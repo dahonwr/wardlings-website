@@ -1,0 +1,6 @@
+{
+  "name": "Wardlings - Forest Sanctuary",
+  "description": "A peaceful sanctuary landing page where tiny spirits of nature come alive. Built with Nintendo-inspired cozy design.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
