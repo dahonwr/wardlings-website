@@ -1,66 +1,135 @@
 @import "tailwindcss";
 
-@layer base {
+html {
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto !important;
   }
-
-  :root {
-    --font-heading: 'Fredoka', 'Plus Jakarta Sans', system-ui, sans-serif;
-    --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
-  }
-
-  body {
-    font-family: var(--font-body);
-    color: #2B241F;
-    background-color: #FFFFFF;
-    overflow-x: hidden;
-  }
-
-  h1, h2, h3, h4, .font-heading {
-    font-family: var(--font-heading);
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-/* Custom soft shadows for cozy Nintendo card look */
-.wardling-card-shadow {
-  box-shadow: 0 10px 30px -10px rgba(43, 36, 31, 0.05), 0 4px 12px -2px rgba(43, 36, 31, 0.03);
+@theme {
+  --font-dynapuff: 'DynaPuff', cursive, sans-serif;
+  --font-baloo: 'Baloo 2', cursive, sans-serif;
+  --font-patrick: 'Patrick Hand', cursive, sans-serif;
+  --font-nunito: 'Nunito', sans-serif;
+
+  --color-sanctuary-sky: #DFF4FF;
+  --color-sanctuary-cream: #FFF9EF;
+  --color-sanctuary-grass: #D9F5C2;
+  --color-sanctuary-leaf: #7EBE69;
+  --color-sanctuary-pink: #F7BFD5;
+  --color-sanctuary-wood: #7C5B46;
+  --color-sanctuary-outline: #2B2B2B;
 }
 
-@keyframes wardlings-marquee {
-  0% {
-    transform: translate3d(0, 0, 0);
+@layer utilities {
+  .font-dynapuff {
+    font-family: 'DynaPuff', cursive, sans-serif;
   }
-  100% {
-    transform: translate3d(-33.333333%, 0, 0);
+  .font-baloo {
+    font-family: 'Baloo 2', cursive, sans-serif;
+  }
+  .font-patrick {
+    font-family: 'Patrick Hand', cursive, sans-serif;
+  }
+  .font-nunito {
+    font-family: 'Nunito', sans-serif;
   }
 }
 
-.animate-wardlings-marquee {
-  animation: wardlings-marquee 25s linear infinite;
-  will-change: transform;
+/* Custom hand-crafted styling classes */
+.cozy-card {
+  background-color: #FFF9EF;
+  border: 3px solid #2B2B2B;
+  border-radius: 24px;
+  box-shadow: 4px 6px 0px #2B2B2B;
 }
 
-@media (min-width: 1024px) {
-  .animate-wardlings-marquee {
-    animation: none;
-    transform: none !important;
-  }
+.cozy-card-hover {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cozy-card-hover:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+  box-shadow: 6px 10px 0px #2B2B2B;
 }
 
-.wardling-card-shadow-hover {
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+.wood-sign {
+  background: #7C5B46;
+  color: #FFF9EF;
+  border: 3px solid #2B2B2B;
+  border-radius: 16px;
+  box-shadow: 3px 5px 0px #2B2B2B;
 }
 
-.wardling-card-shadow-hover:hover {
-  box-shadow: 0 20px 40px -12px rgba(94, 125, 58, 0.12), 0 8px 16px -4px rgba(43, 36, 31, 0.04);
+.tape-strip {
+  background: rgba(255, 245, 215, 0.75);
+  border: 1px dashed #7C5B46;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.06);
 }
 
-/* Subtle pattern for empty placeholders */
-.placeholder-grid-bg {
-  background-color: #FBF9F5;
-  background-image: radial-gradient(#ECE7DF 1.5px, transparent 1.5px);
-  background-size: 20px 20px;
+.paper-pinned {
+  background-color: #FFFDF9;
+  background-image: radial-gradient(#E8DFD1 1px, transparent 1px);
+  background-size: 16px 16px;
+  border: 3px solid #2B2B2B;
+  border-radius: 20px;
+  box-shadow: 4px 6px 0px rgba(43,43,43,0.9);
 }
 
+/* Floating leaf & cloud animations */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(4deg); }
+}
+
+@keyframes cloudDrift {
+  0% { transform: translateX(-10%); }
+  50% { transform: translateX(10%); }
+  100% { transform: translateX(-10%); }
+}
+
+@keyframes butterflyFlutter {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(60px, -40px) rotate(10deg) scale(1.05); }
+  50% { transform: translate(140px, -20px) rotate(-8deg) scale(0.95); }
+  75% { transform: translate(220px, -60px) rotate(6deg) scale(1.02); }
+  100% { transform: translate(300px, -30px) rotate(0deg) scale(1); }
+}
+
+@keyframes wobbleGently {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg) scale(1.03); }
+  75% { transform: rotate(3deg) scale(1.03); }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-cloud-drift {
+  animation: cloudDrift 45s ease-in-out infinite;
+}
+
+.animate-wobble-hover:hover {
+  animation: wobbleGently 0.4s ease-in-out infinite;
+}
 

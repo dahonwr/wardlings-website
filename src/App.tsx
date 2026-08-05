@@ -1,66 +1,101 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { useState } from 'react';
-import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { MeetWardlings } from './components/MeetWardlings';
-import { SanctuaryWorld } from './components/SanctuaryWorld';
-import { WhitelistSection } from './components/WhitelistSection';
+import React, { useState, useEffect } from 'react';
+import { Navbar } from './components/Navbar';
+import { HeroSection } from './components/HeroSection';
+import { AboutSection } from './components/AboutSection';
+import { CollectionSection } from './components/CollectionSection';
+import { ApplicationSection } from './components/ApplicationSection';
 import { Footer } from './components/Footer';
-import { CharacterModal } from './components/CharacterModal';
-import { WardlingCharacter } from './types';
+import { MagicalForestEffects } from './components/MagicalForestEffects';
+import { Settings } from './types';
+import { fetchSettings } from './lib/storage';
 
 export default function App() {
-  const [selectedCharacter, setSelectedCharacter] = useState<WardlingCharacter | null>(null);
+  const [settings, setSettings] = useState<Settings>({
+    twitter_follow: 'https://x.com/WardlingsNFT',
+    twitter_like: 'https://x.com/WardlingsNFT/status/1',
+    twitter_repost: 'https://x.com/WardlingsNFT/status/1',
+    twitter_comment: 'https://x.com/WardlingsNFT/status/1',
+    application_open: true,
+    discord_link: 'https://discord.gg/wardlings',
+    website_banner: ''
+  });
 
-  const scrollToWhitelist = () => {
-    const el = document.getElementById('whitelist');
+  useEffect(() => {
+    loadSettings();
+
+    if (window.location.hash === '#apply' || window.location.pathname === '/apply') {
+      setTimeout(() => {
+        const el = document.getElementById('apply');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    }
+  }, []);
+
+  const loadSettings = async () => {
+    const data = await fetchSettings();
+    setSettings(data);
+  };
+
+  const handleOpenApply = () => {
+    const el = document.getElementById('apply');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const scrollToCollection = () => {
+  const handleExploreClick = () => {
     const el = document.getElementById('collection');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
+  // Main Home Landing Page Single-Page Order:
+  // 1. Hero
+  // 2. Sanctuary (AboutSection)
+  // 3. Gallery (CollectionSection)
+  // 4. Become a Keeper (ApplicationSection)
+  // 5. Footer
   return (
-    <div className="min-h-screen bg-white text-[#2B241F] font-sans antialiased selection:bg-[#5E7D3A]/20 selection:text-[#5E7D3A]">
-      {/* Sticky Header */}
-      <Header onJoinWhitelistClick={scrollToWhitelist} />
+    <div
+      className="min-h-screen text-[#34281F] relative font-nunito selection:bg-[#F7BFD5] selection:text-[#34281F] overflow-x-hidden"
+      style={{
+        backgroundColor: '#FFFDF8'
+      }}
+    >
+      <MagicalForestEffects />
 
-      {/* Main Content Sections */}
-      <main>
-        {/* Section 1: Hero */}
-        <Hero
-          onJoinWhitelistClick={scrollToWhitelist}
-          onExploreCollectionClick={scrollToCollection}
+      {/* Header */}
+      <Navbar
+        onOpenApply={handleOpenApply}
+        twitterUrl={settings.twitter_follow}
+        discordUrl={settings.discord_link}
+      />
+
+      {/* Main Single-Page Sections */}
+      <main className="relative z-10">
+        {/* 1. Hero */}
+        <HeroSection
+          onOpenApply={handleOpenApply}
+          onExploreClick={handleExploreClick}
         />
 
-        {/* Section 2: Meet the Wardlings (Collection) */}
-        <MeetWardlings />
+        {/* 2. Sanctuary */}
+        <AboutSection />
 
-        {/* Section 3: The Sanctuary World (Split layout with Stats) */}
-        <SanctuaryWorld />
+        {/* 3. Gallery */}
+        <CollectionSection />
 
-        {/* Section 4: Whitelist Application */}
-        <WhitelistSection />
+        {/* 4. Become a Keeper (Application) */}
+        <ApplicationSection settings={settings} />
       </main>
 
-      {/* Footer */}
-      <Footer />
-
-      {/* Character Modal for "Learn More" */}
-      <CharacterModal
-        character={selectedCharacter}
-        onClose={() => setSelectedCharacter(null)}
-        onJoinWhitelistClick={scrollToWhitelist}
+      {/* 5. Footer */}
+      <Footer
+        twitterUrl={settings.twitter_follow}
+        discordUrl={settings.discord_link}
       />
     </div>
   );

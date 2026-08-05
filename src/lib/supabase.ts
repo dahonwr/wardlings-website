@@ -1,22 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL || 'https://osyvztzqmtimbefklcsn.supabase.co';
+const DEFAULT_URL = 'https://osyvztzqmtimbefklcsn.supabase.co';
+const DEFAULT_ANON_KEY = 'sb_publishable_bgGoImIYII8Y2eSC5tDBhg_utnTIL2d';
 
-const rawKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  '';
+const env = (import.meta as any).env || {};
 
-// Provide a non-empty fallback key so createClient doesn't throw on app boot
-export const supabaseAnonKey =
-  rawKey && rawKey !== 'PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE'
-    ? rawKey
-    : 'sb_publishable_key_placeholder';
+const supabaseUrl = env.VITE_SUPABASE_URL || env.SUPABASE_URL || DEFAULT_URL;
+const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || env.SUPABASE_ANON_KEY || DEFAULT_ANON_KEY;
 
-export const isSupabaseConfigured = Boolean(
-  rawKey && rawKey !== 'PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE'
-);
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
