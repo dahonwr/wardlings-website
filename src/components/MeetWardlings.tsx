@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { WardlingCharacter } from '../types';
 import { WARDLING_CHARACTERS } from '../data/wardlings';
@@ -50,65 +50,16 @@ const RARITY_CARDS = [
 // Duplicate cards 3 times for seamless infinite marquee loop
 const MARQUEE_CARDS = [...RARITY_CARDS, ...RARITY_CARDS, ...RARITY_CARDS];
 
-export const MeetWardlings: React.FC<MeetWardlingsProps> = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    let lastTime: number | null = null;
-    let animId: number;
-    const speed = 35; // Pixels per second continuous glide
-
-    const step = (now: number) => {
-      if (lastTime !== null) {
-        const delta = (now - lastTime) / 1000;
-
-        // Continuous auto-scroll when container has horizontal overflow
-        if (container.scrollWidth > container.clientWidth) {
-          container.scrollLeft += speed * delta;
-
-          // Seamless loop wrap check
-          const singleSetWidth = container.scrollWidth / 3;
-          if (singleSetWidth > 0 && container.scrollLeft >= singleSetWidth * 2) {
-            container.scrollLeft -= singleSetWidth;
-          }
-        }
-      }
-      lastTime = now;
-      animId = requestAnimationFrame(step);
-    };
-
-    animId = requestAnimationFrame(step);
-
-    return () => {
-      cancelAnimationFrame(animId);
-    };
-  }, []);
-
-  const handleScroll = () => {
-    const container = containerRef.current;
-    if (!container) return;
-    const singleSetWidth = container.scrollWidth / 3;
-    if (singleSetWidth > 0) {
-      if (container.scrollLeft >= singleSetWidth * 2) {
-        container.scrollLeft -= singleSetWidth;
-      } else if (container.scrollLeft <= 0) {
-        container.scrollLeft += singleSetWidth;
-      }
-    }
-  };
-
+export const MeetWardlings: React.FC<MeetWardlingsProps> = React.memo(() => {
   return (
-    <section id="collection" className="py-16 lg:py-24 bg-[#FBF9F5]/50 border-y border-[#ECE7DF]">
+    <section id="collection" className="py-16 lg:py-24 bg-[#FBF9F5]/50 border-y border-[#ECE7DF] overflow-hidden contain-paint">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header with Fade Up */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          viewport={{ once: true, margin: "200px" }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
           className="text-center max-w-2xl mx-auto space-y-4 mb-12 lg:mb-16"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#ECE7DF] text-xs font-bold text-[#5E7D3A] tracking-wider uppercase shadow-2xs">
@@ -123,66 +74,46 @@ export const MeetWardlings: React.FC<MeetWardlingsProps> = () => {
           </p>
         </motion.div>
 
-        {/* Collection Cards: Continuous Infinite Marquee Row on Mobile/Tablet, 4-col Grid on Desktop */}
-        <div
-          ref={containerRef}
-          onScroll={handleScroll}
-          className="flex lg:grid overflow-x-auto pb-4 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0 lg:pb-0 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden select-none"
-        >
-          {MARQUEE_CARDS.map((item, index) => {
-            const isDuplicate = index >= RARITY_CARDS.length;
+        {/* Collection Cards Track */}
+        <div className="overflow-hidden -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
+          <div className="flex w-max lg:w-auto lg:grid lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-6 animate-wardlings-marquee transform-gpu select-none">
+            {MARQUEE_CARDS.map((item, index) => {
+              const isDuplicate = index >= RARITY_CARDS.length;
 
-            return (
-              <motion.div
-                key={`${item.rarity}-${index}`}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{
-                  duration: 0.4,
-                  delay: (index % 4) * 0.05,
-                  ease: 'easeOut',
-                }}
-                aria-hidden={isDuplicate ? 'true' : undefined}
-                className={`w-[82%] sm:w-[calc(50%-12px)] lg:w-auto shrink-0 bg-white rounded-[28px] p-5 border border-[#ECE7DF] wardling-card-shadow flex flex-col justify-between group ${
-                  isDuplicate ? 'lg:hidden' : ''
-                }`}
-              >
-                <div className="space-y-4">
-                  {/* Character Image */}
-                  <div className="overflow-hidden rounded-[20px] bg-[#FBF9F5] aspect-square flex items-center justify-center p-2">
-                    <img
-                      src={item.imageSrc}
-                      alt={`${item.rarity} Wardling`}
-                      className="w-full h-full object-contain pointer-events-none select-none"
-                    />
-                  </div>
+              return (
+                <div
+                  key={`${item.rarity}-${index}`}
+                  aria-hidden={isDuplicate ? 'true' : undefined}
+                  className={`w-[260px] sm:w-[300px] lg:w-auto shrink-0 bg-white rounded-[28px] p-5 border border-[#ECE7DF] wardling-card-shadow flex flex-col justify-between group transform-gpu transition-transform duration-300 hover:-translate-y-1 ${
+                    isDuplicate ? 'lg:hidden' : ''
+                  }`}
+                >
+                  <div className="space-y-4">
+                    {/* Character Image */}
+                    <div className="overflow-hidden rounded-[20px] bg-[#FBF9F5] aspect-square flex items-center justify-center p-2">
+                      <img
+                        src={item.imageSrc}
+                        alt={`${item.rarity} Wardling`}
+                        loading="eager"
+                        decoding="async"
+                        className="w-full h-full object-contain pointer-events-none select-none"
+                      />
+                    </div>
 
-                  {/* Centered Rarity Label */}
-                  <div className="pt-2 text-center">
-                    <h3 className="text-2xl font-bold text-[#2B241F] font-heading group-hover:text-[#5E7D3A] transition-colors duration-300">
-                      {item.rarity}
-                    </h3>
+                    {/* Centered Rarity Label */}
+                    <div className="pt-2 pb-1 text-center">
+                      <h3 className="text-2xl font-bold text-[#2B241F] font-heading group-hover:text-[#5E7D3A] transition-colors duration-300">
+                        {item.rarity}
+                      </h3>
+                    </div>
                   </div>
                 </div>
-
-                {/* View Collection Button */}
-                <div className="pt-6 mt-4 border-t border-[#ECE7DF]/60">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
-                    className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#FBF9F5] hover:bg-[#5E7D3A] text-[#2B241F] hover:text-white font-bold text-sm border border-[#ECE7DF] transition-colors group/btn"
-                  >
-                    <span>View Collection →</span>
-                  </motion.button>
-                </div>
-              </motion.div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
   );
-};
+});
 

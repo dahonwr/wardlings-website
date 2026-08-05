@@ -83,17 +83,56 @@ export const WhitelistSection: React.FC = () => {
     return '';
   };
 
-  const walletError = getWalletError(formData.walletAddress);
-  const xHandleError = getXHandleError(formData.xHandle);
-  const commentLinkError = getCommentLinkError(formData.commentLink);
-  const reasonError = getReasonError(formData.reason);
+  // Sequential Step Unlocking Logic (8 Steps in total)
+  // Step 1: Follow @wardlingsnft on X
+  const step1Done = checklist.followX;
 
-  const isFormValid =
-    !walletError &&
-    !xHandleError &&
-    !commentLinkError &&
-    !reasonError &&
-    formData.confirmed;
+  // Step 2: Like the pinned post
+  const step2Unlocked = step1Done;
+  const step2Done = step2Unlocked && checklist.likePost;
+
+  // Step 3: Repost the pinned post
+  const step3Unlocked = step2Done;
+  const step3Done = step3Unlocked && checklist.repostPost;
+
+  // Step 4: Comment on the pinned post
+  const step4Unlocked = step3Done;
+  const step4Done = step4Unlocked && checklist.commentPost;
+
+  // Step 5: Ethereum Wallet Address
+  const step5Unlocked = step4Done;
+  const walletError = getWalletError(formData.walletAddress);
+  const step5Done = step5Unlocked && formData.walletAddress.trim() !== '' && !walletError;
+
+  // Step 6: X Handle
+  const step6Unlocked = step5Done;
+  const xHandleError = getXHandleError(formData.xHandle);
+  const step6Done = step6Unlocked && formData.xHandle.trim() !== '' && !xHandleError;
+
+  // Step 7: Comment Link
+  const step7Unlocked = step6Done;
+  const commentLinkError = getCommentLinkError(formData.commentLink);
+  const step7Done = step7Unlocked && formData.commentLink.trim() !== '' && !commentLinkError;
+
+  // Step 8: Confirmation checkbox
+  const step8Unlocked = step7Done;
+  const step8Done = step8Unlocked && formData.confirmed;
+
+  const completedCount = [
+    step1Done,
+    step2Done,
+    step3Done,
+    step4Done,
+    step5Done,
+    step6Done,
+    step7Done,
+    step8Done,
+  ].filter(Boolean).length;
+
+  const currentStepNumber = Math.min(completedCount + 1, 8);
+  const progressPercent = Math.round((completedCount / 8) * 100);
+
+  const isFormValid = step8Done;
 
   const handleBlur = (field: keyof typeof touched) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
@@ -153,6 +192,9 @@ export const WhitelistSection: React.FC = () => {
       });
 
       if (result.success) {
+        // Brief artificial delay for verification perception
+        await new Promise((resolve) => setTimeout(resolve, 850));
+
         // Record timestamp for rate limiting
         localStorage.setItem(LAST_SUBMIT_KEY, Date.now().toString());
 
@@ -195,10 +237,10 @@ export const WhitelistSection: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column: Whitelist Form & Requirements */}
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.05, ease: 'easeOut' }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
               className="lg:col-span-6 space-y-8"
             >
               {/* Header */}
@@ -215,113 +257,21 @@ export const WhitelistSection: React.FC = () => {
                 </p>
               </div>
 
-              {/* Required Steps Tasks */}
-              <div className="bg-[#FBF9F5] p-5 sm:p-6 rounded-[24px] border border-[#ECE7DF] space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-[#ECE7DF]">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#5C544B]">
-                    Required Steps
+              {/* Progress Indicator */}
+              <div className="bg-[#FBF9F5] p-4 sm:p-5 rounded-[24px] border border-[#ECE7DF] space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold text-[#2B241F]">
+                  <span className="uppercase tracking-wider text-[#5C544B]">
+                    {completedCount === 8 ? 'All 8 Steps Completed!' : `Step ${currentStepNumber} of 8`}
                   </span>
-                  <span className="text-xs font-bold text-[#5E7D3A]">
-                    {Object.values(checklist).filter(Boolean).length}/4 Done
-                  </span>
+                  <span className="text-[#5E7D3A] font-mono font-extrabold">{progressPercent}%</span>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    type="button"
-                    onClick={() => {
-                      toggleChecklist('followX');
-                      window.open('https://x.com/wardlingsnft', '_blank', 'noopener,noreferrer');
-                    }}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white border border-[#ECE7DF] hover:border-[#5E7D3A] transition-colors text-left cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-3">
-                      {checklist.followX ? (
-                        <CheckCircle className="w-5 h-5 text-[#5E7D3A] shrink-0" />
-                      ) : (
-                        <Square className="w-5 h-5 text-[#5C544B] group-hover:text-[#5E7D3A] shrink-0" />
-                      )}
-                      <span className="text-xs font-bold text-[#2B241F]">
-                        Follow @wardlingsnft on X
-                      </span>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-[#5C544B] group-hover:text-[#5E7D3A] shrink-0" />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    type="button"
-                    onClick={() => {
-                      toggleChecklist('likePost');
-                      window.open('https://x.com/wardlingsnft', '_blank', 'noopener,noreferrer');
-                    }}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white border border-[#ECE7DF] hover:border-[#5E7D3A] transition-colors text-left cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-3">
-                      {checklist.likePost ? (
-                        <CheckCircle className="w-5 h-5 text-[#5E7D3A] shrink-0" />
-                      ) : (
-                        <Square className="w-5 h-5 text-[#5C544B] group-hover:text-[#5E7D3A] shrink-0" />
-                      )}
-                      <span className="text-xs font-bold text-[#2B241F]">
-                        Like the pinned post
-                      </span>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-[#5C544B] group-hover:text-[#5E7D3A] shrink-0" />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    type="button"
-                    onClick={() => {
-                      toggleChecklist('repostPost');
-                      window.open('https://x.com/wardlingsnft', '_blank', 'noopener,noreferrer');
-                    }}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white border border-[#ECE7DF] hover:border-[#5E7D3A] transition-colors text-left cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-3">
-                      {checklist.repostPost ? (
-                        <CheckCircle className="w-5 h-5 text-[#5E7D3A] shrink-0" />
-                      ) : (
-                        <Square className="w-5 h-5 text-[#5C544B] group-hover:text-[#5E7D3A] shrink-0" />
-                      )}
-                      <span className="text-xs font-bold text-[#2B241F]">
-                        Repost the pinned post
-                      </span>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-[#5C544B] group-hover:text-[#5E7D3A] shrink-0" />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    type="button"
-                    onClick={() => {
-                      toggleChecklist('commentPost');
-                      window.open('https://x.com/wardlingsnft', '_blank', 'noopener,noreferrer');
-                    }}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white border border-[#ECE7DF] hover:border-[#5E7D3A] transition-colors text-left cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-3">
-                      {checklist.commentPost ? (
-                        <CheckCircle className="w-5 h-5 text-[#5E7D3A] shrink-0" />
-                      ) : (
-                        <Square className="w-5 h-5 text-[#5C544B] group-hover:text-[#5E7D3A] shrink-0" />
-                      )}
-                      <span className="text-xs font-bold text-[#2B241F]">
-                        Comment on the pinned post
-                      </span>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-[#5C544B] group-hover:text-[#5E7D3A] shrink-0" />
-                  </motion.button>
+                <div className="w-full h-2.5 bg-[#ECE7DF] rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-[#5E7D3A] rounded-full"
+                    initial={{ width: '0%' }}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                  />
                 </div>
               </div>
 
@@ -364,6 +314,12 @@ export const WhitelistSection: React.FC = () => {
                         confirmed: false,
                       });
                       setTouched({});
+                      setChecklist({
+                        followX: false,
+                        likePost: false,
+                        repostPost: false,
+                        commentPost: false,
+                      });
                     }}
                     className="text-xs font-bold text-[#5E7D3A] underline hover:text-[#4E6A2E] cursor-pointer pt-2 inline-block"
                   >
@@ -371,7 +327,7 @@ export const WhitelistSection: React.FC = () => {
                   </button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+                <form onSubmit={handleSubmit} className="space-y-3" noValidate>
                   {errorMessage && (
                     <div className="flex items-center gap-2 p-3.5 rounded-xl bg-red-50 text-red-700 text-xs font-semibold border border-red-200">
                       <AlertCircle className="w-4 h-4 shrink-0" />
@@ -379,100 +335,426 @@ export const WhitelistSection: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Ethereum Wallet Address */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-[#2B241F]">
-                      Ethereum Wallet Address <span className="text-red-500">*</span>
-                    </label>
+                  {/* Step 1: Follow @wardlingsnft on X */}
+                  <motion.div
+                    initial={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-3.5 rounded-2xl border transition-all ${
+                      step1Done
+                        ? 'bg-[#5E7D3A]/5 border-[#5E7D3A]/40'
+                        : 'bg-white border-[#ECE7DF] hover:border-[#5E7D3A]'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleChecklist('followX');
+                        window.open('https://x.com/wardlingsnft', '_blank', 'noopener,noreferrer');
+                      }}
+                      className="w-full flex items-center justify-between text-left cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                            step1Done ? 'bg-[#5E7D3A] text-white' : 'bg-[#FBF9F5] text-[#5E7D3A] border border-[#ECE7DF]'
+                          }`}
+                        >
+                          {step1Done ? <Check className="w-3.5 h-3.5" /> : '1'}
+                        </div>
+                        <span className="text-xs font-bold text-[#2B241F]">
+                          1. Follow @wardlingsnft on X
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {step1Done && (
+                          <span className="text-[10px] font-bold text-[#5E7D3A] bg-[#5E7D3A]/10 px-2 py-0.5 rounded-full">
+                            Completed
+                          </span>
+                        )}
+                        <ExternalLink className="w-3.5 h-3.5 text-[#5C544B] group-hover:text-[#5E7D3A]" />
+                      </div>
+                    </button>
+                  </motion.div>
+
+                  {/* Step 2: Like the pinned post */}
+                  <motion.div
+                    initial={{ opacity: 0.4, y: 4 }}
+                    animate={{ opacity: step2Unlocked ? 1 : 0.4, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className={`p-3.5 rounded-2xl border transition-all ${
+                      step2Done
+                        ? 'bg-[#5E7D3A]/5 border-[#5E7D3A]/40'
+                        : step2Unlocked
+                        ? 'bg-white border-[#ECE7DF] hover:border-[#5E7D3A]'
+                        : 'bg-[#FBF9F5] border-[#ECE7DF]/80 opacity-40 pointer-events-none'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      disabled={!step2Unlocked}
+                      onClick={() => {
+                        if (!step2Unlocked) return;
+                        toggleChecklist('likePost');
+                        window.open('https://x.com/wardlingsnft', '_blank', 'noopener,noreferrer');
+                      }}
+                      className={`w-full flex items-center justify-between text-left group ${
+                        step2Unlocked ? 'cursor-pointer' : 'cursor-not-allowed'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                            step2Done
+                              ? 'bg-[#5E7D3A] text-white'
+                              : step2Unlocked
+                              ? 'bg-[#FBF9F5] text-[#5E7D3A] border border-[#ECE7DF]'
+                              : 'bg-[#ECE7DF]/60 text-[#5C544B]/60'
+                          }`}
+                        >
+                          {step2Done ? <Check className="w-3.5 h-3.5" /> : '2'}
+                        </div>
+                        <span className="text-xs font-bold text-[#2B241F]">
+                          2. Like the pinned post
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {step2Done && (
+                          <span className="text-[10px] font-bold text-[#5E7D3A] bg-[#5E7D3A]/10 px-2 py-0.5 rounded-full">
+                            Completed
+                          </span>
+                        )}
+                        <ExternalLink className={`w-3.5 h-3.5 ${step2Unlocked ? 'text-[#5C544B] group-hover:text-[#5E7D3A]' : 'text-[#5C544B]/40'}`} />
+                      </div>
+                    </button>
+                  </motion.div>
+
+                  {/* Step 3: Repost the pinned post */}
+                  <motion.div
+                    initial={{ opacity: 0.4, y: 4 }}
+                    animate={{ opacity: step3Unlocked ? 1 : 0.4, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className={`p-3.5 rounded-2xl border transition-all ${
+                      step3Done
+                        ? 'bg-[#5E7D3A]/5 border-[#5E7D3A]/40'
+                        : step3Unlocked
+                        ? 'bg-white border-[#ECE7DF] hover:border-[#5E7D3A]'
+                        : 'bg-[#FBF9F5] border-[#ECE7DF]/80 opacity-40 pointer-events-none'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      disabled={!step3Unlocked}
+                      onClick={() => {
+                        if (!step3Unlocked) return;
+                        toggleChecklist('repostPost');
+                        window.open('https://x.com/wardlingsnft', '_blank', 'noopener,noreferrer');
+                      }}
+                      className={`w-full flex items-center justify-between text-left group ${
+                        step3Unlocked ? 'cursor-pointer' : 'cursor-not-allowed'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                            step3Done
+                              ? 'bg-[#5E7D3A] text-white'
+                              : step3Unlocked
+                              ? 'bg-[#FBF9F5] text-[#5E7D3A] border border-[#ECE7DF]'
+                              : 'bg-[#ECE7DF]/60 text-[#5C544B]/60'
+                          }`}
+                        >
+                          {step3Done ? <Check className="w-3.5 h-3.5" /> : '3'}
+                        </div>
+                        <span className="text-xs font-bold text-[#2B241F]">
+                          3. Repost the pinned post
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {step3Done && (
+                          <span className="text-[10px] font-bold text-[#5E7D3A] bg-[#5E7D3A]/10 px-2 py-0.5 rounded-full">
+                            Completed
+                          </span>
+                        )}
+                        <ExternalLink className={`w-3.5 h-3.5 ${step3Unlocked ? 'text-[#5C544B] group-hover:text-[#5E7D3A]' : 'text-[#5C544B]/40'}`} />
+                      </div>
+                    </button>
+                  </motion.div>
+
+                  {/* Step 4: Comment on the pinned post */}
+                  <motion.div
+                    initial={{ opacity: 0.4, y: 4 }}
+                    animate={{ opacity: step4Unlocked ? 1 : 0.4, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className={`p-3.5 rounded-2xl border transition-all ${
+                      step4Done
+                        ? 'bg-[#5E7D3A]/5 border-[#5E7D3A]/40'
+                        : step4Unlocked
+                        ? 'bg-white border-[#ECE7DF] hover:border-[#5E7D3A]'
+                        : 'bg-[#FBF9F5] border-[#ECE7DF]/80 opacity-40 pointer-events-none'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      disabled={!step4Unlocked}
+                      onClick={() => {
+                        if (!step4Unlocked) return;
+                        toggleChecklist('commentPost');
+                        window.open('https://x.com/wardlingsnft', '_blank', 'noopener,noreferrer');
+                      }}
+                      className={`w-full flex items-center justify-between text-left group ${
+                        step4Unlocked ? 'cursor-pointer' : 'cursor-not-allowed'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                            step4Done
+                              ? 'bg-[#5E7D3A] text-white'
+                              : step4Unlocked
+                              ? 'bg-[#FBF9F5] text-[#5E7D3A] border border-[#ECE7DF]'
+                              : 'bg-[#ECE7DF]/60 text-[#5C544B]/60'
+                          }`}
+                        >
+                          {step4Done ? <Check className="w-3.5 h-3.5" /> : '4'}
+                        </div>
+                        <span className="text-xs font-bold text-[#2B241F]">
+                          4. Comment on the pinned post
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {step4Done && (
+                          <span className="text-[10px] font-bold text-[#5E7D3A] bg-[#5E7D3A]/10 px-2 py-0.5 rounded-full">
+                            Completed
+                          </span>
+                        )}
+                        <ExternalLink className={`w-3.5 h-3.5 ${step4Unlocked ? 'text-[#5C544B] group-hover:text-[#5E7D3A]' : 'text-[#5C544B]/40'}`} />
+                      </div>
+                    </button>
+                  </motion.div>
+
+                  {/* Step 5: Ethereum Wallet Address */}
+                  <motion.div
+                    initial={{ opacity: 0.4, y: 4 }}
+                    animate={{ opacity: step5Unlocked ? 1 : 0.4, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className={`space-y-1.5 p-3.5 rounded-2xl border transition-all ${
+                      step5Done
+                        ? 'bg-[#5E7D3A]/5 border-[#5E7D3A]/40'
+                        : step5Unlocked
+                        ? 'bg-white border-[#ECE7DF]'
+                        : 'bg-[#FBF9F5] border-[#ECE7DF]/80 opacity-40 pointer-events-none'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                            step5Done
+                              ? 'bg-[#5E7D3A] text-white'
+                              : step5Unlocked
+                              ? 'bg-[#FBF9F5] text-[#5E7D3A] border border-[#ECE7DF]'
+                              : 'bg-[#ECE7DF]/60 text-[#5C544B]/60'
+                          }`}
+                        >
+                          {step5Done ? <Check className="w-3.5 h-3.5" /> : '5'}
+                        </div>
+                        <label className="text-xs font-bold text-[#2B241F]">
+                          5. Ethereum Wallet Address <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                      {step5Done && (
+                        <span className="text-[10px] font-bold text-[#5E7D3A] bg-[#5E7D3A]/10 px-2 py-0.5 rounded-full">
+                          Completed
+                        </span>
+                      )}
+                    </div>
                     <input
                       type="text"
                       placeholder="0x..."
-                      disabled={isSubmitting}
+                      disabled={!step5Unlocked || isSubmitting}
                       value={formData.walletAddress}
                       onChange={(e) => {
                         setFormData({ ...formData, walletAddress: e.target.value });
                         if (errorMessage) setErrorMessage('');
                       }}
                       onBlur={() => handleBlur('walletAddress')}
-                      className={`w-full px-4 py-3 rounded-2xl bg-white border text-sm font-mono text-[#2B241F] placeholder-[#5C544B]/40 outline-hidden transition-all disabled:opacity-60 ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white border text-sm font-mono text-[#2B241F] placeholder-[#5C544B]/40 outline-hidden transition-all disabled:bg-[#FBF9F5] disabled:cursor-not-allowed ${
                         touched.walletAddress && walletError
                           ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : step5Done
+                          ? 'border-[#5E7D3A]/40 focus:border-[#5E7D3A]'
                           : 'border-[#ECE7DF] focus:border-[#5E7D3A] focus:ring-2 focus:ring-[#5E7D3A]/20'
                       }`}
                     />
                     {touched.walletAddress && walletError && (
-                      <p className="text-xs font-medium text-red-600 pt-0.5">{walletError}</p>
+                      <p className="text-xs font-medium text-red-600 pt-0.5 pl-1">{walletError}</p>
                     )}
-                  </div>
+                  </motion.div>
 
-                  {/* X Handle & Comment Link */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-[#2B241F]">
-                        X Handle <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="@yourhandle"
-                        disabled={isSubmitting}
-                        value={formData.xHandle}
-                        onChange={(e) => {
-                          setFormData({ ...formData, xHandle: e.target.value });
-                          if (errorMessage) setErrorMessage('');
-                        }}
-                        onBlur={() => handleBlur('xHandle')}
-                        className={`w-full px-4 py-3 rounded-2xl bg-white border text-sm text-[#2B241F] placeholder-[#5C544B]/40 outline-hidden transition-all disabled:opacity-60 ${
-                          touched.xHandle && xHandleError
-                            ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                            : 'border-[#ECE7DF] focus:border-[#5E7D3A] focus:ring-2 focus:ring-[#5E7D3A]/20'
-                        }`}
-                      />
-                      {touched.xHandle && xHandleError && (
-                        <p className="text-xs font-medium text-red-600 pt-0.5">{xHandleError}</p>
+                  {/* Step 6: X Handle */}
+                  <motion.div
+                    initial={{ opacity: 0.4, y: 4 }}
+                    animate={{ opacity: step6Unlocked ? 1 : 0.4, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className={`space-y-1.5 p-3.5 rounded-2xl border transition-all ${
+                      step6Done
+                        ? 'bg-[#5E7D3A]/5 border-[#5E7D3A]/40'
+                        : step6Unlocked
+                        ? 'bg-white border-[#ECE7DF]'
+                        : 'bg-[#FBF9F5] border-[#ECE7DF]/80 opacity-40 pointer-events-none'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                            step6Done
+                              ? 'bg-[#5E7D3A] text-white'
+                              : step6Unlocked
+                              ? 'bg-[#FBF9F5] text-[#5E7D3A] border border-[#ECE7DF]'
+                              : 'bg-[#ECE7DF]/60 text-[#5C544B]/60'
+                          }`}
+                        >
+                          {step6Done ? <Check className="w-3.5 h-3.5" /> : '6'}
+                        </div>
+                        <label className="text-xs font-bold text-[#2B241F]">
+                          6. X Handle <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                      {step6Done && (
+                        <span className="text-[10px] font-bold text-[#5E7D3A] bg-[#5E7D3A]/10 px-2 py-0.5 rounded-full">
+                          Completed
+                        </span>
                       )}
                     </div>
-
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-bold text-[#2B241F]">
-                        Comment Link <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="https://x.com/..."
-                        disabled={isSubmitting}
-                        value={formData.commentLink}
-                        onChange={(e) => {
-                          setFormData({ ...formData, commentLink: e.target.value });
-                          if (errorMessage) setErrorMessage('');
-                        }}
-                        onBlur={() => handleBlur('commentLink')}
-                        className={`w-full px-4 py-3 rounded-2xl bg-white border text-sm text-[#2B241F] placeholder-[#5C544B]/40 outline-hidden transition-all disabled:opacity-60 ${
-                          touched.commentLink && commentLinkError
-                            ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                            : 'border-[#ECE7DF] focus:border-[#5E7D3A] focus:ring-2 focus:ring-[#5E7D3A]/20'
-                        }`}
-                      />
-                      {touched.commentLink && commentLinkError && (
-                        <p className="text-xs font-medium text-red-600 pt-0.5">{commentLinkError}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Confirmation Checkbox */}
-                  <label className="flex items-center gap-3 pt-1 cursor-pointer select-none">
                     <input
-                      type="checkbox"
-                      disabled={isSubmitting}
-                      checked={formData.confirmed}
-                      onChange={(e) =>
-                        setFormData({ ...formData, confirmed: e.target.checked })
-                      }
-                      className="w-4 h-4 rounded-md accent-[#5E7D3A] border-[#ECE7DF] cursor-pointer disabled:opacity-60"
+                      type="text"
+                      placeholder="@yourhandle"
+                      disabled={!step6Unlocked || isSubmitting}
+                      value={formData.xHandle}
+                      onChange={(e) => {
+                        setFormData({ ...formData, xHandle: e.target.value });
+                        if (errorMessage) setErrorMessage('');
+                      }}
+                      onBlur={() => handleBlur('xHandle')}
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white border text-sm text-[#2B241F] placeholder-[#5C544B]/40 outline-hidden transition-all disabled:bg-[#FBF9F5] disabled:cursor-not-allowed ${
+                        touched.xHandle && xHandleError
+                          ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : step6Done
+                          ? 'border-[#5E7D3A]/40 focus:border-[#5E7D3A]'
+                          : 'border-[#ECE7DF] focus:border-[#5E7D3A] focus:ring-2 focus:ring-[#5E7D3A]/20'
+                      }`}
                     />
-                    <span className="text-xs font-medium text-[#5C544B]">
-                      I confirm all information is correct.
-                    </span>
-                  </label>
+                    {touched.xHandle && xHandleError && (
+                      <p className="text-xs font-medium text-red-600 pt-0.5 pl-1">{xHandleError}</p>
+                    )}
+                  </motion.div>
+
+                  {/* Step 7: Comment Link */}
+                  <motion.div
+                    initial={{ opacity: 0.4, y: 4 }}
+                    animate={{ opacity: step7Unlocked ? 1 : 0.4, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className={`space-y-1.5 p-3.5 rounded-2xl border transition-all ${
+                      step7Done
+                        ? 'bg-[#5E7D3A]/5 border-[#5E7D3A]/40'
+                        : step7Unlocked
+                        ? 'bg-white border-[#ECE7DF]'
+                        : 'bg-[#FBF9F5] border-[#ECE7DF]/80 opacity-40 pointer-events-none'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                            step7Done
+                              ? 'bg-[#5E7D3A] text-white'
+                              : step7Unlocked
+                              ? 'bg-[#FBF9F5] text-[#5E7D3A] border border-[#ECE7DF]'
+                              : 'bg-[#ECE7DF]/60 text-[#5C544B]/60'
+                          }`}
+                        >
+                          {step7Done ? <Check className="w-3.5 h-3.5" /> : '7'}
+                        </div>
+                        <label className="text-xs font-bold text-[#2B241F]">
+                          7. Comment Link <span className="text-red-500">*</span>
+                        </label>
+                      </div>
+                      {step7Done && (
+                        <span className="text-[10px] font-bold text-[#5E7D3A] bg-[#5E7D3A]/10 px-2 py-0.5 rounded-full">
+                          Completed
+                        </span>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="https://x.com/..."
+                      disabled={!step7Unlocked || isSubmitting}
+                      value={formData.commentLink}
+                      onChange={(e) => {
+                        setFormData({ ...formData, commentLink: e.target.value });
+                        if (errorMessage) setErrorMessage('');
+                      }}
+                      onBlur={() => handleBlur('commentLink')}
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white border text-sm text-[#2B241F] placeholder-[#5C544B]/40 outline-hidden transition-all disabled:bg-[#FBF9F5] disabled:cursor-not-allowed ${
+                        touched.commentLink && commentLinkError
+                          ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                          : step7Done
+                          ? 'border-[#5E7D3A]/40 focus:border-[#5E7D3A]'
+                          : 'border-[#ECE7DF] focus:border-[#5E7D3A] focus:ring-2 focus:ring-[#5E7D3A]/20'
+                      }`}
+                    />
+                    {touched.commentLink && commentLinkError && (
+                      <p className="text-xs font-medium text-red-600 pt-0.5 pl-1">{commentLinkError}</p>
+                    )}
+                  </motion.div>
+
+                  {/* Step 8: Confirmation Checkbox */}
+                  <motion.div
+                    initial={{ opacity: 0.4, y: 4 }}
+                    animate={{ opacity: step8Unlocked ? 1 : 0.4, y: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className={`p-3.5 rounded-2xl border transition-all ${
+                      step8Done
+                        ? 'bg-[#5E7D3A]/5 border-[#5E7D3A]/40'
+                        : step8Unlocked
+                        ? 'bg-white border-[#ECE7DF]'
+                        : 'bg-[#FBF9F5] border-[#ECE7DF]/80 opacity-40 pointer-events-none'
+                    }`}
+                  >
+                    <label className={`flex items-center justify-between select-none ${step8Unlocked ? 'cursor-pointer' : 'cursor-not-allowed'}`}>
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                            step8Done
+                              ? 'bg-[#5E7D3A] text-white'
+                              : step8Unlocked
+                              ? 'bg-[#FBF9F5] text-[#5E7D3A] border border-[#ECE7DF]'
+                              : 'bg-[#ECE7DF]/60 text-[#5C544B]/60'
+                          }`}
+                        >
+                          {step8Done ? <Check className="w-3.5 h-3.5" /> : '8'}
+                        </div>
+                        <input
+                          type="checkbox"
+                          disabled={!step8Unlocked || isSubmitting}
+                          checked={formData.confirmed}
+                          onChange={(e) =>
+                            setFormData({ ...formData, confirmed: e.target.checked })
+                          }
+                          className="w-4 h-4 rounded-md accent-[#5E7D3A] border-[#ECE7DF] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                        />
+                        <span className="text-xs font-bold text-[#2B241F]">
+                          8. I confirm all information is correct.
+                        </span>
+                      </div>
+                      {step8Done && (
+                        <span className="text-[10px] font-bold text-[#5E7D3A] bg-[#5E7D3A]/10 px-2 py-0.5 rounded-full">
+                          Completed
+                        </span>
+                      )}
+                    </label>
+                  </motion.div>
 
                   {/* Submit Button */}
                   <div className="pt-2">
@@ -489,7 +771,7 @@ export const WhitelistSection: React.FC = () => {
                       {isSubmitting ? (
                         <>
                           <Loader2 className="w-5 h-5 animate-spin" />
-                          <span>Submitting...</span>
+                          <span>Verifying application...</span>
                         </>
                       ) : (
                         <span>Join Whitelist</span>
@@ -502,10 +784,10 @@ export const WhitelistSection: React.FC = () => {
 
             {/* Right Column: Whitelist Illustration */}
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
+              transition={{ duration: 0.42, delay: 0.08, ease: 'easeOut' }}
               className="lg:col-span-6 flex items-end justify-center lg:justify-end p-2 sm:p-4 w-full h-full min-h-[460px] sm:min-h-[580px] lg:min-h-[680px]"
             >
               <img

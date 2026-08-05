@@ -44,7 +44,7 @@ export default function App() {
         />
 
         {/* Section 2: Meet the Wardlings (Collection) */}
-        <MeetWardlings onSelectCharacter={(char) => setSelectedCharacter(char)} />
+        <MeetWardlings />
 
         {/* Section 3: The Sanctuary World (Split layout with Stats) */}
         <SanctuaryWorld />

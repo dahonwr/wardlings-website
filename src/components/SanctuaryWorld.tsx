@@ -8,10 +8,10 @@ export const SanctuaryWorld: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Copy & Statistics */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            viewport={{ once: true, margin: "200px" }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="lg:col-span-5 space-y-8"
           >
             <div className="space-y-4">
@@ -67,15 +67,17 @@ export const SanctuaryWorld: React.FC = () => {
 
           {/* Right Column: Sanctuary Illustration */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
+            viewport={{ once: true, margin: "200px" }}
+            transition={{ duration: 0.42, delay: 0.08, ease: 'easeOut' }}
             className="lg:col-span-7 flex items-end justify-center lg:justify-end w-full h-full min-h-[420px] sm:min-h-[540px] lg:min-h-[640px]"
           >
             <img
               src="https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Keeper-sanctuary.png"
               alt="Keeper Sanctuary"
+              loading="eager"
+              decoding="async"
               className="w-full h-auto max-w-[950px] max-h-[750px] sm:max-h-[850px] lg:max-h-[950px] object-contain pointer-events-none select-none"
             />
           </motion.div>

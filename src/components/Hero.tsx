@@ -16,9 +16,9 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Copy & Actions */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-6 space-y-6 lg:pr-4"
           >
             {/* Large Heading */}
@@ -60,14 +60,16 @@ export const Hero: React.FC<HeroProps> = ({
 
           {/* Right Column: Hero Illustration Image */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
+            transition={{ duration: 0.45, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-6 flex justify-center lg:justify-end items-center"
           >
             <img
               src="https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero.png"
               alt="Wardlings Sanctuary Hero"
+              loading="eager"
+              decoding="async"
               className="w-full max-w-[600px] lg:max-w-[700px] h-auto object-contain pointer-events-none select-none"
             />
           </motion.div>
