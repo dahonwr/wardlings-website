@@ -84,12 +84,19 @@ export const JourneySection: React.FC = () => {
         <div className="relative">
           {/* Animated Growing Vine Line (Center/Left) */}
           <div className="absolute left-6 sm:left-1/2 top-0 bottom-0 w-3 -translate-x-1/2 bg-[#7C5B46]/30 rounded-full overflow-hidden border-2 border-[#2B2B2B]">
+            {/* Animate scaleY (compositor-only, GPU) instead of height
+                (a layout property that forces reflow on every frame of the
+                1.8s animation). Also switched to once:true — re-running
+                this on every scroll pass in/out of view was doing a full
+                reflow-animation each time, which is a real source of
+                scroll jank on longer pages. */}
             <motion.div
-              initial={{ height: '0%' }}
-              whileInView={{ height: '100%' }}
-              viewport={{ once: false, margin: '-100px' }}
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 1.8, ease: 'easeInOut' }}
-              className="w-full bg-[#7EBE69]"
+              style={{ transformOrigin: 'top' }}
+              className="w-full h-full bg-[#7EBE69]"
             />
           </div>
 
@@ -139,6 +146,7 @@ export const JourneySection: React.FC = () => {
                   <div className="absolute left-6 sm:left-1/2 -translate-x-1/2 top-6 w-12 h-12 rounded-full bg-[#FFF9EF] border-3 border-[#2B2B2B] shadow-[2px_3px_0px_#2B2B2B] flex items-center justify-center z-20">
                     <motion.div
                       whileInView={{ scale: [0.7, 1.2, 1] }}
+                      viewport={{ once: true }}
                       transition={{ duration: 0.5 }}
                       className="w-6 h-6 rounded-full bg-[#7EBE69] flex items-center justify-center text-white text-xs font-bold"
                     >

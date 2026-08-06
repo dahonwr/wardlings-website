@@ -148,6 +148,8 @@ export const ResidentsSection: React.FC = () => {
                     <img
                       src={resident.imageUrl}
                       alt={resident.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300"
                       onError={(e) => {
                         // Fallback styling if Supabase test URL is blocked

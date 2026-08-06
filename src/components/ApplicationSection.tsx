@@ -60,6 +60,17 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
   // the user actually triggers (submitting a form, clicking "Back", etc).
   const isInitialMount = useRef(true);
 
+  // On touch devices, skip autoFocus on the step inputs below. Auto-focusing
+  // immediately pops the on-screen keyboard the instant a step mounts, right
+  // as its enter animation is still playing — that collision (keyboard
+  // opening + page animating + our own scroll all at once) is what caused
+  // the reported "page zooms in and the form slides left/off-center" glitch
+  // on phones. Desktop keeps autoFocus since there's no keyboard/viewport
+  // fight there. Computed once; a device's pointer type doesn't change mid-session.
+  const skipAutoFocus = useRef(
+    typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+  ).current;
+
   // Whitelist success popup: fires once, the moment the application lands
   // on step 5 (i.e. right after a successful submission) — not on every
   // visit to the final step (e.g. restoring a past application).
@@ -77,9 +88,20 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
       isInitialMount.current = false;
       return;
     }
-    if (cardRef.current) {
-      cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+    // Wait until the step's enter transition (duration: 0.3s below) has
+    // finished before scrolling. Firing scrollIntoView() at the same
+    // instant as the step mounts meant it ran against a layout that was
+    // still animating in — and, on mobile, at the same moment the
+    // autoFocus'd input was opening the on-screen keyboard and the
+    // browser was doing its own "scroll focused input into view". Two
+    // scrolls plus a moving keyboard is what produced the page looking
+    // zoomed in with the card shoved off-center. Deferring this scroll
+    // (and centering it, instead of 'nearest') lets everything else
+    // settle first so there's only one, correct scroll.
+    const timer = setTimeout(() => {
+      cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 350);
+    return () => clearTimeout(timer);
   }, [currentStep]);
 
   // Countdown timer interval for display (recomputed from each task's
@@ -290,7 +312,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                         placeholder="username"
                         className="w-full pl-9 pr-4 py-3 rounded-2xl border-2 border-[#2F241D] bg-white font-nunito font-bold text-base text-[#2F241D] focus:outline-none focus:ring-2 focus:ring-[#82C66A]"
                         required
-                        autoFocus
+                        autoFocus={!skipAutoFocus}
                       />
                     </div>
                   </div>
@@ -535,7 +557,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                       placeholder="0x..."
                       className="w-full px-4 py-3 rounded-2xl border-2 border-[#2F241D] bg-white font-mono font-bold text-base sm:text-sm text-[#2F241D] focus:outline-none focus:ring-2 focus:ring-[#82C66A]"
                       required
-                      autoFocus
+                      autoFocus={!skipAutoFocus}
                     />
                   </div>
 
@@ -603,7 +625,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                       placeholder="https://x.com/username/status/123456789..."
                       className="w-full px-4 py-3 rounded-2xl border-2 border-[#2F241D] bg-white font-nunito font-bold text-base sm:text-sm text-[#2F241D] focus:outline-none focus:ring-2 focus:ring-[#82C66A]"
                       required
-                      autoFocus
+                      autoFocus={!skipAutoFocus}
                     />
                   </div>
 

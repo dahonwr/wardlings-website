@@ -21,6 +21,17 @@ html {
   text-size-adjust: 100%;
 }
 
+/* Belt-and-braces guard against iOS Safari's auto-zoom-on-focus: any
+   text input under 16px causes Safari to zoom the whole page in when it
+   gains focus (regardless of the maximum-scale/user-scalable viewport
+   settings). All inputs in this app are already sized at 16px via
+   Tailwind, but this makes it impossible to regress. */
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
 body {
   overflow-x: hidden;
   width: 100%;

@@ -61,10 +61,17 @@ const NavbarComponent: React.FC<NavbarProps> = ({
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
         style={{
-          backgroundColor: isScrolled ? 'rgba(248, 243, 233, 0.95)' : 'rgba(248, 243, 233, 0.88)',
+          // Bumped opacity up (was 0.88/0.95) to compensate for dropping
+          // backdrop-blur below — a fixed, always-mounted element with
+          // backdrop-filter forces the browser to recompute a blur layer
+          // on every single scroll frame, which is one of the most common
+          // causes of janky/laggy scrolling on mobile Safari. A near-opaque
+          // solid background reads almost identically but costs nothing
+          // during scroll.
+          backgroundColor: isScrolled ? 'rgba(248, 243, 233, 0.98)' : 'rgba(248, 243, 233, 0.96)',
           borderColor: 'rgba(53, 44, 38, 0.25)'
         }}
-        className={`flex items-center justify-between px-3.5 sm:px-5 py-2.5 rounded-full backdrop-blur-md border shadow-sm transition-all duration-300 w-full whitespace-nowrap ${
+        className={`flex items-center justify-between px-3.5 sm:px-5 py-2.5 rounded-full border shadow-sm transition-all duration-300 w-full whitespace-nowrap ${
           isScrolled ? 'shadow-md' : ''
         }`}
       >

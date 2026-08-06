@@ -58,6 +58,8 @@ export const WorldSection: React.FC = () => {
                     <img
                       src="https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero.png"
                       alt="Sanctuary Hero"
+                      loading="lazy"
+                      decoding="async"
                       className="w-24 h-24 object-contain"
                     />
                   </div>
