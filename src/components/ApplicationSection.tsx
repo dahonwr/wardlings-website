@@ -223,9 +223,9 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
   const getTaskLink = (taskId: string) => {
     switch (taskId) {
       case 'follow_x': return settings.twitter_follow || 'https://x.com/WardlingsNFT';
-      case 'like_pinned': return settings.twitter_like || 'https://x.com/WardlingsNFT/status/1';
-      case 'repost_pinned': return settings.twitter_repost || 'https://x.com/WardlingsNFT/status/1';
-      case 'comment_pinned': return settings.twitter_comment || 'https://x.com/WardlingsNFT/status/1';
+      case 'like_pinned': return settings.twitter_like || 'https://x.com/wardlingsnft/status/2085351433776636116?s=20';
+      case 'repost_pinned': return settings.twitter_repost || 'https://x.com/wardlingsnft/status/2085351433776636116?s=20';
+      case 'comment_pinned': return settings.twitter_comment || 'https://x.com/wardlingsnft/status/2085351433776636116?s=20';
       default: return 'https://x.com/WardlingsNFT';
     }
   };

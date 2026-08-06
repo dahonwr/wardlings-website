@@ -3,9 +3,9 @@ import { supabase, isSupabaseConfigured } from './supabase';
 
 const INITIAL_SETTINGS: Settings = {
   twitter_follow: 'https://x.com/WardlingsNFT',
-  twitter_like: 'https://x.com/WardlingsNFT/status/1',
-  twitter_repost: 'https://x.com/WardlingsNFT/status/1',
-  twitter_comment: 'https://x.com/WardlingsNFT/status/1',
+  twitter_like: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
+  twitter_repost: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
+  twitter_comment: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
   application_open: true,
   discord_link: 'https://discord.gg/wardlings',
   website_banner: '🌿 The Sanctuary gates are now accepting Keeper applications!',
