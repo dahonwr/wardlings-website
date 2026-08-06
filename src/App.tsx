@@ -9,8 +9,11 @@ import { MagicalForestEffects } from './components/MagicalForestEffects';
 import { Settings } from './types';
 import { fetchSettings } from './lib/storage';
 import { scrollToId } from './lib/scroll';
+import { useVisibilityRecovery } from './hooks/useVisibilityRecovery';
 
 export default function App() {
+  useVisibilityRecovery();
+
   const [settings, setSettings] = useState<Settings>({
     twitter_follow: 'https://x.com/WardlingsNFT',
     twitter_like: 'https://x.com/WardlingsNFT/status/1',

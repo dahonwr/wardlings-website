@@ -59,19 +59,15 @@ export const WardlingsProgressTracker: React.FC<WardlingsProgressTrackerProps> =
           transition={{ type: 'spring', stiffness: 200, damping: 22 }}
         >
           <div className="absolute left-0 top-0 -translate-x-1/2 w-9 h-9 flex items-center justify-center">
-            <motion.img
+            {/* Idle bob/rotate is a pure CSS animation (animate-wardling-bob)
+                instead of a Framer Motion repeat:Infinity loop — see the
+                comment in index.css for why: this is exactly what was
+                freezing for several seconds after returning from a
+                backgrounded tab (e.g. after clicking an X task button). */}
+            <img
               src={WARDLINGS_LOGO_URL}
               alt="Wardlings Progress"
-              className="w-9 h-9 object-contain drop-shadow-sm"
-              animate={{
-                y: [0, -2, 0],
-                rotate: [0, 2, -2, 0]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
+              className="animate-wardling-bob w-9 h-9 object-contain drop-shadow-sm"
               onError={(e) => {
                 (e.target as HTMLElement).style.display = 'none';
               }}

@@ -180,3 +180,33 @@ body::-webkit-scrollbar,
   animation-play-state: paused;
 }
 
+/* Idle/looping decorative animations below are deliberately implemented in
+   pure CSS rather than as Framer Motion `animate={...}` + `repeat: Infinity`
+   loops. Root cause of the "freezes for several seconds after returning to
+   the tab" bug: Framer Motion drives multi-keyframe infinite loops with its
+   own internal requestAnimationFrame-based clock. Backgrounding a tab fully
+   stops rAF callbacks; when the tab regains focus, that internal clock can
+   take a noticeable amount of time to resync (a well-documented Framer
+   Motion issue), which reads as a multi-second freeze before the loop
+   continues. A native CSS animation's timeline is driven by the browser
+   itself — it keeps advancing on wall-clock time even while hidden, so the
+   moment the tab is visible again the animation is already exactly where
+   it should be, with no catch-up stutter and no dependency on React/JS
+   being scheduled first. See also useVisibilityRecovery (src/hooks) which
+   adds a belt-and-braces resync nudge for anything not covered here. */
+@keyframes wardlingBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-2px) rotate(2deg); }
+}
+.animate-wardling-bob {
+  animation: wardlingBob 3s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.4); opacity: 1; }
+}
+.animate-pulse-dot {
+  animation: pulseDot 2s ease-in-out infinite;
+}
+

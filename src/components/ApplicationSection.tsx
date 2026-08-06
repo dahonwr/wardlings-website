@@ -652,11 +652,10 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF7E8] border border-[#82C66A]/30 font-patrick font-bold text-xs text-[#2F241D]">
-                      <motion.span
-                        animate={{ scale: [1, 1.4, 1], opacity: [0.6, 1, 0.6] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                        className="w-2 h-2 rounded-full bg-[#82C66A]"
-                      />
+                      {/* CSS animation, not Framer Motion repeat:Infinity —
+                          see index.css comment: avoids the multi-second
+                          freeze-on-tab-return bug. */}
+                      <span className="animate-pulse-dot inline-block w-2 h-2 rounded-full bg-[#82C66A]" />
                       Status: {application.status === 'pending' ? 'Growing' : application.status}
                     </div>
                   </div>
