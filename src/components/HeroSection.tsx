@@ -9,7 +9,7 @@ interface HeroSectionProps {
 
 const HERO_BACKGROUND_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/hero%20background.jpg';
 
-export const HeroSection: React.FC<HeroSectionProps> = ({
+const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   onOpenApply,
   onExploreClick
 }) => {
@@ -61,7 +61,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <motion.button
               onClick={onOpenApply}
               whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               style={{ backgroundColor: '#5C8E47' }}
               className="w-full max-w-[340px] sm:w-auto font-dynapuff font-bold text-base sm:text-lg px-7 py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer flex items-center justify-center gap-2 transition-all"
             >
@@ -72,7 +73,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <motion.button
               onClick={onExploreClick}
               whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               className="w-full max-w-[340px] sm:w-auto font-baloo font-bold text-base sm:text-lg px-6 py-3.5 rounded-full bg-white/90 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer flex items-center justify-center gap-2 transition-all"
             >
               <Compass className="w-5 h-5 text-[#4D7A39] shrink-0" />
@@ -86,3 +88,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     </section>
   );
 };
+
+// Memoized: HeroSection's only props are two stable callback references
+// from App (wrapped in useCallback), so this only ever needs to render once.
+export const HeroSection = React.memo(HeroSectionComponent);

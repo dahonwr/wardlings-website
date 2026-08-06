@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Menu, X as CloseIcon } from 'lucide-react';
 import { XIcon, DiscordIcon } from './SocialIcons';
+import { scrollToId, scrollToY } from '../lib/scroll';
+import { useActiveSection } from '../hooks/useActiveSection';
 
 interface NavbarProps {
   onOpenApply: () => void;
@@ -9,13 +11,23 @@ interface NavbarProps {
   discordUrl?: string;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
+const NAV_LINKS = [
+  { id: 'home', label: 'Home' },
+  { id: 'about', label: 'Sanctuary' },
+  { id: 'collection', label: 'Collection' },
+  { id: 'apply', label: 'Apply' }
+];
+
+const SECTION_IDS = NAV_LINKS.map((link) => link.id);
+
+const NavbarComponent: React.FC<NavbarProps> = ({
   onOpenApply,
   twitterUrl = 'https://x.com/WardlingsNFT',
   discordUrl = 'https://discord.gg/wardlings'
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const activeId = useActiveSection(SECTION_IDS, 'home');
 
   useEffect(() => {
     let ticking = false;
@@ -37,10 +49,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const scrollToSection = (id: string) => {
     setIsMobileMenuOpen(false);
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    // 800ms eased scroll (see src/lib/scroll.ts) — falls within the
+    // 700-900ms ease-in-out spec and doesn't fight native wheel scrolling.
+    scrollToId(id, 800);
   };
 
   return (
@@ -61,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           onClick={() => {
             setIsMobileMenuOpen(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            scrollToY(0, 800);
           }}
           className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer text-left shrink-0"
         >
@@ -80,18 +91,24 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Middle Desktop/Tablet Navigation Links */}
         <div className="hidden md:flex items-center gap-5 lg:gap-7 font-baloo font-bold text-xs lg:text-sm text-[#5E564F] shrink-0">
-          <button
-            onClick={() => scrollToSection('about')}
-            className="hover:text-[#352C26] transition-colors cursor-pointer"
-          >
-            Sanctuary
-          </button>
-          <button
-            onClick={() => scrollToSection('collection')}
-            className="hover:text-[#352C26] transition-colors cursor-pointer"
-          >
-            Sneak Peek
-          </button>
+          {NAV_LINKS.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => scrollToSection(link.id)}
+              className={`relative pb-1 transition-colors cursor-pointer ${
+                activeId === link.id ? 'text-[#352C26]' : 'hover:text-[#352C26]'
+              }`}
+            >
+              {link.label}
+              {activeId === link.id && (
+                <motion.span
+                  layoutId="nav-underline"
+                  className="absolute left-0 right-0 -bottom-0.5 h-[2px] rounded-full bg-[#5C8E47]"
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                />
+              )}
+            </button>
+          ))}
           <a
             href={twitterUrl}
             target="_blank"
@@ -121,7 +138,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               onOpenApply();
             }}
             whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             style={{ backgroundColor: '#5C8E47' }}
             className="font-dynapuff font-bold text-xs sm:text-sm px-3.5 sm:px-5 py-2 rounded-full text-white shadow-sm hover:bg-[#4F7A3D] cursor-pointer flex items-center gap-1 sm:gap-1.5 transition-all whitespace-nowrap"
           >
@@ -154,20 +172,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             transition={{ duration: 0.2 }}
             className="md:hidden mt-2 p-5 rounded-3xl bg-[#FFFDF8] border border-[#352C26]/20 shadow-xl flex flex-col space-y-4 font-baloo font-bold text-base text-[#352C26]"
           >
-            <button
-              onClick={() => scrollToSection('about')}
-              className="text-left py-2 border-b border-[#352C26]/10 flex items-center justify-between"
-            >
-              <span>Sanctuary</span>
-              <span className="text-xs font-nunito text-[#6A6158]">About</span>
-            </button>
-            <button
-              onClick={() => scrollToSection('collection')}
-              className="text-left py-2 border-b border-[#352C26]/10 flex items-center justify-between"
-            >
-              <span>Sneak Peek</span>
-              <span className="text-xs font-nunito text-[#6A6158]">Gallery</span>
-            </button>
+            {NAV_LINKS.map((link) => (
+              <button
+                key={link.id}
+                onClick={() => scrollToSection(link.id)}
+                className={`text-left py-2 border-b border-[#352C26]/10 flex items-center justify-between ${
+                  activeId === link.id ? 'text-[#4D7A39]' : ''
+                }`}
+              >
+                <span>{link.label}</span>
+                {activeId === link.id && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#5C8E47]" />
+                )}
+              </button>
+            ))}
             <div className="py-2 border-b border-[#352C26]/10 flex items-center justify-between">
               <span className="text-sm">Follow Community</span>
               <div className="flex items-center gap-4 text-[#352C26]">
@@ -197,3 +215,5 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
+
+export const Navbar = React.memo(NavbarComponent);

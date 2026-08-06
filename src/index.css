@@ -1,13 +1,20 @@
 @import "tailwindcss";
 
 html {
-  scroll-behavior: smooth;
+  /* IMPORTANT: do not set overflow-x (or overflow) here. Chromium takes
+     the page off the compositor "fast" scroll path and falls back to
+     main-thread scrolling whenever <html> has an overflow value other
+     than `visible`, which is what caused wheel scrolling to feel like
+     it needed two ticks to "wake up". Horizontal overflow is instead
+     contained on <body> below, which doesn't have that side effect. */
   -ms-overflow-style: none;
   scrollbar-width: none;
-  /* Belt-and-braces against any element accidentally causing a
-     horizontal scrollbar / page shift (e.g. on input focus on iOS). */
-  overflow-x: hidden;
   width: 100%;
+  /* Nav-triggered scrolling is animated manually in JS (src/lib/scroll.ts)
+     with an explicit 700-900ms ease-in-out curve. Leaving CSS
+     scroll-behavior:smooth on top of that made two smooth-scroll engines
+     fight over the same scroll and produced stalls/backwards jumps. */
+  scroll-behavior: auto;
   /* Stop iOS from bumping the base font size up when the phone rotates
      into landscape, which can otherwise shift/zoom the whole layout. */
   -webkit-text-size-adjust: 100%;
@@ -144,5 +151,32 @@ body::-webkit-scrollbar,
 
 .animate-wobble-hover:hover {
   animation: wobbleGently 0.4s ease-in-out infinite;
+}
+
+/* Very subtle illustration "breathing" float — ~3px, slow, transform-only
+   (GPU-composited, no layout/paint cost). Used for hero/section artwork. */
+@keyframes breatheFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+.animate-breathe-float {
+  animation: breatheFloat 6s ease-in-out infinite;
+}
+
+/* Collection marquee: pure CSS transform animation so it runs entirely on
+   the compositor thread (no per-frame JS/React work), and pauses cleanly
+   on hover via animation-play-state rather than tearing down/rebuilding a
+   Framer Motion animation object. */
+@keyframes marqueeScroll {
+  from { transform: translateX(0%); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marqueeScroll 25s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover .animate-marquee,
+.marquee-track:focus-within .animate-marquee {
+  animation-play-state: paused;
 }
 

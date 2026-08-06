@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { AboutSection } from './components/AboutSection';
@@ -8,6 +8,7 @@ import { Footer } from './components/Footer';
 import { MagicalForestEffects } from './components/MagicalForestEffects';
 import { Settings } from './types';
 import { fetchSettings } from './lib/storage';
+import { scrollToId } from './lib/scroll';
 
 export default function App() {
   const [settings, setSettings] = useState<Settings>({
@@ -38,19 +39,16 @@ export default function App() {
     setSettings(data);
   };
 
-  const handleOpenApply = () => {
-    const el = document.getElementById('apply');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  // Memoized so children receiving these as props (Navbar, HeroSection)
+  // don't see a new function identity — and therefore don't re-render —
+  // on every App re-render.
+  const handleOpenApply = useCallback(() => {
+    scrollToId('apply');
+  }, []);
 
-  const handleExploreClick = () => {
-    const el = document.getElementById('collection');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const handleExploreClick = useCallback(() => {
+    scrollToId('collection');
+  }, []);
 
   // Main Home Landing Page Single-Page Order:
   // 1. Hero

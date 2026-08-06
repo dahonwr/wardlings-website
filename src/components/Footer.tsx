@@ -7,7 +7,7 @@ interface FooterProps {
   discordUrl?: string;
 }
 
-export const Footer: React.FC<FooterProps> = ({
+const FooterComponent: React.FC<FooterProps> = ({
   twitterUrl = 'https://x.com/WardlingsNFT',
   discordUrl = 'https://discord.gg/wardlings'
 }) => {
@@ -138,3 +138,5 @@ export const Footer: React.FC<FooterProps> = ({
     </motion.footer>
   );
 };
+
+export const Footer = React.memo(FooterComponent);

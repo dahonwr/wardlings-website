@@ -43,7 +43,7 @@ const baseCards: RarityCard[] = [
 // Duplicate items multiple times to create an infinite seamless track
 const galleryItems = [...baseCards, ...baseCards, ...baseCards, ...baseCards];
 
-export const CollectionSection: React.FC = () => {
+const CollectionSectionComponent: React.FC = () => {
   return (
     <section id="collection" className="py-[72px] md:py-[96px] lg:py-[120px] relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
       {/* Header */}
@@ -62,37 +62,33 @@ export const CollectionSection: React.FC = () => {
         </p>
       </motion.div>
 
-      {/* Infinite Horizontal Carousel Track (Right to Left) */}
+      {/* Infinite Horizontal Carousel Track (Right to Left).
+          The scroll itself is a pure CSS animation (.animate-marquee, see
+          index.css) instead of a Framer Motion-driven loop, so it runs on
+          the compositor thread with zero per-frame JS cost, and pauses
+          cleanly on hover via `marquee-track:hover` — satisfying "pause
+          auto-scroll while hovering" without tearing the animation down. */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-40px' }}
         transition={{ duration: 0.6, delay: 0.1, ease: [0.215, 0.61, 0.355, 1] }}
-        className="w-full overflow-hidden"
+        className="marquee-track w-full overflow-hidden"
       >
-        <motion.div
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{
-            duration: 25,
-            ease: 'linear',
-            repeat: Infinity
-          }}
-          style={{ willChange: 'transform' }}
-          className="flex gap-6 w-max px-3"
-        >
+        <div className="animate-marquee flex gap-6 w-max px-3">
           {galleryItems.map((card, idx) => (
-            <motion.div
+            <div
               key={idx}
-              whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.2 }}
-              className="w-64 sm:w-72 shrink-0 p-4 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D]/10 shadow-md hover:shadow-lg flex flex-col items-center cursor-pointer transition-shadow"
+              className="group w-64 sm:w-72 shrink-0 p-4 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D]/10 shadow-md hover:shadow-xl hover:-translate-y-2 flex flex-col items-center cursor-pointer transition-[transform,box-shadow] duration-[250ms] ease-out"
             >
               {/* Image Centered */}
               <div className="w-full aspect-square rounded-2xl bg-[#FFF8F0] overflow-hidden flex items-center justify-center p-3 mb-4 border border-[#2F241D]/5">
                 <img
                   src={card.image}
                   alt={`${card.rarity} Wardling`}
-                  className="w-full h-full object-contain"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-contain transition-transform duration-[250ms] ease-out group-hover:scale-[1.03]"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = AVATAR1_URL;
                   }}
@@ -109,10 +105,12 @@ export const CollectionSection: React.FC = () => {
               >
                 {card.rarity}
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </motion.div>
     </section>
   );
 };
+
+export const CollectionSection = React.memo(CollectionSectionComponent);

@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 
 const SANCTUARY_IMAGE_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Keeper-sanctuary.png';
 
-export const AboutSection: React.FC = () => {
+const AboutSectionComponent: React.FC = () => {
   const stats = [
     {
       value: '4,444',
@@ -71,25 +71,37 @@ export const AboutSection: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.1, ease: [0.215, 0.61, 0.355, 1] }}
           className="md:col-span-6 flex items-center justify-center relative w-full pt-4 md:pt-0 overflow-visible"
         >
-          <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            whileHover={{ scale: 1.02 }}
-            className="w-full max-w-[360px] sm:max-w-[460px] lg:max-w-[560px] flex items-center justify-center cursor-pointer transition-transform duration-300"
-          >
-            {/* Tablet-only: illustration scaled up ~35% (transform-based, so it
-                doesn't affect layout, spacing, cropping, or stretching) */}
-            <img
-              src={SANCTUARY_IMAGE_URL}
-              alt="The Sanctuary Awaits"
-              className="w-full h-auto object-contain max-h-[420px] lg:max-h-[560px] mx-auto md:scale-[1.35] lg:scale-100 transition-transform duration-300"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
-              }}
-            />
-          </motion.div>
+          {/* Two nested layers on purpose: the outer layer owns the CSS
+              breathing-float animation (animate-breathe-float, ~3px,
+              GPU-composited) and the inner layer owns the Framer Motion
+              hover-scale. Both animate `transform`, and a running CSS
+              animation always wins the cascade over an inline style on the
+              *same* element — nesting them keeps the two independent so
+              the float never cancels the hover response. */}
+          <div className="animate-breathe-float w-full max-w-[360px] sm:max-w-[460px] lg:max-w-[560px] flex items-center justify-center">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="w-full flex items-center justify-center cursor-pointer"
+            >
+              {/* Tablet-only: illustration scaled up ~35% (transform-based, so
+                  it doesn't affect layout, spacing, cropping, or stretching) */}
+              <img
+                src={SANCTUARY_IMAGE_URL}
+                alt="The Sanctuary Awaits"
+                loading="eager"
+                decoding="async"
+                className="w-full h-auto object-contain max-h-[420px] lg:max-h-[560px] mx-auto md:scale-[1.35] lg:scale-100 transition-transform duration-300"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+            </motion.div>
+          </div>
         </motion.div>
       </div>
     </section>
   );
 };
+
+export const AboutSection = React.memo(AboutSectionComponent);
