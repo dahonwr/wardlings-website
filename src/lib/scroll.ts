@@ -50,8 +50,17 @@ export function scrollToY(targetY: number, duration = 800): void {
 const NAV_OFFSET = 90;
 
 export function scrollToId(id: string, duration = 800): void {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const targetY = el.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
+  const section = document.getElementById(id);
+  if (!section) return;
+  // Some sections have large decorative top padding, and/or vertically
+  // center their content against a taller sibling column — scrolling to
+  // the section's own top edge in those cases just reveals that empty
+  // space and pushes the real content (heading, and on the whitelist
+  // card, its action buttons) below the fold, so the visitor has to
+  // scroll again to see anything. If the section marks where its real
+  // content starts with data-scroll-anchor, land there instead; only
+  // fall back to the section's own top edge if it doesn't.
+  const anchor = section.querySelector<HTMLElement>('[data-scroll-anchor]') ?? section;
+  const targetY = anchor.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
   scrollToY(Math.max(targetY, 0), duration);
 }

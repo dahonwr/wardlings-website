@@ -56,7 +56,7 @@ export const WorldSection: React.FC = () => {
                 <div className="relative z-10 text-center flex flex-col items-center">
                   <div className="w-28 h-28 rounded-full bg-[#FFF9EF] border-3 border-[#2B2B2B] shadow-[3px_4px_0px_#2B2B2B] flex items-center justify-center mb-4">
                     <img
-                      src="https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero.png"
+                      src="https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero1.jpg"
                       alt="Sanctuary Hero"
                       loading="lazy"
                       decoding="async"

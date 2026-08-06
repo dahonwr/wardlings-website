@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 
-const SANCTUARY_IMAGE_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Keeper-sanctuary.png';
+const SANCTUARY_IMAGE_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Sanctuary1.jpg';
 
 const AboutSectionComponent: React.FC = () => {
   const stats = [
@@ -22,8 +22,16 @@ const AboutSectionComponent: React.FC = () => {
       style={{ backgroundColor: '#FFFDF8' }}
     >
       <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16 items-center">
-        {/* Left Column: Text & Stats */}
+        {/* Left Column: Text & Stats.
+            data-scroll-anchor: this column sits inside a grid with
+            items-center, so it's vertically centered against the taller
+            illustration on the right — its rendered top edge already
+            sits well below the section's own padding. Marking it as the
+            nav-scroll target (instead of the outer <section>) means
+            clicking "Sanctuary" lands right on this heading rather than
+            on a stretch of empty space above it. */}
         <motion.div
+          data-scroll-anchor
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}

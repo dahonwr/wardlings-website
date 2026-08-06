@@ -236,7 +236,11 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
 
   return (
     <section id="apply" className="py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
+      {/* data-scroll-anchor: lands the "Apply" nav click (and the hero
+          "Become a Keeper" button) right on this header instead of on
+          the section's own top padding. */}
       <motion.div
+        data-scroll-anchor
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-40px' }}
@@ -694,6 +698,18 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                       Status: {application.status === 'pending' ? 'Growing' : application.status}
                     </div>
                   </div>
+
+                  {/* Reopens the ticket popup (with Download/Share) for anyone
+                      who dismissed it earlier without downloading — the popup
+                      itself only auto-shows once, right after submitting. */}
+                  <button
+                    type="button"
+                    onClick={() => setShowSuccessPopup(true)}
+                    className="w-full mb-4 font-dynapuff font-bold text-sm py-3 rounded-full bg-[#82C66A] text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#72B65A] active:translate-y-0.5 cursor-pointer transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>🎟️</span>
+                    <span>View My Ticket</span>
+                  </button>
 
                   {/* Submitted Data directly from Supabase */}
                   <div className="space-y-2.5 font-nunito text-sm sm:text-base">

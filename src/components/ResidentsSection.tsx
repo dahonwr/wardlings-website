@@ -21,7 +21,7 @@ export const ResidentsSection: React.FC = () => {
       title: 'Hero Wardlings',
       rarity: '1 of 1 / Heroic',
       badgeColor: 'bg-[#F7BFD5]',
-      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero.png',
+      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero1.jpg',
       description: 'Ancient guardians carrying celestial light. Only a handful exist in the deepest heart of the forest.',
       handwrittenNote: 'Spotted under the midnight full moon! ✨'
     },
@@ -30,7 +30,7 @@ export const ResidentsSection: React.FC = () => {
       title: 'Legendary Wardlings',
       rarity: 'Legendary Tier',
       badgeColor: 'bg-amber-200',
-      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Legendary.png',
+      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Legendary.jpg',
       description: 'Blessed with golden sunburst antlers and rare blooming petals that never wither.',
       handwrittenNote: 'Very shy! Loves sweet honey sap 🍯'
     },
@@ -39,7 +39,7 @@ export const ResidentsSection: React.FC = () => {
       title: 'Epic Wardlings',
       rarity: 'Epic Tier',
       badgeColor: 'bg-[#D9F5C2]',
-      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Epic.png',
+      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Epic.jpg',
       description: 'Adorned in mossy crowns and luminescent fungi, protecting ancient woodland paths.',
       handwrittenNote: 'Guild leader of the Moss Scouts 🌿'
     },
@@ -48,7 +48,7 @@ export const ResidentsSection: React.FC = () => {
       title: 'Uncommon Wardlings',
       rarity: 'Uncommon Tier',
       badgeColor: 'bg-[#DFF4FF]',
-      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.png',
+      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.jpg',
       description: 'Curious explorers carrying river pebble pendants and sprout antennas.',
       handwrittenNote: 'Collects shiny blue stream stones 💎'
     },
@@ -57,7 +57,7 @@ export const ResidentsSection: React.FC = () => {
       title: 'Common Wardlings',
       rarity: 'Common Tier',
       badgeColor: 'bg-stone-200',
-      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.png',
+      imageUrl: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.jpg',
       description: 'Cheerful woodland helpers who plant acorn seeds and water morning sprouts.',
       handwrittenNote: 'Always seen with a tiny watering leaf 🍃'
     }

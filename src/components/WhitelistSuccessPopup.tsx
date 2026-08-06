@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Download, Share2, X as CloseIcon } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { SHARE_MESSAGES } from '../config/shareMessages';
 
 // Real Wardlings Ticket artwork, provided by the user.
@@ -55,15 +56,62 @@ function buildButterflies(): Butterfly[] {
 
 const CELEBRATION_DURATION_MS = 2100;
 
+// Premium colors for the side-cannon confetti burst — brand greens/pinks
+// plus a gold accent so it reads as a "reward" moment rather than generic
+// party confetti.
+const CONFETTI_COLORS = ['#82C66A', '#F7BFD5', '#FDE047', '#DFF4FF', '#2F241D'];
+
 export const WhitelistSuccessPopup: React.FC<WhitelistSuccessPopupProps> = ({ open, onClose }) => {
   const [showCelebration, setShowCelebration] = useState(false);
   const particles = useMemo(() => buildParticles(), [open]);
   const butterflies = useMemo(() => buildButterflies(), [open]);
+  const ticketImgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     if (!open) return;
     setShowCelebration(true);
     const timer = setTimeout(() => setShowCelebration(false), CELEBRATION_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, [open]);
+
+  // Two confetti cannons anchored to the ticket artwork itself, firing
+  // outward and upward past its left/right edges — a "premium surprise"
+  // burst rather than confetti raining from the top of the screen. Timed
+  // to fire just after the ticket image has finished popping in (see its
+  // 0.4s/0.1s-delay entrance transition below) so the burst reads as a
+  // reaction to the ticket appearing, not simultaneous with it.
+  useEffect(() => {
+    if (!open) return;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const timer = setTimeout(() => {
+      const rect = ticketImgRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const originY = (rect.top + rect.height * 0.35) / window.innerHeight;
+      const leftX = rect.left / window.innerWidth;
+      const rightX = rect.right / window.innerWidth;
+
+      const shared = {
+        particleCount: 55,
+        spread: 60,
+        startVelocity: 42,
+        gravity: 0.9,
+        ticks: 200,
+        scalar: 0.9,
+        colors: CONFETTI_COLORS,
+        zIndex: 9999
+      };
+
+      // Left edge of the ticket: fires up and away to the left.
+      confetti({ ...shared, angle: 125, origin: { x: leftX, y: originY } });
+      // Right edge of the ticket: fires up and away to the right.
+      confetti({ ...shared, angle: 55, origin: { x: rightX, y: originY } });
+    }, 250);
+
     return () => clearTimeout(timer);
   }, [open]);
 
@@ -189,6 +237,7 @@ export const WhitelistSuccessPopup: React.FC<WhitelistSuccessPopupProps> = ({ op
 
             <div className="relative z-10 p-6 sm:p-8 flex flex-col items-center text-center">
               <motion.img
+                ref={ticketImgRef}
                 src={TICKET_ARTWORK_URL}
                 alt="Your Wardlings Ticket"
                 decoding="async"

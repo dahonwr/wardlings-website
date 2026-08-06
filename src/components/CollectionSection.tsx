@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
 
-const AVATAR1_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.png';
-const AVATAR2_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.png';
-const AVATAR3_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Epic.png';
-const AVATAR4_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Legendary.png';
+const AVATAR1_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.jpg';
+const AVATAR2_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.jpg';
+const AVATAR3_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Epic.jpg';
+const AVATAR4_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Legendary.jpg';
 
 interface RarityCard {
   rarity: 'Common' | 'Uncommon' | 'Epic' | 'Legendary';
@@ -46,8 +46,11 @@ const galleryItems = [...baseCards, ...baseCards, ...baseCards, ...baseCards];
 const CollectionSectionComponent: React.FC = () => {
   return (
     <section id="collection" className="py-[72px] md:py-[96px] lg:py-[120px] relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
-      {/* Header */}
+      {/* Header. data-scroll-anchor: lands the "Collection" nav click
+          right on this heading instead of on the section's 72-120px of
+          top padding. */}
       <motion.div
+        data-scroll-anchor
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-40px' }}

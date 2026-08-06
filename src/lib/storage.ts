@@ -9,7 +9,7 @@ const INITIAL_SETTINGS: Settings = {
   application_open: true,
   discord_link: 'https://discord.gg/wardlings',
   website_banner: '🌿 The Sanctuary gates are now accepting Keeper applications!',
-  hero_illustration: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero.png'
+  hero_illustration: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero1.jpg'
 };
 
 const INITIAL_GALLERY: GalleryItem[] = [
@@ -17,35 +17,35 @@ const INITIAL_GALLERY: GalleryItem[] = [
     id: 'g-hero',
     title: 'Elder Sanctuary Hero',
     category: 'Hero',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero.png',
+    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero1.jpg',
     description: 'Ancient protector of the mother tree, bearing radiant starlight spores.'
   },
   {
     id: 'g-legendary',
     title: 'Sunburst Legendary',
     category: 'Legendary',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Legendary.png',
+    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Legendary.jpg',
     description: 'Spotted near the golden streams of the eastern clearing.'
   },
   {
     id: 'g-epic',
     title: 'Mossy Canopy Epic',
     category: 'Epic',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Epic.png',
+    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Epic.jpg',
     description: 'Wears a crown of luminescent mushrooms and ancient fern leaves.'
   },
   {
     id: 'g-uncommon',
     title: 'Pebble Wanderer',
     category: 'Uncommon',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.png',
+    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.jpg',
     description: 'Curious explorer with smooth river stone horns.'
   },
   {
     id: 'g-common',
     title: 'Sprout Scout',
     category: 'Common',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.png',
+    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.jpg',
     description: 'Friendly woodland resident tending to tiny acorn seedlings.'
   }
 ];

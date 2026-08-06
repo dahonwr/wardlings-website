@@ -7,7 +7,7 @@ interface HeroSectionProps {
   onExploreClick: () => void;
 }
 
-const HERO_BACKGROUND_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/hero%20background.jpg';
+const HERO_BACKGROUND_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero1.jpg';
 
 const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   onOpenApply,
