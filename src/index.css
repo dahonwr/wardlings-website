@@ -4,6 +4,19 @@ html {
   scroll-behavior: smooth;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  /* Belt-and-braces against any element accidentally causing a
+     horizontal scrollbar / page shift (e.g. on input focus on iOS). */
+  overflow-x: hidden;
+  width: 100%;
+  /* Stop iOS from bumping the base font size up when the phone rotates
+     into landscape, which can otherwise shift/zoom the whole layout. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
 }
 
 html::-webkit-scrollbar,

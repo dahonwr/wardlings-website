@@ -38,8 +38,20 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
     submitStep4CommentLink
   } = useWhitelist();
 
-  // Active 5-second countdown timers for task clicks: taskId -> seconds remaining
-  const [pendingTasks, setPendingTasks] = useState<Record<string, number>>({});
+  // Active countdown timers for task clicks: taskId -> deadline (ms epoch).
+  // Storing an absolute deadline (instead of a live "seconds remaining"
+  // counter) means the displayed countdown is always self-correcting —
+  // even if the interval gets throttled while the tab is in the background
+  // (e.g. the user tapped a task, switched to X, then came back), the UI
+  // recomputes the true remaining time instead of drifting or bursting
+  // through several stale ticks at once.
+  const [pendingDeadlines, setPendingDeadlines] = useState<Record<string, number>>({});
+  const [pendingDisplay, setPendingDisplay] = useState<Record<string, number>>({});
+
+  // Track in-flight timers so they can be cancelled on unmount — prevents
+  // "set state after unmount" leaks and guarantees we never stack duplicate
+  // timers/intervals for the same task.
+  const completionTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
   const cardRef = useRef<HTMLDivElement>(null);
   // Tracks whether this is the very first render so we don't auto-scroll
@@ -57,44 +69,79 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
     }
   }, [currentStep]);
 
-  // Countdown timer interval for display (decrements 4s -> 3s -> 2s -> 1s)
+  // Countdown timer interval for display (recomputed from each task's
+  // absolute deadline, so a single interval always shows accurate time).
   useEffect(() => {
-    const keys = Object.keys(pendingTasks);
+    const keys = Object.keys(pendingDeadlines);
     if (keys.length === 0) return;
 
-    const interval = setInterval(() => {
-      setPendingTasks(prev => {
-        const next = { ...prev };
-        let changed = false;
-
-        for (const taskId of Object.keys(next)) {
-          if (next[taskId] > 1) {
-            next[taskId] -= 1;
-            changed = true;
-          }
+    // Recompute the displayed "seconds remaining" for every pending task
+    // from its absolute deadline rather than decrementing a counter. This
+    // makes the display self-correcting: if the interval gets throttled
+    // while the tab is backgrounded, the very next tick (or the
+    // visibilitychange resync below) shows the true remaining time instead
+    // of bursting through stale ticks.
+    const tick = () => {
+      setPendingDisplay(() => {
+        const next: Record<string, number> = {};
+        const now = Date.now();
+        for (const taskId of Object.keys(pendingDeadlines)) {
+          const remainingMs = pendingDeadlines[taskId] - now;
+          next[taskId] = Math.max(1, Math.ceil(remainingMs / 1000));
         }
-
-        return changed ? next : prev;
+        return next;
       });
-    }, 1000);
+    };
 
-    return () => clearInterval(interval);
-  }, [pendingTasks]);
+    tick();
+    const interval = setInterval(tick, 1000);
+
+    // Instantly resync the countdown the moment the tab regains focus,
+    // instead of waiting for the next 1s tick (avoids a visible "frozen"
+    // number right after switching back from X).
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') tick();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [pendingDeadlines]);
+
+  // Clean up any in-flight completion timers on unmount so we never call
+  // setState on an unmounted component or leave stray timers running.
+  useEffect(() => {
+    return () => {
+      Object.values(completionTimers.current).forEach(clearTimeout);
+      completionTimers.current = {};
+    };
+  }, []);
 
   // Handle task card click
   const handleTaskClick = (taskId: string, linkUrl: string) => {
-    if (pendingTasks[taskId] || isTaskCompleted(taskId)) return;
+    if (pendingDeadlines[taskId] || isTaskCompleted(taskId) || completionTimers.current[taskId]) return;
 
     // 1. Open URL immediately in new tab
     window.open(linkUrl, '_blank', 'noopener,noreferrer');
 
-    // 2. Set fake checking state with 4 seconds countdown
-    setPendingTasks(prev => ({ ...prev, [taskId]: 4 }));
+    // 2. Set fake checking state with a 4-second deadline
+    const deadline = Date.now() + 4000;
+    setPendingDeadlines(prev => ({ ...prev, [taskId]: deadline }));
+    setPendingDisplay(prev => ({ ...prev, [taskId]: 4 }));
 
     // 3. Guaranteed automatic task completion after 3.5 seconds
-    setTimeout(() => {
+    completionTimers.current[taskId] = setTimeout(() => {
+      delete completionTimers.current[taskId];
+
       // Clear pending state
-      setPendingTasks(prev => {
+      setPendingDeadlines(prev => {
+        const copy = { ...prev };
+        delete copy[taskId];
+        return copy;
+      });
+      setPendingDisplay(prev => {
         const copy = { ...prev };
         delete copy[taskId];
         return copy;
@@ -104,6 +151,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
       toggleSocialTask(taskId);
     }, 3500);
   };
+
 
   // Form Handlers
   const handleStep1Submit = async (e: React.FormEvent) => {
@@ -283,8 +331,8 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                     const done = isTaskCompleted(task.id);
                     const prevDone = idx === 0 || isTaskCompleted(SOCIAL_TASKS[idx - 1].id);
                     const isLocked = !prevDone;
-                    const isChecking = Boolean(pendingTasks[task.id]);
-                    const countdown = pendingTasks[task.id];
+                    const isChecking = Boolean(pendingDeadlines[task.id]);
+                    const countdown = pendingDisplay[task.id];
 
                     return (
                       <motion.div
@@ -425,16 +473,16 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                   type="button"
                   onClick={proceedToStep3Wallet}
                   disabled={!areAllSocialTasksCompleted()}
-                  className={`w-full font-dynapuff font-bold text-xs sm:text-sm md:text-base py-3.5 rounded-full border-2 border-[#2F241D] transition-all flex items-center justify-center gap-2 text-center whitespace-nowrap px-2 ${
+                  className={`w-full min-w-0 font-dynapuff font-bold text-xs sm:text-sm md:text-base py-3.5 rounded-full border-2 border-[#2F241D] transition-all flex items-center justify-center gap-2 text-center px-3 ${
                     areAllSocialTasksCompleted()
                       ? 'bg-[#82C66A] text-white shadow-[2px_3px_0px_#2F241D] hover:bg-[#72B65A] cursor-pointer'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300'
                   }`}
                 >
                   {areAllSocialTasksCompleted() ? (
-                    <span>All Tasks Completed → Proceed to Wallet</span>
+                    <span className="truncate min-w-0">All Tasks Completed → Proceed to Wallet</span>
                   ) : (
-                    <span>Complete All 4 Tasks to Continue</span>
+                    <span className="truncate min-w-0">Complete All 4 Tasks to Continue</span>
                   )}
                 </button>
               </motion.div>
@@ -472,7 +520,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                       value={walletInput}
                       onChange={(e) => setWalletInput(e.target.value)}
                       placeholder="0x..."
-                      className="w-full px-4 py-3 rounded-2xl border-2 border-[#2F241D] bg-white font-mono font-bold text-sm text-[#2F241D] focus:outline-none focus:ring-2 focus:ring-[#82C66A]"
+                      className="w-full px-4 py-3 rounded-2xl border-2 border-[#2F241D] bg-white font-mono font-bold text-base sm:text-sm text-[#2F241D] focus:outline-none focus:ring-2 focus:ring-[#82C66A]"
                       required
                       autoFocus
                     />
@@ -540,7 +588,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                       value={commentLinkInput}
                       onChange={(e) => setCommentLinkInput(e.target.value)}
                       placeholder="https://x.com/username/status/123456789..."
-                      className="w-full px-4 py-3 rounded-2xl border-2 border-[#2F241D] bg-white font-nunito font-bold text-sm text-[#2F241D] focus:outline-none focus:ring-2 focus:ring-[#82C66A]"
+                      className="w-full px-4 py-3 rounded-2xl border-2 border-[#2F241D] bg-white font-nunito font-bold text-base sm:text-sm text-[#2F241D] focus:outline-none focus:ring-2 focus:ring-[#82C66A]"
                       required
                       autoFocus
                     />
