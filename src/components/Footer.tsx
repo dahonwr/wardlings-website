@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { XIcon, DiscordIcon } from './SocialIcons';
 
@@ -14,6 +14,22 @@ const FooterComponent: React.FC<FooterProps> = ({
   const [activeModal, setActiveModal] = useState<'magicPaper' | 'privacy' | 'terms' | 'contact' | null>(null);
 
   const LOGO_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Logo.png';
+
+  // Escape closes the info modal, and background scroll is locked while
+  // it's open — same conventions as the whitelist success popup.
+  useEffect(() => {
+    if (!activeModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveModal(null);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [activeModal]);
 
   return (
     <motion.footer
@@ -31,6 +47,8 @@ const FooterComponent: React.FC<FooterProps> = ({
           <img
             src={LOGO_URL}
             alt="Wardlings Logo"
+            loading="lazy"
+            decoding="async"
             className="w-[72px] h-[72px] object-contain"
             onError={(e) => {
               (e.target as HTMLElement).style.display = 'none';
@@ -95,9 +113,18 @@ const FooterComponent: React.FC<FooterProps> = ({
 
       {/* Modal for Magic Paper, Privacy, Terms, Contact */}
       {activeModal && (
-        <div className="fixed inset-0 z-50 bg-[#3C2F28]/40 backdrop-blur-sm p-4 flex items-center justify-center">
-          <div className="max-w-md w-full p-6 sm:p-8 rounded-3xl bg-[#FFFDF8] border border-[#3C2F28]/10 shadow-xl relative text-left">
-            <h3 className="font-dynapuff font-bold text-xl sm:text-2xl text-[#3C2F28] mb-4 capitalize">
+        <div
+          onClick={() => setActiveModal(null)}
+          className="fixed inset-0 z-50 bg-[#3C2F28]/40 backdrop-blur-sm p-4 flex items-center justify-center"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="footer-modal-title"
+            className="max-w-md w-full p-6 sm:p-8 rounded-3xl bg-[#FFFDF8] border border-[#3C2F28]/10 shadow-xl relative text-left"
+          >
+            <h3 id="footer-modal-title" className="font-dynapuff font-bold text-xl sm:text-2xl text-[#3C2F28] mb-4 capitalize">
               {activeModal === 'magicPaper'
                 ? '✨ Magic Paper'
                 : activeModal === 'privacy'

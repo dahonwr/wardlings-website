@@ -38,9 +38,11 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
         }}
       />
 
-      {/* Semi-transparent White Gradient Overlay (z-index: 10) */}
+      {/* Semi-transparent White Gradient Overlay (z-index: 10) — lightened so
+          more of the illustration reads through; left edge stays solid
+          enough to keep the text legible. */}
       <div
-        className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#FFFDF8] via-[#FFFDF8]/90 sm:via-[#FFFDF8]/75 to-[#FFFDF8]/20 sm:to-transparent"
+        className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#FFFDF8] via-[#FFFDF8]/55 sm:via-[#FFFDF8]/40 to-[#FFFDF8]/10 sm:to-transparent"
       />
 
       {/* Hero Content (z-index: 20) */}

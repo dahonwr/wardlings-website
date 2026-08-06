@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, Sparkles, ExternalLink, RefreshCw, Lock, Check } from 'lucide-react';
 import { Settings } from '../types';
 import { WardlingsProgressTracker } from './WardlingsProgressTracker';
+import { WhitelistSuccessPopup } from './WhitelistSuccessPopup';
 import { useWhitelist } from '../hooks/useWhitelist';
 import { SOCIAL_TASKS } from '../services/whitelistService';
 
@@ -42,6 +43,18 @@ export const ApplicationPage: React.FC<ApplicationPageProps> = ({
 
   const [lookupQuery, setLookupQuery] = useState('');
   const [isLookingUp, setIsLookingUp] = useState(false);
+
+  // Whitelist success popup: fires once, the moment the application lands
+  // on step 5 (i.e. right after a successful submission) — not on every
+  // visit to the final step (e.g. restoring a past application).
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const previousStepRef = useRef(currentStep);
+  useEffect(() => {
+    if (currentStep === 5 && previousStepRef.current !== 5) {
+      setShowSuccessPopup(true);
+    }
+    previousStepRef.current = currentStep;
+  }, [currentStep]);
 
   // Active 5-second countdown timers for task clicks: taskId -> seconds remaining
   const [pendingTasks, setPendingTasks] = useState<Record<string, number>>({});
@@ -582,11 +595,7 @@ export const ApplicationPage: React.FC<ApplicationPageProps> = ({
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF7E8] border border-[#82C66A]/30 font-patrick font-bold text-xs text-[#2F241D]">
-                    <motion.span
-                      animate={{ scale: [1, 1.4, 1], opacity: [0.6, 1, 0.6] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                      className="w-2 h-2 rounded-full bg-[#82C66A]"
-                    />
+                    <span className="w-2 h-2 rounded-full bg-[#82C66A] animate-pulse-dot" />
                     Status: {application.status === 'pending' ? 'Growing' : application.status}
                   </div>
                 </div>
@@ -657,6 +666,8 @@ export const ApplicationPage: React.FC<ApplicationPageProps> = ({
           🌿 Wardlings Sanctuary • A Peaceful Forest Realm
         </p>
       </footer>
+
+      <WhitelistSuccessPopup open={showSuccessPopup} onClose={() => setShowSuccessPopup(false)} />
     </div>
   );
 };

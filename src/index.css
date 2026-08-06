@@ -210,3 +210,107 @@ body::-webkit-scrollbar,
   animation: pulseDot 2s ease-in-out infinite;
 }
 
+/* WardlingCharacter mascot loops — converted from Framer Motion
+   animate={...} + repeat:Infinity to CSS for the same reason documented
+   above (wardlingBob / pulseDot): a native CSS timeline stays correct
+   across tab backgrounding, a JS-clock-driven infinite loop does not. */
+@keyframes sleepBreathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(0.98, 1.04); }
+}
+.animate-sleep-breathe {
+  animation: sleepBreathe 3s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes zzzFloat1 {
+  0%, 100% { transform: translateY(0); opacity: 0.2; }
+  50% { transform: translateY(-20px); opacity: 0.9; }
+}
+.animate-zzz-1 {
+  animation: zzzFloat1 3.5s ease-in-out infinite;
+}
+
+@keyframes zzzFloat2 {
+  0%, 100% { transform: translateY(0); opacity: 0; }
+  50% { transform: translateY(-15px); opacity: 0.8; }
+}
+.animate-zzz-2 {
+  animation: zzzFloat2 3.5s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+@keyframes seedAuraGlow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(1.25); opacity: 0.95; }
+}
+.animate-seed-aura {
+  animation: seedAuraGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes bodyBreathe {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-4px) scaleY(1.02); }
+}
+.animate-body-breathe {
+  animation: bodyBreathe 3s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes seedPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.animate-seed-pulse {
+  animation: seedPulse 1.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes particleFloat1 {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50% { transform: translateY(-10px); opacity: 1; }
+}
+.animate-particle-1 {
+  animation: particleFloat1 2.2s ease-in-out infinite;
+  animation-delay: 0.2s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes particleFloat2 {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-12px); opacity: 1; }
+}
+.animate-particle-2 {
+  animation: particleFloat2 2.8s ease-in-out infinite;
+  animation-delay: 0.7s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* KeeperModal floating leaves overlay — same conversion; this loop can run
+   for as long as the application modal stays open. */
+@keyframes leafFall1 {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(100px) rotate(90deg); opacity: 0; }
+}
+.animate-leaf-fall-1 {
+  animation: leafFall1 3s ease-in-out infinite;
+}
+
+@keyframes leafFall2 {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(120px) rotate(-120deg); opacity: 0; }
+}
+.animate-leaf-fall-2 {
+  animation: leafFall2 3.5s ease-in-out infinite;
+  animation-delay: 1s;
+}
+

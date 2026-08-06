@@ -64,10 +64,7 @@ export const WardlingCharacter: React.FC<WardlingCharacterProps> = ({
           <path d="M 10 120 Q 100 110 190 120 C 195 120 195 130 190 130 Q 100 125 10 130 Z" fill="#7C5B46" stroke="#2B2B2B" strokeWidth="3" />
           
           {/* Sleeping Wardling Body */}
-          <motion.g
-            animate={{ scaleY: [1, 1.04, 1], scaleX: [1, 0.98, 1] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          >
+          <g className="animate-sleep-breathe">
             {/* Main Round Body */}
             <ellipse cx="100" cy="85" rx="55" ry="42" fill="#D9F5C2" stroke="#2B2B2B" strokeWidth="4" />
             
@@ -85,27 +82,23 @@ export const WardlingCharacter: React.FC<WardlingCharacterProps> = ({
             
             {/* Little Paw */}
             <ellipse cx="100" cy="102" rx="12" ry="8" fill="#B9E89D" stroke="#2B2B2B" strokeWidth="3" />
-          </motion.g>
+          </g>
 
           {/* Floating Zzz */}
-          <motion.text
+          <text
             x="145" y="45"
             fill="#7C5B46"
-            className="font-patrick font-bold text-lg"
-            animate={{ y: [45, 25, 45], opacity: [0.2, 0.9, 0.2] }}
-            transition={{ duration: 3.5, repeat: Infinity }}
+            className="font-patrick font-bold text-lg animate-zzz-1"
           >
             Z
-          </motion.text>
-          <motion.text
+          </text>
+          <text
             x="160" y="25"
             fill="#7C5B46"
-            className="font-patrick font-bold text-sm"
-            animate={{ y: [25, 10, 25], opacity: [0, 0.8, 0] }}
-            transition={{ duration: 3.5, repeat: Infinity, delay: 0.8 }}
+            className="font-patrick font-bold text-sm animate-zzz-2"
           >
             z
-          </motion.text>
+          </text>
         </svg>
       </div>
     );
@@ -118,15 +111,13 @@ export const WardlingCharacter: React.FC<WardlingCharacterProps> = ({
       style={{ width: size, height: size }}
     >
       {/* Glowing Seed Aura */}
-      <motion.div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none animate-seed-aura"
         style={{
           width: size * 0.7,
           height: size * 0.7,
           background: 'radial-gradient(circle, rgba(254, 240, 138, 0.5) 0%, rgba(126, 190, 105, 0.2) 50%, transparent 70%)',
         }}
-        animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.95, 0.6] }}
-        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       {/* Main SVG Wardling Illustration */}
@@ -146,13 +137,7 @@ export const WardlingCharacter: React.FC<WardlingCharacterProps> = ({
         )}
 
         {/* Breathing Body Group */}
-        <motion.g
-          animate={{
-            y: [0, -4, 0],
-            scaleY: [1, 1.02, 1]
-          }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        >
+        <g className="animate-body-breathe">
           {/* Feet */}
           <ellipse cx="75" cy="155" rx="18" ry="12" fill="#B9E89D" stroke="#2B2B2B" strokeWidth="4" />
           <ellipse cx="125" cy="155" rx="18" ry="12" fill="#B9E89D" stroke="#2B2B2B" strokeWidth="4" />
@@ -227,10 +212,7 @@ export const WardlingCharacter: React.FC<WardlingCharacterProps> = ({
           <ellipse cx="124" cy="118" rx="10" ry="9" fill="#B9E89D" stroke="#2B2B2B" strokeWidth="3" />
 
           {/* Glowing Sanctuary Seed */}
-          <motion.g
-            animate={{ scale: [1, 1.15, 1] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-          >
+          <g className="animate-seed-pulse">
             {/* Glowing Golden Seed Core */}
             <path
               d="M 100 102 C 90 114, 94 126, 100 128 C 106 126, 110 114, 100 102 Z"
@@ -241,19 +223,17 @@ export const WardlingCharacter: React.FC<WardlingCharacterProps> = ({
             {/* Seed Leaf Sprout */}
             <path d="M 100 102 Q 95 95 90 98 Q 94 105 100 102 Z" fill="#7EBE69" stroke="#2B2B2B" strokeWidth="2" />
             <path d="M 100 102 Q 105 95 110 98 Q 106 105 100 102 Z" fill="#7EBE69" stroke="#2B2B2B" strokeWidth="2" />
-          </motion.g>
-        </motion.g>
+          </g>
+        </g>
 
         {/* Floating Magic Particles around Wardling */}
-        <motion.circle
+        <circle
           cx="45" cy="55" r="3" fill="#FDE047"
-          animate={{ y: [0, -10, 0], opacity: [0.3, 1, 0.3] }}
-          transition={{ duration: 2.2, repeat: Infinity, delay: 0.2 }}
+          className="animate-particle-1"
         />
-        <motion.circle
+        <circle
           cx="155" cy="65" r="3" fill="#F7BFD5"
-          animate={{ y: [0, -12, 0], opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: 2.8, repeat: Infinity, delay: 0.7 }}
+          className="animate-particle-2"
         />
       </svg>
     </div>

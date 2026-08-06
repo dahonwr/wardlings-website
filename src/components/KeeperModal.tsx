@@ -156,20 +156,12 @@ export const KeeperModal: React.FC<KeeperModalProps> = ({
 
         {/* Floating leaves overlay */}
         <div className="fixed inset-0 pointer-events-none z-40">
-          <motion.div
-            animate={{ y: [0, 100], opacity: [0, 1, 0], rotate: [0, 90] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="absolute top-10 left-1/4 text-[#7EBE69]"
-          >
+          <div className="absolute top-10 left-1/4 text-[#7EBE69] animate-leaf-fall-1">
             🍃
-          </motion.div>
-          <motion.div
-            animate={{ y: [0, 120], opacity: [0, 1, 0], rotate: [0, -120] }}
-            transition={{ duration: 3.5, repeat: Infinity, delay: 1 }}
-            className="absolute top-12 right-1/4 text-[#F7BFD5]"
-          >
+          </div>
+          <div className="absolute top-12 right-1/4 text-[#F7BFD5] animate-leaf-fall-2">
             🌸
-          </motion.div>
+          </div>
         </div>
 
         {/* Main Portal Modal Window */}

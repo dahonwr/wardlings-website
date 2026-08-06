@@ -18,13 +18,11 @@ export const FinalCta: React.FC<FinalCtaProps> = ({ onOpenApply }) => {
           className="p-8 sm:p-12 rounded-3xl bg-white/80 backdrop-blur-sm border border-[#34281F]/10 shadow-sm text-center flex flex-col items-center space-y-6"
         >
           {/* Gentle Floating Illustration */}
-          <motion.div
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-28 h-28 rounded-full bg-[#FFF9EF] border border-[#34281F]/10 flex items-center justify-center p-2 shadow-xs"
+          <div
+            className="w-28 h-28 rounded-full bg-[#FFF9EF] border border-[#34281F]/10 flex items-center justify-center p-2 shadow-xs animate-breathe-float"
           >
             <WardlingCharacter variant="scout" size={90} />
-          </motion.div>
+          </div>
 
           <div className="space-y-3">
             <h2 className="font-dynapuff font-bold text-3xl sm:text-4xl text-[#34281F]">

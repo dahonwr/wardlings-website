@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink, Sparkles, RefreshCw, Lock, Check } from 'lucide-react';
 import { Settings } from '../types';
 import { WardlingsProgressTracker } from './WardlingsProgressTracker';
+import { WhitelistSuccessPopup } from './WhitelistSuccessPopup';
 import { useWhitelist } from '../hooks/useWhitelist';
 import { SOCIAL_TASKS } from '../services/whitelistService';
 
@@ -58,6 +59,18 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
   // the whitelist card into view on initial page load — only on step changes
   // the user actually triggers (submitting a form, clicking "Back", etc).
   const isInitialMount = useRef(true);
+
+  // Whitelist success popup: fires once, the moment the application lands
+  // on step 5 (i.e. right after a successful submission) — not on every
+  // visit to the final step (e.g. restoring a past application).
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const previousStepRef = useRef(currentStep);
+  useEffect(() => {
+    if (currentStep === 5 && previousStepRef.current !== 5) {
+      setShowSuccessPopup(true);
+    }
+    previousStepRef.current = currentStep;
+  }, [currentStep]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -714,6 +727,8 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
           </AnimatePresence>
         </div>
       </motion.div>
+
+      <WhitelistSuccessPopup open={showSuccessPopup} onClose={() => setShowSuccessPopup(false)} />
     </section>
   );
 };
