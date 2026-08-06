@@ -16,9 +16,21 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="home"
-      className="relative min-h-[85vh] md:min-h-[90vh] pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center overflow-hidden bg-[#FFFDF8]"
+      // Height is tuned per device bucket so the tall illustration never
+      // pushes content below the fold:
+      //  - Mobile (base/sm):  ~100-110svh (svh avoids the iOS URL-bar jump)
+      //  - Tablet (md):       ~70-80vh
+      //  - Desktop (lg+):     unchanged — min-h-[90vh], exactly as before
+      className="relative min-h-[100svh] max-h-[110svh] md:min-h-[75vh] md:max-h-none lg:min-h-[90vh] pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
-      {/* Background Artwork Layer (z-index: 0) */}
+      {/* Background Artwork Layer (z-index: 0)
+          bg-cover = object-fit:cover equivalent (crops, never stretches).
+          bg-position is the crop anchor per breakpoint (object-position
+          equivalent), tuned so the main Wardling stays in frame:
+            base (mobile portrait) -> center
+            sm   (mobile landscape) -> right-bottom
+            md   (tablet)          -> 85% center
+            lg+  (desktop)         -> right-bottom (unchanged) */}
       <div
         className="absolute inset-0 z-0 bg-no-repeat bg-cover bg-center sm:bg-right-bottom md:bg-[85%_center] lg:bg-right-bottom pointer-events-none"
         style={{

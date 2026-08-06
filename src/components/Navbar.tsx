@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Menu, X as CloseIcon } from 'lucide-react';
+import { Menu, X as CloseIcon } from 'lucide-react';
 import { XIcon, DiscordIcon } from './SocialIcons';
 import { scrollToId, scrollToY } from '../lib/scroll';
 import { useActiveSection } from '../hooks/useActiveSection';
@@ -89,8 +89,9 @@ const NavbarComponent: React.FC<NavbarProps> = ({
           </span>
         </button>
 
-        {/* Middle Desktop/Tablet Navigation Links */}
-        <div className="hidden md:flex items-center gap-5 lg:gap-7 font-baloo font-bold text-xs lg:text-sm text-[#5E564F] shrink-0">
+        {/* Middle Desktop/Tablet Navigation Links — centered in its own flexible
+            column so the header stays balanced now that the header CTA is gone */}
+        <div className="hidden md:flex flex-1 items-center justify-center gap-5 lg:gap-7 font-baloo font-bold text-xs lg:text-sm text-[#5E564F]">
           {NAV_LINKS.map((link) => (
             <button
               key={link.id}
@@ -109,43 +110,32 @@ const NavbarComponent: React.FC<NavbarProps> = ({
               )}
             </button>
           ))}
-          <a
-            href={twitterUrl}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="X (Twitter)"
-            className="text-[#5E564F] hover:text-[#352C26] transition-colors p-1 cursor-pointer flex items-center justify-center"
-          >
-            <XIcon className="w-4 h-4" />
-          </a>
-          <a
-            href={discordUrl}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Discord"
-            className="text-[#5E564F] hover:text-[#352C26] transition-colors p-1 cursor-pointer flex items-center justify-center"
-          >
-            <DiscordIcon className="w-4.5 h-4.5" />
-          </a>
         </div>
 
-        {/* Right Action: Become a Keeper + Hamburger (Mobile) */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-          {/* Become a Keeper Button (always visible, no lock icon) */}
-          <motion.button
-            onClick={() => {
-              setIsMobileMenuOpen(false);
-              onOpenApply();
-            }}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            style={{ backgroundColor: '#5C8E47' }}
-            className="font-dynapuff font-bold text-xs sm:text-sm px-3.5 sm:px-5 py-2 rounded-full text-white shadow-sm hover:bg-[#4F7A3D] cursor-pointer flex items-center gap-1 sm:gap-1.5 transition-all whitespace-nowrap"
-          >
-            <Sparkles className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-yellow-200 fill-yellow-200 shrink-0" />
-            <span>Become a Keeper</span>
-          </motion.button>
+        {/* Right: Social Icons (Desktop/Tablet) + Hamburger (Mobile).
+            No "Become a Keeper" button here anymore — that CTA lives only in
+            the Hero and other intentional CTA sections (e.g. the footer). */}
+        <div className="flex items-center gap-3 lg:gap-4 shrink-0">
+          <div className="hidden md:flex items-center gap-3 lg:gap-4">
+            <a
+              href={twitterUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="X (Twitter)"
+              className="text-[#5E564F] hover:text-[#352C26] transition-colors p-1 cursor-pointer flex items-center justify-center"
+            >
+              <XIcon className="w-4 h-4" />
+            </a>
+            <a
+              href={discordUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Discord"
+              className="text-[#5E564F] hover:text-[#352C26] transition-colors p-1 cursor-pointer flex items-center justify-center"
+            >
+              <DiscordIcon className="w-4.5 h-4.5" />
+            </a>
+          </div>
 
           {/* Mobile Hamburger Toggle */}
           <button
