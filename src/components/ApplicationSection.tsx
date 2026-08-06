@@ -42,8 +42,16 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
   const [pendingTasks, setPendingTasks] = useState<Record<string, number>>({});
 
   const cardRef = useRef<HTMLDivElement>(null);
+  // Tracks whether this is the very first render so we don't auto-scroll
+  // the whitelist card into view on initial page load — only on step changes
+  // the user actually triggers (submitting a form, clicking "Back", etc).
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     if (cardRef.current) {
       cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -390,7 +398,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                             </motion.div>
                           ) : isChecking ? (
                             <div className="p-1.5 rounded-full bg-[#82C66A]/15 text-[#4D7A39]">
-                              <RefreshCw className="w-4 h-4 animate-spin" />
+                              <ExternalLink className="w-4 h-4" />
                             </div>
                           ) : isLocked ? (
                             <div className="p-1.5 rounded-full bg-gray-100 text-gray-400">
@@ -417,7 +425,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
                   type="button"
                   onClick={proceedToStep3Wallet}
                   disabled={!areAllSocialTasksCompleted()}
-                  className={`w-full font-dynapuff font-bold text-base py-3.5 rounded-full border-2 border-[#2F241D] transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full font-dynapuff font-bold text-xs sm:text-sm md:text-base py-3.5 rounded-full border-2 border-[#2F241D] transition-all flex items-center justify-center gap-2 text-center whitespace-nowrap px-2 ${
                     areAllSocialTasksCompleted()
                       ? 'bg-[#82C66A] text-white shadow-[2px_3px_0px_#2F241D] hover:bg-[#72B65A] cursor-pointer'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-300'

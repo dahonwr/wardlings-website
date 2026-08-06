@@ -21,14 +21,14 @@ export const AboutSection: React.FC = () => {
       className="py-[72px] md:py-[96px] lg:py-[120px] px-4 sm:px-6 lg:px-12 relative z-10 w-full"
       style={{ backgroundColor: '#FFFDF8' }}
     >
-      <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+      <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16 items-center">
         {/* Left Column: Text & Stats */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
-          className="lg:col-span-6 flex flex-col items-start text-left"
+          className="md:col-span-6 flex flex-col items-start text-left"
         >
           {/* Small Badge */}
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#EEF7E8] text-[#4D7A39] font-patrick font-bold text-xs sm:text-sm tracking-wide border border-[#4D7A39]/20 shadow-2xs mb-4 sm:mb-6">
@@ -69,7 +69,7 @@ export const AboutSection: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.215, 0.61, 0.355, 1] }}
-          className="lg:col-span-6 flex items-center justify-center relative w-full pt-4 lg:pt-0"
+          className="md:col-span-6 flex items-center justify-center relative w-full pt-4 md:pt-0 overflow-visible"
         >
           <motion.div
             animate={{ y: [0, -8, 0] }}
@@ -77,10 +77,12 @@ export const AboutSection: React.FC = () => {
             whileHover={{ scale: 1.02 }}
             className="w-full max-w-[360px] sm:max-w-[460px] lg:max-w-[560px] flex items-center justify-center cursor-pointer transition-transform duration-300"
           >
+            {/* Tablet-only: illustration scaled up ~35% (transform-based, so it
+                doesn't affect layout, spacing, cropping, or stretching) */}
             <img
               src={SANCTUARY_IMAGE_URL}
               alt="The Sanctuary Awaits"
-              className="w-full h-auto object-contain max-h-[420px] lg:max-h-[560px] mx-auto"
+              className="w-full h-auto object-contain max-h-[420px] lg:max-h-[560px] mx-auto md:scale-[1.35] lg:scale-100 transition-transform duration-300"
               onError={(e) => {
                 (e.target as HTMLElement).style.display = 'none';
               }}

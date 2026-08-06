@@ -77,6 +77,7 @@ export const CollectionSection: React.FC = () => {
             ease: 'linear',
             repeat: Infinity
           }}
+          style={{ willChange: 'transform' }}
           className="flex gap-6 w-max px-3"
         >
           {galleryItems.map((card, idx) => (

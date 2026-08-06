@@ -21,16 +21,16 @@ export default function App() {
   });
 
   useEffect(() => {
-    loadSettings();
-
-    if (window.location.hash === '#apply' || window.location.pathname === '/apply') {
-      setTimeout(() => {
-        const el = document.getElementById('apply');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 300);
+    // Prevent the browser from restoring a previous scroll position on
+    // refresh/reload — every fresh load should always begin at the Hero.
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
     }
+    // Ignore any URL hash on initial load (e.g. a stale #apply hash from a
+    // previous session) and force the page to start at the top.
+    window.scrollTo(0, 0);
+
+    loadSettings();
   }, []);
 
   const loadSettings = async () => {

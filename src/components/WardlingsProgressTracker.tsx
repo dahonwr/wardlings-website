@@ -19,11 +19,12 @@ export const WardlingsProgressTracker: React.FC<WardlingsProgressTrackerProps> =
       <div className="relative w-full h-10 flex items-center">
         {/* Background Inactive Line (#D8D8D8) */}
         <div className="absolute left-0 right-0 h-[3px] bg-[#D8D8D8] rounded-full z-0 overflow-hidden pointer-events-none">
-          {/* Animated Active Line (#78B95B) */}
+          {/* Animated Active Line (#78B95B) — animates via GPU-accelerated
+              transform (scaleX) instead of width, avoiding layout reflow */}
           <motion.div
-            className="h-full bg-[#78B95B] rounded-full"
+            className="h-full w-full bg-[#78B95B] rounded-full origin-left"
             initial={false}
-            animate={{ width: `${progressPercent}%` }}
+            animate={{ scaleX: progressPercent / 100 }}
             transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
           />
         </div>
@@ -48,14 +49,16 @@ export const WardlingsProgressTracker: React.FC<WardlingsProgressTrackerProps> =
           );
         })}
 
-        {/* Wardlings Logo Floating Indicator that moves smoothly to next position */}
+        {/* Wardlings Logo Floating Indicator that moves smoothly to next position.
+            Positioned via GPU-accelerated transform (x/y) instead of the
+            layout-triggering `left` property. */}
         <motion.div
-          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 pointer-events-none"
+          className="absolute top-1/2 left-0 w-full h-9 z-20 pointer-events-none"
           initial={false}
-          animate={{ left: `${progressPercent}%` }}
+          animate={{ x: `${progressPercent}%`, y: '-50%' }}
           transition={{ type: 'spring', stiffness: 200, damping: 22 }}
         >
-          <div className="relative flex items-center justify-center">
+          <div className="absolute left-0 top-0 -translate-x-1/2 w-9 h-9 flex items-center justify-center">
             <motion.img
               src={WARDLINGS_LOGO_URL}
               alt="Wardlings Progress"
