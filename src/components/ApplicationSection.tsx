@@ -240,12 +240,20 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
       {/* data-scroll-anchor: lands the "Apply" nav click (and the hero
           "Become a Keeper" button) right on this header instead of on
           the section's own top padding. */}
+      {/* viewport margin trims the bottom 35% of the viewport out of the
+          intersection check, so this only triggers once the header is
+          well inside view — not the instant its top edge peeks in. That
+          matters because this element is also the scroll target for the
+          Hero's "Become a Keeper" button: without this, the reveal could
+          fire mid-scroll (during the button's own 800ms scroll-to) and
+          finish playing before the scroll even settles, reading as "no
+          animation" once your eyes land on it. */}
       <motion.div
         data-scroll-anchor
         variants={staggerContainer(0.12)}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, margin: '-40px' }}
+        viewport={{ once: true, margin: '0px 0px -35% 0px' }}
         className="max-w-lg mx-auto flex flex-col items-center"
       >
 

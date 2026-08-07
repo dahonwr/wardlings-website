@@ -39,7 +39,7 @@ const AboutSectionComponent: React.FC = () => {
           variants={staggerContainer(0.12)}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: '-40px' }}
+          viewport={{ once: true, margin: '0px 0px -35% 0px' }}
           className="md:col-span-6 flex flex-col items-start text-left relative z-20"
         >
           {/* Small Badge — quick snappy pop */}

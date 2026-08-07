@@ -56,7 +56,7 @@ const CollectionSectionComponent: React.FC = () => {
         variants={staggerContainer(0.15)}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, margin: '-40px' }}
+        viewport={{ once: true, margin: '0px 0px -35% 0px' }}
         className="text-center max-w-xl mx-auto mb-10 md:mb-12 px-4 sm:px-6"
       >
         <motion.h2

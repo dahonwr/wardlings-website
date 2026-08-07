@@ -35,19 +35,22 @@ const FooterComponent: React.FC<FooterProps> = ({
     <motion.footer
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: '0px 0px -20% 0px' }}
       transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
       style={{ backgroundColor: '#FFFDF8' }}
       className="py-[64px] md:py-[88px] lg:py-[104px] px-6 relative z-10 text-center"
     >
       <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center space-y-7">
         
-        {/* Logo & Title — small springy pop, matching the badges elsewhere */}
+        {/* Logo & Title — small springy pop. Delayed a beat behind the
+            footer's own fade-in (which shares the same viewport trigger)
+            so the pop is actually visible instead of playing underneath
+            the footer while it's still mostly transparent. */}
         <motion.div
           initial={{ opacity: 0, scale: 0.7, y: 12 }}
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+          viewport={{ once: true, margin: '0px 0px -20% 0px' }}
+          transition={{ duration: 0.5, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
           className="flex flex-col items-center justify-center"
         >
           <img
