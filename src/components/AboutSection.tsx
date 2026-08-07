@@ -36,7 +36,7 @@ const AboutSectionComponent: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
-          className="md:col-span-6 flex flex-col items-start text-left"
+          className="md:col-span-6 flex flex-col items-start text-left relative z-20"
         >
           {/* Small Badge */}
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#EEF7E8] text-[#4D7A39] font-patrick font-bold text-xs sm:text-sm tracking-wide border border-[#4D7A39]/20 shadow-2xs mb-4 sm:mb-6">
@@ -77,7 +77,7 @@ const AboutSectionComponent: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.215, 0.61, 0.355, 1] }}
-          className="md:col-span-6 flex items-center justify-center relative w-full pt-4 md:pt-0 overflow-visible"
+          className="md:col-span-6 flex items-center justify-center relative z-0 w-full pt-4 md:pt-0 overflow-visible"
         >
           {/* Two nested layers on purpose: the outer layer owns the CSS
               breathing-float animation (animate-breathe-float, ~3px,
