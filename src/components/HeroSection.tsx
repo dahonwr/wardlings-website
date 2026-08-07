@@ -42,7 +42,7 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
           more of the illustration reads through; left edge stays solid
           enough to keep the text legible. */}
       <div
-        className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#FFFDF8] via-[#FFFDF8]/55 sm:via-[#FFFDF8]/40 to-[#FFFDF8]/10 sm:to-transparent"
+        className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#FFFDF8]/70 via-[#FFFDF8]/30 sm:via-[#FFFDF8]/20 to-transparent"
       />
 
       {/* Hero Content (z-index: 20) */}
