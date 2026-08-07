@@ -19,6 +19,13 @@ html {
      into landscape, which can otherwise shift/zoom the whole layout. */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Contain vertical overscroll to this document instead of letting a
+     scroll-past-the-edge gesture chain into pull-to-refresh/rubber-band
+     bounce, and drop the browser's default touch gesture ambiguity delay
+     for a purely-vertical page — both of which can read as "the first
+     swipe doesn't do anything" on mobile. */
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
 }
 
 /* Belt-and-braces guard against iOS Safari's auto-zoom-on-focus: any
@@ -124,6 +131,16 @@ body::-webkit-scrollbar,
   border: 3px solid #2B2B2B;
   border-radius: 20px;
   box-shadow: 4px 6px 0px rgba(43,43,43,0.9);
+}
+
+/* Skips layout/paint work for sections while they're off-screen, so the
+   browser has far less to do on every scroll frame — the single biggest
+   lever for scroll frame rate on a long page like this. contain-intrinsic-size
+   reserves roughly the section's real height up front so nothing jumps
+   when it's swapped in/out of the render tree as it enters/leaves view. */
+.scroll-optimize {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
 }
 
 /* Floating leaf & cloud animations */

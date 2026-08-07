@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { fadeUpPop, fadeUpPopTransition, popInPlayfulTransition, staggerContainer } from '../lib/motion';
 
 const AVATAR1_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.jpg';
 const AVATAR2_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.jpg';
@@ -45,24 +46,33 @@ const galleryItems = [...baseCards, ...baseCards, ...baseCards, ...baseCards];
 
 const CollectionSectionComponent: React.FC = () => {
   return (
-    <section id="collection" className="py-[72px] md:py-[96px] lg:py-[120px] relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
+    <section id="collection" className="scroll-optimize py-[72px] md:py-[96px] lg:py-[120px] relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
       {/* Header. data-scroll-anchor: lands the "Collection" nav click
           right on this heading instead of on the section's 72-120px of
-          top padding. */}
+          top padding. Heading and subheading cascade in one after
+          another for a cuter, less flat reveal. */}
       <motion.div
         data-scroll-anchor
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        variants={staggerContainer(0.15)}
+        initial="hidden"
+        whileInView="show"
         viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
         className="text-center max-w-xl mx-auto mb-10 md:mb-12 px-4 sm:px-6"
       >
-        <h2 className="font-dynapuff font-bold text-[34px] md:text-[44px] lg:text-[56px] text-[#2F241D] tracking-tight leading-[1.15]">
+        <motion.h2
+          variants={fadeUpPop}
+          transition={fadeUpPopTransition}
+          className="font-dynapuff font-bold text-[34px] md:text-[44px] lg:text-[56px] text-[#2F241D] tracking-tight leading-[1.15]"
+        >
           Gallery
-        </h2>
-        <p className="font-nunito font-semibold text-[16px] md:text-[17px] lg:text-[18px] text-[#6A6158] mt-2 sm:mt-3">
+        </motion.h2>
+        <motion.p
+          variants={fadeUpPop}
+          transition={fadeUpPopTransition}
+          className="font-nunito font-semibold text-[16px] md:text-[17px] lg:text-[18px] text-[#6A6158] mt-2 sm:mt-3"
+        >
           Discover handcrafted Wardlings from across the Sanctuary.
-        </p>
+        </motion.p>
       </motion.div>
 
       {/* Infinite Horizontal Carousel Track (Right to Left).
@@ -70,19 +80,26 @@ const CollectionSectionComponent: React.FC = () => {
           index.css) instead of a Framer Motion-driven loop, so it runs on
           the compositor thread with zero per-frame JS cost, and pauses
           cleanly on hover via `marquee-track:hover` — satisfying "pause
-          auto-scroll while hovering" without tearing the animation down. */}
+          auto-scroll while hovering" without tearing the animation down.
+          The track itself now pops in with a little bounce/scale instead
+          of a flat fade, to match the cascading header above it. */}
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 24, scale: 0.97 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.6, delay: 0.1, ease: [0.215, 0.61, 0.355, 1] }}
+        transition={{ ...popInPlayfulTransition, delay: 0.15 }}
         className="marquee-track w-full overflow-hidden"
       >
         <div className="animate-marquee flex gap-6 w-max px-3">
           {galleryItems.map((card, idx) => (
-            <div
+            <motion.div
               key={idx}
-              className="group w-64 sm:w-72 shrink-0 p-4 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D]/10 shadow-md hover:shadow-xl hover:-translate-y-2 flex flex-col items-center cursor-pointer transition-[transform,box-shadow] duration-[250ms] ease-out"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: '-20px' }}
+              transition={{ duration: 0.4, delay: (idx % baseCards.length) * 0.06, ease: [0.34, 1.56, 0.64, 1] }}
+              whileHover={{ y: -8 }}
+              className="group w-64 sm:w-72 shrink-0 p-4 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D]/10 shadow-md hover:shadow-xl flex flex-col items-center cursor-pointer transition-[box-shadow] duration-[250ms] ease-out"
             >
               {/* Image Centered */}
               <div className="w-full aspect-square rounded-2xl bg-[#FFF8F0] overflow-hidden flex items-center justify-center p-3 mb-4 border border-[#2F241D]/5">
@@ -108,7 +125,7 @@ const CollectionSectionComponent: React.FC = () => {
               >
                 {card.rarity}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </motion.div>

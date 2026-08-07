@@ -42,8 +42,14 @@ const FooterComponent: React.FC<FooterProps> = ({
     >
       <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center space-y-7">
         
-        {/* Logo & Title */}
-        <div className="flex flex-col items-center justify-center">
+        {/* Logo & Title — small springy pop, matching the badges elsewhere */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.7, y: 12 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+          className="flex flex-col items-center justify-center"
+        >
           <img
             src={LOGO_URL}
             alt="Wardlings Logo"
@@ -57,7 +63,7 @@ const FooterComponent: React.FC<FooterProps> = ({
           <span className="font-dynapuff font-bold text-2xl sm:text-3xl text-[#3C2F28] mt-3 tracking-tight">
             Wardlings
           </span>
-        </div>
+        </motion.div>
 
         {/* Centered Navigation & Social Icons */}
         <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 font-baloo font-bold text-base sm:text-lg">

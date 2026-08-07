@@ -6,6 +6,7 @@ import { WardlingsProgressTracker } from './WardlingsProgressTracker';
 import { WhitelistSuccessPopup } from './WhitelistSuccessPopup';
 import { useWhitelist } from '../hooks/useWhitelist';
 import { SOCIAL_TASKS } from '../services/whitelistService';
+import { fadeUpPop, fadeUpPopTransition, badgePop, badgePopTransition, staggerContainer } from '../lib/motion';
 
 interface ApplicationSectionProps {
   settings: Settings;
@@ -235,30 +236,43 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
   const trackerStep = currentStep === 2 ? 2 + (completedSocialCount / 4) : currentStep;
 
   return (
-    <section id="apply" className="py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
+    <section id="apply" className="scroll-optimize py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
       {/* data-scroll-anchor: lands the "Apply" nav click (and the hero
           "Become a Keeper" button) right on this header instead of on
           the section's own top padding. */}
       <motion.div
         data-scroll-anchor
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        variants={staggerContainer(0.12)}
+        initial="hidden"
+        whileInView="show"
         viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
         className="max-w-lg mx-auto flex flex-col items-center"
       >
 
-        {/* Section Header */}
+        {/* Section Header — badge, heading, and subheading cascade in one
+            after another instead of arriving as a single flat block. */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#EEF7E8] text-[#4D7A39] font-patrick font-bold text-xs sm:text-sm tracking-wide border border-[#4D7A39]/20 shadow-xs mb-4">
+          <motion.div
+            variants={badgePop}
+            transition={badgePopTransition}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#EEF7E8] text-[#4D7A39] font-patrick font-bold text-xs sm:text-sm tracking-wide border border-[#4D7A39]/20 shadow-xs mb-4"
+          >
             <span>🌿 JOIN THE SANCTUARY</span>
-          </div>
-          <h2 className="font-dynapuff font-bold text-3xl sm:text-4xl md:text-5xl text-[#2F241D] tracking-tight leading-tight">
+          </motion.div>
+          <motion.h2
+            variants={fadeUpPop}
+            transition={fadeUpPopTransition}
+            className="font-dynapuff font-bold text-3xl sm:text-4xl md:text-5xl text-[#2F241D] tracking-tight leading-tight"
+          >
             Become a Keeper
-          </h2>
-          <p className="font-nunito font-semibold text-base sm:text-lg text-[#6A6158] mt-2">
+          </motion.h2>
+          <motion.p
+            variants={fadeUpPop}
+            transition={fadeUpPopTransition}
+            className="font-nunito font-semibold text-base sm:text-lg text-[#6A6158] mt-2"
+          >
             Plant your story and protect the world of Wardlings.
-          </p>
+          </motion.p>
         </div>
 
         {/* Progress Tracker (Wardlings logo indicator, smooth filling progress line) */}

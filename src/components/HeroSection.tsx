@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Sparkles, Compass } from 'lucide-react';
+import { fadeUpPop, fadeUpPopTransition, staggerContainer } from '../lib/motion';
 
 interface HeroSectionProps {
   onOpenApply: () => void;
@@ -47,14 +48,16 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
 
       {/* Hero Content (z-index: 20) */}
       <div className="max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-20">
-        {/* Content Column */}
+        {/* Content Column — badge/heading/tagline, paragraph, and buttons
+            cascade in one after another on load instead of arriving as one
+            flat block, for a cuter, more playful first impression. */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
+          variants={staggerContainer(0.14)}
+          initial="hidden"
+          animate="show"
           className="lg:col-span-8 flex flex-col items-start text-left space-y-5 sm:space-y-6"
         >
-          <div className="space-y-2">
+          <motion.div variants={fadeUpPop} transition={fadeUpPopTransition} className="space-y-2">
             <span className="font-patrick font-bold text-base sm:text-lg lg:text-xl text-[#2C241E] tracking-wide uppercase">
               Welcome to
             </span>
@@ -64,14 +67,22 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
             <h2 className="font-dynapuff font-bold text-xl sm:text-2xl md:text-3xl text-[#241E1A] pt-1 sm:pt-2">
               Every forest has its keepers.
             </h2>
-          </div>
+          </motion.div>
 
-          <p className="font-nunito font-bold text-[16px] md:text-[17px] lg:text-[18px] text-[#241E1B] max-w-lg leading-relaxed">
+          <motion.p
+            variants={fadeUpPop}
+            transition={fadeUpPopTransition}
+            className="font-nunito font-bold text-[16px] md:text-[17px] lg:text-[18px] text-[#241E1B] max-w-lg leading-relaxed"
+          >
             A peaceful sanctuary where tiny forest spirits gather. Collect, protect, and grow alongside your Wardlings as you explore a magical world filled with wonder.
-          </p>
+          </motion.p>
 
           {/* Action Buttons */}
-          <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 pt-2">
+          <motion.div
+            variants={fadeUpPop}
+            transition={fadeUpPopTransition}
+            className="w-full sm:w-auto flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 pt-2"
+          >
             <motion.button
               onClick={onOpenApply}
               whileHover={{ scale: 1.03 }}
@@ -94,7 +105,7 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
               <Compass className="w-5 h-5 text-[#4D7A39] shrink-0" />
               <span>Explore Collection</span>
             </motion.button>
-          </div>
+          </motion.div>
 
 
         </motion.div>
