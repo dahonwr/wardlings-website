@@ -9,6 +9,7 @@ import { SOCIAL_TASKS } from '../services/whitelistService';
 import { fadeUpPop, fadeUpPopTransition, badgePop, badgePopTransition, popInPlayfulTransition, staggerContainer } from '../lib/motion';
 import { WHITELIST_OPEN } from '../lib/whitelistConfig';
 import { scrollToId } from '../lib/scroll';
+import { XIcon } from './SocialIcons';
 
 interface ApplicationSectionProps {
   settings: Settings;
@@ -290,6 +291,36 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
             >
               <span>Return to Sanctuary</span>
             </motion.button>
+          </motion.div>
+
+          {/* Follow Wardlings on X — small social CTA below the closed
+              message. Own card so the "Whitelist Closed" message above
+              stays exactly as it was; button style is lifted directly
+              from HeroSection's secondary ("Explore Collection") button
+              so it feels native rather than like a new component. */}
+          <motion.div
+            variants={fadeUpPop}
+            transition={{ ...fadeUpPopTransition, delay: 0.2 }}
+            className="w-full mt-5 p-5 sm:p-6 rounded-3xl bg-white/60 border border-[#2F241D]/10 text-center"
+          >
+            <h3 className="font-dynapuff font-bold text-lg sm:text-xl text-[#2F241D]">
+              Follow Wardlings on X
+            </h3>
+            <p className="font-nunito font-semibold text-sm sm:text-base text-[#6A6158] mt-2 leading-relaxed">
+              Stay close to the Sanctuary. Follow @wardlingsnft on X for Keeper announcements, updates, and what's coming next.
+            </p>
+            <motion.a
+              href="https://x.com/wardlingsnft"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="mt-4 w-full sm:w-auto font-baloo font-bold text-base sm:text-lg px-6 py-3.5 rounded-full bg-white/90 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer inline-flex items-center justify-center gap-2 transition-all"
+            >
+              <XIcon className="w-4 h-4 text-[#34281F] shrink-0" />
+              <span>Follow @wardlingsnft</span>
+            </motion.a>
           </motion.div>
         </motion.div>
       </section>
