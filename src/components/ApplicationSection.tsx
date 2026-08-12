@@ -6,7 +6,9 @@ import { WardlingsProgressTracker } from './WardlingsProgressTracker';
 import { WhitelistSuccessPopup } from './WhitelistSuccessPopup';
 import { useWhitelist } from '../hooks/useWhitelist';
 import { SOCIAL_TASKS } from '../services/whitelistService';
-import { fadeUpPop, fadeUpPopTransition, badgePop, badgePopTransition, staggerContainer } from '../lib/motion';
+import { fadeUpPop, fadeUpPopTransition, badgePop, badgePopTransition, popInPlayfulTransition, staggerContainer } from '../lib/motion';
+import { WHITELIST_OPEN } from '../lib/whitelistConfig';
+import { scrollToId } from '../lib/scroll';
 
 interface ApplicationSectionProps {
   settings: Settings;
@@ -234,6 +236,65 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
   // Calculate progress for tracker
   const completedSocialCount = SOCIAL_TASKS.filter(st => isTaskCompleted(st.id)).length;
   const trackerStep = currentStep === 2 ? 2 + (completedSocialCount / 4) : currentStep;
+
+  // Whitelist closed: render a clean closed-state card instead of the
+  // multi-step form. Crucially, this returns before any of the step
+  // components render, so submitStep1Handle — the only function that
+  // INSERTs a new row into whitelist_applications — is never reachable
+  // from the UI. (The direct-API bypass is separately closed off at the
+  // database level; see supabase/migrations/02_close_whitelist_submissions.sql.)
+  if (!WHITELIST_OPEN) {
+    return (
+      <section id="apply" className="scroll-optimize py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
+        <motion.div
+          data-scroll-anchor
+          variants={staggerContainer(0.14)}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '0px 0px -35% 0px' }}
+          className="max-w-lg mx-auto flex flex-col items-center text-center"
+        >
+          <motion.div
+            variants={badgePop}
+            transition={badgePopTransition}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F4EEE4] text-[#6A6158] font-patrick font-bold text-xs sm:text-sm tracking-wide border border-[#2F241D]/15 shadow-xs mb-4"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>WHITELIST CLOSED</span>
+          </motion.div>
+
+          <motion.div
+            variants={fadeUpPop}
+            transition={{ ...popInPlayfulTransition, delay: 0.1 }}
+            className="w-full p-6 sm:p-10 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D] shadow-md text-[#2F241D]"
+          >
+            <h2 className="font-dynapuff font-bold text-2xl sm:text-3xl md:text-4xl tracking-tight leading-tight">
+              WHITELIST CLOSED
+            </h2>
+            <p className="font-nunito font-semibold text-base sm:text-lg text-[#6A6158] mt-4 leading-relaxed">
+              The first chapter of the Sanctuary has come to an end.
+              <br />
+              Thank you to everyone who planted their story with us.
+            </p>
+            <p className="font-nunito font-semibold text-base sm:text-lg text-[#6A6158] mt-4 leading-relaxed">
+              Selected Keepers will receive their invitation through the Wardlings website.
+            </p>
+
+            <motion.button
+              onClick={() => scrollToId('home')}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              style={{ backgroundColor: '#5C8E47' }}
+              className="mt-7 w-full sm:w-auto font-dynapuff font-bold text-base sm:text-lg px-7 py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2 transition-colors"
+            >
+              <span>Return to Sanctuary</span>
+            </motion.button>
+          </motion.div>
+        </motion.div>
+      </section>
+    );
+  }
 
   return (
     <section id="apply" className="scroll-optimize py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
