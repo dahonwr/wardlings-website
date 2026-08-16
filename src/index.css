@@ -133,15 +133,19 @@ body::-webkit-scrollbar,
   box-shadow: 4px 6px 0px rgba(43,43,43,0.9);
 }
 
-/* Skips layout/paint work for sections while they're off-screen, so the
-   browser has far less to do on every scroll frame — the single biggest
-   lever for scroll frame rate on a long page like this. contain-intrinsic-size
-   reserves roughly the section's real height up front so nothing jumps
-   when it's swapped in/out of the render tree as it enters/leaves view. */
-.scroll-optimize {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 800px;
-}
+/* NOTE — content-visibility: auto was tried here for scroll performance
+   (skip layout/paint for off-screen sections) but was reverted after it
+   turned out to cause exactly the opposite of the intended effect: when
+   the browser "un-skips" a large section right as it crosses into view,
+   it has to run a full synchronous layout pass for that entire subtree
+   in that one frame. On a page with a few sizeable sections (marquee
+   cards, the funnel/closed-state card, etc.) that lump cost was enough
+   to occasionally eat the exact frame a wheel/trackpad tick landed on —
+   reading as "the first scroll doesn't move the page, the second one
+   catches up". Native scrolling with no per-frame skip/unskip is worth
+   more than the paint-cost saving here. If revisiting this, tune
+   contain-intrinsic-size very close to each section's real height first
+   and test wheel input specifically at each section boundary. */
 
 /* Floating leaf & cloud animations */
 @keyframes floatSlow {

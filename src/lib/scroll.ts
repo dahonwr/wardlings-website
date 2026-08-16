@@ -10,11 +10,35 @@ const easeInOutCubic = (t: number): number =>
 
 let activeScrollFrame: number | null = null;
 
-export function scrollToY(targetY: number, duration = 800): void {
+function cancelActiveScroll(): void {
   if (activeScrollFrame !== null) {
     cancelAnimationFrame(activeScrollFrame);
     activeScrollFrame = null;
   }
+}
+
+// If a nav-triggered tween is still running and the user manually scrolls
+// (wheel, trackpad, touch, or a keyboard scroll key) partway through it,
+// stop the tween immediately instead of letting it keep calling
+// window.scrollTo() on top of the user's own input for the rest of its
+// duration — that fight is what makes a scroll right after clicking a nav
+// link feel like it needs a second try. These listeners never call
+// preventDefault and never alter where the page scrolls to; they only
+// cancel our own animation frame loop so native scrolling takes over
+// cleanly from wherever the tween had gotten to.
+if (typeof window !== 'undefined') {
+  const passiveOpts: AddEventListenerOptions = { passive: true };
+  window.addEventListener('wheel', cancelActiveScroll, passiveOpts);
+  window.addEventListener('touchstart', cancelActiveScroll, passiveOpts);
+  window.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(e.key)) {
+      cancelActiveScroll();
+    }
+  });
+}
+
+export function scrollToY(targetY: number, duration = 800): void {
+  cancelActiveScroll();
 
   const startY = window.scrollY;
   const distance = targetY - startY;

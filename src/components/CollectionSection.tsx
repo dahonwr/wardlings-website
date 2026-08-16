@@ -46,7 +46,7 @@ const galleryItems = [...baseCards, ...baseCards, ...baseCards, ...baseCards];
 
 const CollectionSectionComponent: React.FC = () => {
   return (
-    <section id="collection" className="scroll-optimize py-[72px] md:py-[96px] lg:py-[120px] relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
+    <section id="collection" className="py-[72px] md:py-[96px] lg:py-[120px] relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
       {/* Header. data-scroll-anchor: lands the "Collection" nav click
           right on this heading instead of on the section's 72-120px of
           top padding. Heading and subheading cascade in one after

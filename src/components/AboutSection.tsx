@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { fadeUpPop, fadeUpPopTransition, popInPlayful, popInPlayfulTransition, badgePop, badgePopTransition, staggerContainer } from '../lib/motion';
-import { DiscordIcon } from './SocialIcons';
 
 const SANCTUARY_IMAGE_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Sanctuary1.jpg';
 
@@ -20,7 +19,7 @@ const AboutSectionComponent: React.FC = () => {
   return (
     <section
       id="about"
-      className="scroll-optimize py-[72px] md:py-[96px] lg:py-[120px] px-4 sm:px-6 lg:px-12 relative z-10 w-full"
+      className="py-[72px] md:py-[96px] lg:py-[120px] px-4 sm:px-6 lg:px-12 relative z-10 w-full"
       style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
@@ -98,24 +97,6 @@ const AboutSectionComponent: React.FC = () => {
               </motion.div>
             ))}
           </motion.div>
-
-          {/* Secondary CTA — Join our Discord. Same outline/secondary
-              button styling used for "Explore Collection" (Hero) and
-              "Follow @wardlingsnft" (Apply closed-state), so it reads as
-              native to the site rather than a new component. */}
-          <motion.a
-            href="https://discord.com/invite/AXjAt95DK"
-            target="_blank"
-            rel="noopener noreferrer"
-            variants={badgePop}
-            transition={badgePopTransition}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            className="mt-6 sm:mt-8 w-full sm:w-auto font-baloo font-bold text-base sm:text-lg px-6 py-3.5 rounded-full bg-white/90 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer inline-flex items-center justify-center gap-2 transition-all"
-          >
-            <DiscordIcon className="w-5 h-5 text-[#5865F2] shrink-0" />
-            <span>Join our Discord</span>
-          </motion.a>
         </motion.div>
 
         {/* Right Column: Sanctuary Artwork — bouncier pop-in with a tiny

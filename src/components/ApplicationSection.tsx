@@ -246,7 +246,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
   // database level; see supabase/migrations/02_close_whitelist_submissions.sql.)
   if (!WHITELIST_OPEN) {
     return (
-      <section id="apply" className="scroll-optimize py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
+      <section id="apply" className="py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
         <motion.div
           data-scroll-anchor
           variants={staggerContainer(0.14)}
@@ -328,7 +328,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({ settings
   }
 
   return (
-    <section id="apply" className="scroll-optimize py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
+    <section id="apply" className="py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
       {/* data-scroll-anchor: lands the "Apply" nav click (and the hero
           "Become a Keeper" button) right on this header instead of on
           the section's own top padding. */}
