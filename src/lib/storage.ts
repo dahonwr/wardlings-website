@@ -7,7 +7,7 @@ const INITIAL_SETTINGS: Settings = {
   twitter_repost: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
   twitter_comment: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
   application_open: true,
-  discord_link: 'https://discord.gg/wardlings',
+  discord_link: 'https://discord.com/invite/AXjAt95DK',
   website_banner: '🌿 The Sanctuary gates are now accepting Keeper applications!',
   hero_illustration: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero1.jpg'
 };

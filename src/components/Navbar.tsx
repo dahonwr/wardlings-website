@@ -8,7 +8,6 @@ import { useActiveSection } from '../hooks/useActiveSection';
 interface NavbarProps {
   onOpenApply: () => void;
   twitterUrl?: string;
-  discordUrl?: string;
 }
 
 const NAV_LINKS = [
@@ -20,10 +19,15 @@ const NAV_LINKS = [
 
 const SECTION_IDS = NAV_LINKS.map((link) => link.id);
 
+// Official Wardlings Discord invite. Hardcoded intentionally (not a prop,
+// not an env var, not settings-driven) so this exact URL is what every
+// Discord icon on the site opens, with no chance of it being overridden
+// by a stale/incorrect default passed down from a parent component.
+const DISCORD_INVITE_URL = 'https://discord.com/invite/AXjAt95DK';
+
 const NavbarComponent: React.FC<NavbarProps> = ({
   onOpenApply,
-  twitterUrl = 'https://x.com/WardlingsNFT',
-  discordUrl = 'https://discord.gg/wardlings'
+  twitterUrl = 'https://x.com/WardlingsNFT'
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -134,9 +138,9 @@ const NavbarComponent: React.FC<NavbarProps> = ({
               <XIcon className="w-4 h-4" />
             </a>
             <a
-              href={discordUrl}
+              href={DISCORD_INVITE_URL}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="Discord"
               className="text-[#5E564F] hover:text-[#352C26] transition-colors p-1 cursor-pointer flex items-center justify-center"
             >
@@ -196,9 +200,9 @@ const NavbarComponent: React.FC<NavbarProps> = ({
                   <XIcon className="w-5 h-5" />
                 </a>
                 <a
-                  href={discordUrl}
+                  href={DISCORD_INVITE_URL}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   aria-label="Discord"
                   className="hover:text-[#4D7A39] transition-colors p-1"
                 >

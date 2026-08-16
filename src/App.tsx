@@ -20,7 +20,7 @@ export default function App() {
     twitter_repost: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
     twitter_comment: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
     application_open: true,
-    discord_link: 'https://discord.gg/wardlings',
+    discord_link: 'https://discord.com/invite/AXjAt95DK',
     website_banner: ''
   });
 
@@ -72,7 +72,6 @@ export default function App() {
       <Navbar
         onOpenApply={handleOpenApply}
         twitterUrl={settings.twitter_follow}
-        discordUrl={settings.discord_link}
       />
 
       {/* Main Single-Page Sections */}
@@ -96,7 +95,6 @@ export default function App() {
       {/* 5. Footer */}
       <Footer
         twitterUrl={settings.twitter_follow}
-        discordUrl={settings.discord_link}
       />
     </div>
   );

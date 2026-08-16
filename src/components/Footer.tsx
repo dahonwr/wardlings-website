@@ -4,12 +4,15 @@ import { XIcon, DiscordIcon } from './SocialIcons';
 
 interface FooterProps {
   twitterUrl?: string;
-  discordUrl?: string;
 }
 
+// Official Wardlings Discord invite — hardcoded (not a prop, not an env
+// var, not settings-driven) so this exact URL is what the footer's
+// Discord icon opens, regardless of any default a parent might pass.
+const DISCORD_INVITE_URL = 'https://discord.com/invite/AXjAt95DK';
+
 const FooterComponent: React.FC<FooterProps> = ({
-  twitterUrl = 'https://x.com/WardlingsNFT',
-  discordUrl = 'https://discord.gg/wardlings'
+  twitterUrl = 'https://x.com/WardlingsNFT'
 }) => {
   const [activeModal, setActiveModal] = useState<'magicPaper' | 'privacy' | 'terms' | 'contact' | null>(null);
 
@@ -80,9 +83,9 @@ const FooterComponent: React.FC<FooterProps> = ({
             <XIcon className="w-5 h-5" />
           </a>
           <a
-            href={discordUrl}
+            href={DISCORD_INVITE_URL}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             aria-label="Discord"
             className="text-[#6E645C] hover:text-[#4D7A39] transition-colors duration-200 cursor-pointer p-1 flex items-center justify-center"
           >
