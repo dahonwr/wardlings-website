@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { fadeUpPop, fadeUpPopTransition, popInPlayful, popInPlayfulTransition, badgePop, badgePopTransition, staggerContainer } from '../lib/motion';
+import { DiscordIcon } from './SocialIcons';
 
 const SANCTUARY_IMAGE_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Sanctuary1.jpg';
 
@@ -22,7 +23,7 @@ const AboutSectionComponent: React.FC = () => {
       className="scroll-optimize py-[72px] md:py-[96px] lg:py-[120px] px-4 sm:px-6 lg:px-12 relative z-10 w-full"
       style={{ backgroundColor: '#FFFFFF' }}
     >
-      <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16 items-center">
+      <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
         {/* Left Column: Text & Stats.
             data-scroll-anchor: this column sits inside a grid with
             items-center, so it's vertically centered against the taller
@@ -40,7 +41,7 @@ const AboutSectionComponent: React.FC = () => {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '0px 0px -35% 0px' }}
-          className="md:col-span-6 flex flex-col items-start text-left relative z-20"
+          className="lg:col-span-6 flex flex-col items-start text-left relative z-20"
         >
           {/* Small Badge — quick snappy pop */}
           <motion.div
@@ -97,18 +98,41 @@ const AboutSectionComponent: React.FC = () => {
               </motion.div>
             ))}
           </motion.div>
+
+          {/* Secondary CTA — Join our Discord. Same outline/secondary
+              button styling used for "Explore Collection" (Hero) and
+              "Follow @wardlingsnft" (Apply closed-state), so it reads as
+              native to the site rather than a new component. */}
+          <motion.a
+            href="https://discord.com/invite/AXjAt95DK"
+            target="_blank"
+            rel="noopener noreferrer"
+            variants={badgePop}
+            transition={badgePopTransition}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+            className="mt-6 sm:mt-8 w-full sm:w-auto font-baloo font-bold text-base sm:text-lg px-6 py-3.5 rounded-full bg-white/90 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer inline-flex items-center justify-center gap-2 transition-all"
+          >
+            <DiscordIcon className="w-5 h-5 text-[#5865F2] shrink-0" />
+            <span>Join our Discord</span>
+          </motion.a>
         </motion.div>
 
         {/* Right Column: Sanctuary Artwork — bouncier pop-in with a tiny
             settle-wobble (scale + slight rotate that eases past 0deg),
-            since this is the character art and should read the most cute. */}
+            since this is the character art and should read the most cute.
+            `hidden lg:flex`: on tablet/mobile the illustration is removed
+            from layout entirely (not just visually hidden) so it takes up
+            zero space and the text column above naturally uses the full
+            row width — desktop (lg+) is unaffected, same size/position as
+            before. */}
         <motion.div
           variants={popInPlayful}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-40px' }}
           transition={{ ...popInPlayfulTransition, delay: 0.15 }}
-          className="md:col-span-6 flex items-center justify-center relative z-0 w-full pt-4 md:pt-0 overflow-visible"
+          className="hidden lg:flex lg:col-span-6 items-center justify-center relative z-0 w-full overflow-visible"
         >
           {/* Two nested layers on purpose: the outer layer owns the CSS
               breathing-float animation (animate-breathe-float, ~3px,
@@ -123,8 +147,11 @@ const AboutSectionComponent: React.FC = () => {
               transition={{ duration: 0.3, ease: 'easeOut' }}
               className="w-full flex items-center justify-center cursor-pointer"
             >
-              {/* Tablet-only: illustration scaled up ~35% (transform-based, so
-                  it doesn't affect layout, spacing, cropping, or stretching) */}
+              {/* md:scale-[1.35] is inert now that this block only renders
+                  at lg+ (its own lg:scale-100 already overrides it there,
+                  exactly as before) — left in place untouched since it
+                  doesn't affect anything and this section's image styling
+                  wasn't meant to change. */}
               <img
                 src={SANCTUARY_IMAGE_URL}
                 alt="The Sanctuary Awaits"
