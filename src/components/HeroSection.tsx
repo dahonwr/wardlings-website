@@ -8,7 +8,7 @@ interface HeroSectionProps {
   onExploreClick: () => void;
 }
 
-const HERO_BACKGROUND_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Hero1.jpg';
+const HERO_BACKGROUND_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/IMG_20260824_220449.png';
 
 const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   onOpenApply,
@@ -92,7 +92,7 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
               className="w-full max-w-[340px] sm:w-auto font-dynapuff font-bold text-base sm:text-lg px-7 py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer flex items-center justify-center gap-2 transition-all"
             >
               <Sparkles className="w-5 h-5 text-yellow-200 fill-yellow-200 shrink-0" />
-              <span>Become a Keeper</span>
+              <span>Find Your Place</span>
             </motion.button>
 
             <motion.button

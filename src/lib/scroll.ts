@@ -1,43 +1,42 @@
-// Custom, dependency-free smooth scroll used for nav-triggered navigation
-// (logo click, nav links, CTA buttons). Native `scrollIntoView` and CSS
-// `scroll-behavior: smooth` give no control over duration/easing and, when
-// combined, can fight each other mid-scroll. This runs a single
-// requestAnimationFrame-driven tween instead, so wheel/trackpad scrolling
-// (native, untouched) never competes with an in-flight nav scroll.
+// Native-friendly smooth scroll used ONLY for nav-triggered clicks
+// (logo click, nav links, CTA buttons). Wheel, trackpad, and touch scrolling
+// remain 100% native and are never intercepted or prevented.
 
 const easeInOutCubic = (t: number): number =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 let activeScrollFrame: number | null = null;
 
-function cancelActiveScroll(): void {
+function handleKeyDown(e: KeyboardEvent): void {
+  if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(e.key)) {
+    cancelActiveScroll();
+  }
+}
+
+function detachCancelListeners(): void {
+  if (typeof window === 'undefined') return;
+  window.removeEventListener('wheel', cancelActiveScroll);
+  window.removeEventListener('touchstart', cancelActiveScroll);
+  window.removeEventListener('keydown', handleKeyDown);
+}
+
+function attachCancelListeners(): void {
+  if (typeof window === 'undefined') return;
+  const passiveOpts: AddEventListenerOptions = { passive: true };
+  window.addEventListener('wheel', cancelActiveScroll, passiveOpts);
+  window.addEventListener('touchstart', cancelActiveScroll, passiveOpts);
+  window.addEventListener('keydown', handleKeyDown, passiveOpts);
+}
+
+export function cancelActiveScroll(): void {
   if (activeScrollFrame !== null) {
     cancelAnimationFrame(activeScrollFrame);
     activeScrollFrame = null;
   }
+  detachCancelListeners();
 }
 
-// If a nav-triggered tween is still running and the user manually scrolls
-// (wheel, trackpad, touch, or a keyboard scroll key) partway through it,
-// stop the tween immediately instead of letting it keep calling
-// window.scrollTo() on top of the user's own input for the rest of its
-// duration — that fight is what makes a scroll right after clicking a nav
-// link feel like it needs a second try. These listeners never call
-// preventDefault and never alter where the page scrolls to; they only
-// cancel our own animation frame loop so native scrolling takes over
-// cleanly from wherever the tween had gotten to.
-if (typeof window !== 'undefined') {
-  const passiveOpts: AddEventListenerOptions = { passive: true };
-  window.addEventListener('wheel', cancelActiveScroll, passiveOpts);
-  window.addEventListener('touchstart', cancelActiveScroll, passiveOpts);
-  window.addEventListener('keydown', (e: KeyboardEvent) => {
-    if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(e.key)) {
-      cancelActiveScroll();
-    }
-  });
-}
-
-export function scrollToY(targetY: number, duration = 800): void {
+export function scrollToY(targetY: number, duration = 650): void {
   cancelActiveScroll();
 
   const startY = window.scrollY;
@@ -48,10 +47,12 @@ export function scrollToY(targetY: number, duration = 800): void {
     typeof window !== 'undefined' &&
     window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-  if (prefersReducedMotion || distance === 0) {
+  if (prefersReducedMotion || Math.abs(distance) < 2) {
     window.scrollTo(0, targetY);
     return;
   }
+
+  attachCancelListeners();
 
   const step = (now: number) => {
     const elapsed = now - startTime;
@@ -63,6 +64,7 @@ export function scrollToY(targetY: number, duration = 800): void {
       activeScrollFrame = requestAnimationFrame(step);
     } else {
       activeScrollFrame = null;
+      detachCancelListeners();
     }
   };
 
@@ -73,17 +75,10 @@ export function scrollToY(targetY: number, duration = 800): void {
 // the floating navbar.
 const NAV_OFFSET = 90;
 
-export function scrollToId(id: string, duration = 800): void {
+export function scrollToId(id: string, duration = 650): void {
   const section = document.getElementById(id);
   if (!section) return;
-  // Some sections have large decorative top padding, and/or vertically
-  // center their content against a taller sibling column — scrolling to
-  // the section's own top edge in those cases just reveals that empty
-  // space and pushes the real content (heading, and on the whitelist
-  // card, its action buttons) below the fold, so the visitor has to
-  // scroll again to see anything. If the section marks where its real
-  // content starts with data-scroll-anchor, land there instead; only
-  // fall back to the section's own top edge if it doesn't.
+
   const anchor = section.querySelector<HTMLElement>('[data-scroll-anchor]') ?? section;
   const targetY = anchor.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
   scrollToY(Math.max(targetY, 0), duration);

@@ -1,6 +1,6 @@
 {
   "name": "Wardlings - Hidden Sanctuary",
-  "description": "A magical story-driven landing page and Keeper application portal for Wardlings, an upcoming Ethereum NFT collection set deep within the Sanctuary.",
+  "description": "A magical story-driven landing page and allocation checker for Wardlings, an upcoming Robinhood Chain NFT collection set deep within the Sanctuary.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

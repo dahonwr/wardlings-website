@@ -8,6 +8,80 @@ export const SOCIAL_TASKS = [
   { id: 'comment_pinned', label: 'Comment on the pinned post' }
 ];
 
+export const GOOGLE_SHEET_CSV_URL =
+  'https://docs.google.com/spreadsheets/d/16YuotUZIWPms-M_DwoRVcw9W5iitSbFU4_yG_IlVUuc/export?format=csv&gid=0';
+
+export interface WinnerCheckResult {
+  found: boolean;
+  allocation?: string;
+  project?: string;
+  searchedAddress?: string;
+}
+
+export async function checkWinnerAllocation(walletAddress: string): Promise<WinnerCheckResult> {
+  const cleanInput = walletAddress.trim().toLowerCase();
+  if (!cleanInput) {
+    return { found: false, searchedAddress: walletAddress };
+  }
+
+  // Fetch with cache-busting timestamp to always retrieve latest sheet entries
+  const url = `${GOOGLE_SHEET_CSV_URL}&_t=${Date.now()}`;
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Accept: 'text/csv, text/plain, */*'
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to retrieve spreadsheet data');
+  }
+
+  const csvText = await res.text();
+  const lines = csvText.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  if (lines.length === 0) {
+    return { found: false, searchedAddress: walletAddress };
+  }
+
+  // Parse header to dynamically locate ADDRESS and WHITELIST columns
+  const headerParts = lines[0].split(',').map(h => h.trim().toUpperCase().replace(/^["']|["']$/g, ''));
+  let addressIdx = headerParts.indexOf('ADDRESS');
+  let whitelistIdx = headerParts.indexOf('WHITELIST');
+  let projectIdx = headerParts.indexOf('PROJECT');
+
+  if (addressIdx === -1) addressIdx = 2;
+  if (whitelistIdx === -1) whitelistIdx = 1;
+  if (projectIdx === -1) projectIdx = 0;
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
+    if (cols.length <= addressIdx) continue;
+
+    const rowAddress = cols[addressIdx]?.toLowerCase();
+    if (rowAddress && rowAddress === cleanInput) {
+      let rawAlloc = (cols[whitelistIdx] || 'GTD').trim().toUpperCase();
+      let normalizedAlloc = 'GTD';
+      if (rawAlloc.includes('OG')) {
+        normalizedAlloc = 'OG';
+      } else if (rawAlloc.includes('FCFS')) {
+        normalizedAlloc = 'FCFS';
+      } else {
+        normalizedAlloc = 'GTD';
+      }
+
+      return {
+        found: true,
+        allocation: normalizedAlloc,
+        project: cols[projectIdx] || '',
+        searchedAddress: walletAddress.trim()
+      };
+    }
+  }
+
+  return { found: false, searchedAddress: walletAddress.trim() };
+}
+
 // Helper to construct a WhitelistApplication with derived step and completion state
 function mapDbRowToApplication(row: any, tasks: TaskProgress[] = []): WhitelistApplication {
   const hasCommentLink = Boolean(row.comment_link && row.comment_link.trim());
@@ -255,7 +329,7 @@ export async function updateWalletAddress(
   const cleanWallet = walletAddressInput.trim().toLowerCase();
 
   if (!cleanWallet || !cleanWallet.startsWith('0x') || cleanWallet.length < 10) {
-    return { success: false, error: 'Please enter a valid Ethereum address starting with 0x.' };
+    return { success: false, error: 'Please enter a valid Robinhood Chain address starting with 0x.' };
   }
 
   const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(applicationId);

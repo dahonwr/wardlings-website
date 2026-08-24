@@ -92,14 +92,9 @@ const CollectionSectionComponent: React.FC = () => {
       >
         <div className="animate-marquee flex gap-6 w-max px-3">
           {galleryItems.map((card, idx) => (
-            <motion.div
+            <div
               key={idx}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-20px' }}
-              transition={{ duration: 0.4, delay: (idx % baseCards.length) * 0.06, ease: [0.34, 1.56, 0.64, 1] }}
-              whileHover={{ y: -8 }}
-              className="group w-64 sm:w-72 shrink-0 p-4 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D]/10 shadow-md hover:shadow-xl flex flex-col items-center cursor-pointer transition-[box-shadow] duration-[250ms] ease-out"
+              className="group w-64 sm:w-72 shrink-0 p-4 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D]/10 shadow-md hover:shadow-xl hover:-translate-y-2 flex flex-col items-center cursor-pointer transition-all duration-300 ease-out"
             >
               {/* Image Centered */}
               <div className="w-full aspect-square rounded-2xl bg-[#FFF8F0] overflow-hidden flex items-center justify-center p-3 mb-4 border border-[#2F241D]/5">
@@ -108,7 +103,7 @@ const CollectionSectionComponent: React.FC = () => {
                   alt={`${card.rarity} Wardling`}
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-contain transition-transform duration-[250ms] ease-out group-hover:scale-[1.03]"
+                  className="w-full h-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.03]"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = AVATAR1_URL;
                   }}
@@ -125,7 +120,7 @@ const CollectionSectionComponent: React.FC = () => {
               >
                 {card.rarity}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </motion.div>

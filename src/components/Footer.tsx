@@ -148,8 +148,8 @@ const FooterComponent: React.FC<FooterProps> = ({
             <div className="font-nunito font-semibold text-sm sm:text-base text-[#6E645C] space-y-3 max-h-60 overflow-y-auto pr-2 leading-relaxed">
               {activeModal === 'magicPaper' && (
                 <>
-                  <p>Welcome to the official Wardlings Magic Paper. The Sanctuary is a peaceful realm dedicated to storybook creativity and woodland digital ownership on Ethereum.</p>
-                  <p>All Wardlings metadata and artwork are stored on IPFS & Ethereum smart contracts.</p>
+                  <p>Welcome to the official Wardlings Magic Paper. The Sanctuary is a peaceful realm dedicated to storybook creativity and woodland digital ownership on Robinhood Chain.</p>
+                  <p>All Wardlings metadata and artwork are stored on IPFS & Robinhood Chain smart contracts.</p>
                 </>
               )}
               {activeModal === 'privacy' && (

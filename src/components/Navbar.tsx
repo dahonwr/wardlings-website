@@ -14,7 +14,7 @@ const NAV_LINKS = [
   { id: 'home', label: 'Home' },
   { id: 'about', label: 'Sanctuary' },
   { id: 'collection', label: 'Collection' },
-  { id: 'apply', label: 'Apply' }
+  { id: 'apply', label: 'Find Your Place' }
 ];
 
 const SECTION_IDS = NAV_LINKS.map((link) => link.id);
@@ -39,10 +39,9 @@ const NavbarComponent: React.FC<NavbarProps> = ({
     const handleScroll = () => {
       if (ticking) return;
       ticking = true;
-      // Batch the read/write into the next animation frame so this listener
-      // never forces a synchronous layout while the user is scrolling.
       requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 20);
+        const scrolled = window.scrollY > 20;
+        setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
         ticking = false;
       });
     };

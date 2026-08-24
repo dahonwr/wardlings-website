@@ -42,10 +42,13 @@ export default function App() {
     setSettings(data);
   };
 
+  const [checkerTrigger, setCheckerTrigger] = useState(0);
+
   // Memoized so children receiving these as props (Navbar, HeroSection)
   // don't see a new function identity — and therefore don't re-render —
   // on every App re-render.
   const handleOpenApply = useCallback(() => {
+    setCheckerTrigger((prev) => prev + 1);
     scrollToId('apply');
   }, []);
 
@@ -57,7 +60,7 @@ export default function App() {
   // 1. Hero
   // 2. Sanctuary (AboutSection)
   // 3. Gallery (CollectionSection)
-  // 4. Become a Keeper (ApplicationSection)
+  // 4. Find Your Place (ApplicationSection)
   // 5. Footer
   return (
     <div
@@ -88,8 +91,11 @@ export default function App() {
         {/* 3. Gallery */}
         <CollectionSection />
 
-        {/* 4. Become a Keeper (Application) */}
-        <ApplicationSection settings={settings} />
+        {/* 4. Find Your Place (Winner Check) */}
+        <ApplicationSection
+          settings={settings}
+          checkerTrigger={checkerTrigger}
+        />
       </main>
 
       {/* 5. Footer */}

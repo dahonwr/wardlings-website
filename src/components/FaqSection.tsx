@@ -16,7 +16,7 @@ export const FaqSection: React.FC = () => {
     {
       id: 'faq-1',
       question: 'What are Wardlings?',
-      answer: 'Wardlings are 10,000 unique, hand-crafted digital companions living on the Ethereum blockchain. Each Wardling is generated with distinctive woodland traits, glowing sanctuary seeds, and cozy personalities.',
+      answer: 'Wardlings are 10,000 unique, hand-crafted digital companions living on the Robinhood Chain blockchain. Each Wardling is generated with distinctive woodland traits, glowing sanctuary seeds, and cozy personalities.',
       handwrittenTag: 'Note #1 — Origin Story 🌿'
     },
     {
@@ -28,7 +28,7 @@ export const FaqSection: React.FC = () => {
     {
       id: 'faq-3',
       question: 'What is the mint price and blockchain?',
-      answer: 'Wardlings are minted on the Ethereum network. Mint pricing and date will be officially revealed on our official X account (@WardlingsNFT) and Discord announcement channel.',
+      answer: 'Wardlings are minted on the Robinhood Chain network. Mint pricing and date will be officially revealed on our official X account (@WardlingsNFT) and Discord announcement channel.',
       handwrittenTag: 'Note #3 — Network Details 🔗'
     },
     {

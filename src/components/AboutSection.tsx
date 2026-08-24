@@ -11,7 +11,7 @@ const AboutSectionComponent: React.FC = () => {
       label: 'Wardlings'
     },
     {
-      value: 'Ethereum',
+      value: 'Robinhood Chain',
       label: 'Blockchain'
     }
   ];
@@ -88,7 +88,7 @@ const AboutSectionComponent: React.FC = () => {
                 transition={badgePopTransition}
                 className="flex flex-col items-start min-w-0"
               >
-                <span className="font-dynapuff font-extrabold text-[#2F241D] tracking-tight text-[32px] sm:text-[36px] lg:text-[40px] leading-none">
+                <span className="font-dynapuff font-extrabold text-[#2F241D] tracking-tight text-[26px] sm:text-[32px] lg:text-[38px] leading-tight">
                   {stat.value}
                 </span>
                 <span className="font-nunito font-semibold text-[#6A6158] text-[15px] sm:text-[16px] lg:text-[18px] mt-1.5">

@@ -10,7 +10,7 @@ export const ProjectInfoSection: React.FC = () => {
       badgeColor: '#7EBE69'
     },
     {
-      title: 'Ethereum',
+      title: 'Robinhood Chain',
       subtitle: 'Blockchain',
       accentColor: '#DFF4FF',
       badgeColor: '#3B82F6'

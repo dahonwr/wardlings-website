@@ -85,7 +85,7 @@ export const KeeperModal: React.FC<KeeperModalProps> = ({
   const handlePlantApplication = async () => {
     const cleanWallet = walletAddress.trim();
     if (!isValidEVM(cleanWallet)) {
-      setErrorMsg('Please enter a valid Ethereum wallet address starting with 0x (42 characters).');
+      setErrorMsg('Please enter a valid Robinhood Chain wallet address starting with 0x (42 characters).');
       return;
     }
 
@@ -349,7 +349,7 @@ export const KeeperModal: React.FC<KeeperModalProps> = ({
 
               <div className="space-y-2">
                 <label className="font-patrick font-bold text-base text-[#7C5B46] block">
-                  EVM Wallet Address (Ethereum)
+                  EVM Wallet Address (Robinhood Chain)
                 </label>
                 <input
                   type="text"

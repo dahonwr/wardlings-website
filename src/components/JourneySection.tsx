@@ -31,7 +31,7 @@ export const JourneySection: React.FC = () => {
       subtitle: 'Selected for Sanctuary Access',
       icon: <ShieldCheck className="w-6 h-6 text-[#F7BFD5]" />,
       badge: 'Stage III',
-      description: 'Chosen Keepers receive guaranteed mint allocation tokens to claim their Wardling partner during the Ethereum mint.'
+      description: 'Chosen Keepers receive guaranteed mint allocation tokens to claim their Wardling partner during the Robinhood Chain mint.'
     },
     {
       title: 'Guardian',

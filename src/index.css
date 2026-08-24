@@ -1,31 +1,12 @@
 @import "tailwindcss";
 
 html {
-  /* IMPORTANT: do not set overflow-x (or overflow) here. Chromium takes
-     the page off the compositor "fast" scroll path and falls back to
-     main-thread scrolling whenever <html> has an overflow value other
-     than `visible`, which is what caused wheel scrolling to feel like
-     it needed two ticks to "wake up". Horizontal overflow is instead
-     contained on <body> below, which doesn't have that side effect. */
   -ms-overflow-style: none;
   scrollbar-width: none;
   width: 100%;
-  /* Nav-triggered scrolling is animated manually in JS (src/lib/scroll.ts)
-     with an explicit 700-900ms ease-in-out curve. Leaving CSS
-     scroll-behavior:smooth on top of that made two smooth-scroll engines
-     fight over the same scroll and produced stalls/backwards jumps. */
   scroll-behavior: auto;
-  /* Stop iOS from bumping the base font size up when the phone rotates
-     into landscape, which can otherwise shift/zoom the whole layout. */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* Contain vertical overscroll to this document instead of letting a
-     scroll-past-the-edge gesture chain into pull-to-refresh/rubber-band
-     bounce, and drop the browser's default touch gesture ambiguity delay
-     for a purely-vertical page — both of which can read as "the first
-     swipe doesn't do anything" on mobile. */
-  overscroll-behavior-y: contain;
-  touch-action: pan-y;
 }
 
 /* Belt-and-braces guard against iOS Safari's auto-zoom-on-focus: any
