@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 import { Settings } from '../types';
 import { checkWinnerAllocation, WinnerCheckResult } from '../services/whitelistService';
 import { fadeUpPop, fadeUpPopTransition, badgePop, badgePopTransition, popInPlayfulTransition, staggerContainer } from '../lib/motion';
+import { scrollElementIntoSmartView } from '../lib/scroll';
 import { XIcon, DiscordIcon } from './SocialIcons';
 
 // Authoritative Visual Assets
@@ -42,6 +43,31 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const walletInputRef = useRef<HTMLInputElement>(null);
 
+  // Fires exactly when the winner/not_found result block is attached to
+  // the DOM (React calls ref callbacks synchronously on mount) — a precise
+  // signal that beats any fixed delay. A follow-up double rAF waits for
+  // that content to actually be laid out and painted before measuring
+  // where it landed, so the reposition below is based on real geometry.
+  const handleResultMount = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollElementIntoSmartView(cardRef.current);
+      });
+    });
+  }, []);
+
+  // The result graphics are remote images with no known intrinsic size, so
+  // they can still grow the card after the initial layout settles once
+  // they finish loading. Re-checking (not re-forcing) the position on load
+  // catches that without stacking animations — scrollElementIntoSmartView
+  // only moves the page if the content has actually drifted out of a
+  // sensible spot, and scrollToY cancels any in-flight scroll before
+  // starting a new one, so this never fights the mount-time scroll above.
+  const handleResultImageLoad = useCallback(() => {
+    scrollElementIntoSmartView(cardRef.current);
+  }, []);
+
   // Confetti celebration trigger for winning wallets
   const triggerConfettiCelebration = useCallback(() => {
     const prefersReducedMotion =
@@ -78,26 +104,35 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     }, 250);
   }, []);
 
-  // Trigger opening checker when hero CTA or navbar is clicked
+  // Schedules work for just after the browser has painted the current
+  // step's content, so measurements (and the resulting scroll target)
+  // reflect real, laid-out geometry instead of a guessed delay.
+  const runAfterPaint = useCallback((fn: () => void) => {
+    requestAnimationFrame(() => requestAnimationFrame(fn));
+  }, []);
+
+  // Trigger opening checker when hero CTA or navbar is clicked. The caller
+  // (App.tsx) already scrolls to this exact card via scrollToId('apply')
+  // when it bumps checkerTrigger, so this only needs to handle focus —
+  // scrolling again here would just be a second animation to the same spot.
   useEffect(() => {
     if (checkerTrigger > 0) {
       setErrorMessage('');
       setStep('wallet_input');
-      setTimeout(() => {
-        cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      runAfterPaint(() => {
         walletInputRef.current?.focus();
-      }, 150);
+      });
     }
-  }, [checkerTrigger]);
+  }, [checkerTrigger, runAfterPaint]);
 
   // Open Wallet Input
   const handleOpenWalletInput = () => {
     setStep('wallet_input');
     setErrorMessage('');
-    setTimeout(() => {
-      cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    runAfterPaint(() => {
+      scrollElementIntoSmartView(cardRef.current);
       walletInputRef.current?.focus();
-    }, 150);
+    });
   };
 
   // Check Wallet Allocation against Google Sheet
@@ -354,6 +389,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
             {step === 'winner' && (
               <motion.div
                 key="step-winner"
+                ref={handleResultMount}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -366,6 +402,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                     src={GRAPHIC_WINNER_URL}
                     alt="Official Wardlings Allocation"
                     className="w-full h-auto object-contain block"
+                    onLoad={handleResultImageLoad}
                   />
                 </div>
 
@@ -423,6 +460,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
             {step === 'not_found' && (
               <motion.div
                 key="step-not-found"
+                ref={handleResultMount}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -435,6 +473,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                     src={GRAPHIC_NOT_FOUND_URL}
                     alt="Wardlings Allocation Status"
                     className="w-full h-auto object-contain block"
+                    onLoad={handleResultImageLoad}
                   />
                 </div>
 

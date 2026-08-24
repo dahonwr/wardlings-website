@@ -83,3 +83,39 @@ export function scrollToId(id: string, duration = 650): void {
   const targetY = anchor.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
   scrollToY(Math.max(targetY, 0), duration);
 }
+
+// Keeps a dynamically-resizing block (e.g. content that swaps from a short
+// form to a much taller result) positioned sensibly in the viewport.
+//
+// Native scroll anchoring holds the *scroll position*, not the element's
+// place in the viewport, steady when content above it changes size. When a
+// block below the fold grows taller in place, the old scroll offset can
+// land the viewport anywhere inside the new, taller content instead of at
+// its top. This recalculates from the element's actual current position
+// each time it's called, so it self-corrects regardless of scroll
+// direction or how tall the content ends up being.
+//
+// Only scrolls if the element's heading/top edge isn't already sitting in
+// a sensible spot just below the fixed header — so it won't fight the user
+// or produce a jump when nothing meaningfully changed.
+export function scrollElementIntoSmartView(el: HTMLElement | null, duration = 650): void {
+  if (!el || typeof window === 'undefined') return;
+
+  const rect = el.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const idealTop = NAV_OFFSET;
+
+  // Tolerance band: if the element's top is already roughly under the
+  // header (a little above is fine, a bit further down the fold is fine
+  // too), leave the scroll position alone.
+  const slackAbove = 16;
+  const slackBelow = Math.max(viewportHeight * 0.3, 140);
+
+  const alreadyWellPositioned =
+    rect.top >= idealTop - slackAbove && rect.top <= idealTop + slackBelow;
+
+  if (alreadyWellPositioned) return;
+
+  const targetY = rect.top + window.scrollY - NAV_OFFSET;
+  scrollToY(Math.max(targetY, 0), duration);
+}
