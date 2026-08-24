@@ -42,24 +42,23 @@ const FooterComponent: React.FC<FooterProps> = ({
       viewport={{ once: true, margin: '0px 0px -20% 0px' }}
       transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
       style={{ backgroundColor: '#FFFDF8' }}
-      className="min-h-[100svh] py-16 md:py-24 px-6 relative z-10 text-center flex flex-col justify-center items-center"
+      className="py-14 sm:py-18 md:py-20 px-6 relative z-10 text-center"
     >
       <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center space-y-7">
         
-        {/* Logo & Title — small springy pop. Delayed a beat behind the
-            footer's own fade-in (which shares the same viewport trigger)
-            so the pop is actually visible instead of playing underneath
-            the footer while it's still mostly transparent. */}
+        {/* Logo & Title */}
         <motion.div
           initial={{ opacity: 0, scale: 0.7, y: 12 }}
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
           viewport={{ once: true, margin: '0px 0px -20% 0px' }}
-          transition={{ duration: 0.5, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
           className="flex flex-col items-center justify-center"
         >
           <img
             src={LOGO_URL}
             alt="Wardlings Logo"
+            width="72"
+            height="72"
             loading="lazy"
             decoding="async"
             className="w-[72px] h-[72px] object-contain"

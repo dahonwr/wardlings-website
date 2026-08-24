@@ -46,18 +46,16 @@ const galleryItems = [...baseCards, ...baseCards, ...baseCards, ...baseCards];
 
 const CollectionSectionComponent: React.FC = () => {
   return (
-    <section id="collection" className="min-h-[100svh] py-16 md:py-20 relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8] flex flex-col justify-center items-center">
+    <section id="collection" className="py-14 sm:py-18 md:py-24 relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
       {/* Header. data-scroll-anchor: lands the "Collection" nav click
-          right on this heading instead of on the section's 72-120px of
-          top padding. Heading and subheading cascade in one after
-          another for a cuter, less flat reveal. */}
+          right on this heading instead of on the section's top padding. */}
       <motion.div
         data-scroll-anchor
         variants={staggerContainer(0.15)}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, margin: '0px 0px -35% 0px' }}
-        className="text-center max-w-xl mx-auto mb-10 md:mb-12 px-4 sm:px-6"
+        viewport={{ once: true, margin: '0px 0px -20% 0px' }}
+        className="text-center max-w-xl mx-auto mb-8 sm:mb-10 md:mb-12 px-4 sm:px-6"
       >
         <motion.h2
           variants={fadeUpPop}
@@ -75,19 +73,12 @@ const CollectionSectionComponent: React.FC = () => {
         </motion.p>
       </motion.div>
 
-      {/* Infinite Horizontal Carousel Track (Right to Left).
-          The scroll itself is a pure CSS animation (.animate-marquee, see
-          index.css) instead of a Framer Motion-driven loop, so it runs on
-          the compositor thread with zero per-frame JS cost, and pauses
-          cleanly on hover via `marquee-track:hover` — satisfying "pause
-          auto-scroll while hovering" without tearing the animation down.
-          The track itself now pops in with a little bounce/scale instead
-          of a flat fade, to match the cascading header above it. */}
+      {/* Infinite Horizontal Carousel Track (Right to Left). */}
       <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.97 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        viewport={{ once: true, margin: '-40px' }}
-        transition={{ ...popInPlayfulTransition, delay: 0.15 }}
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-20px' }}
+        transition={{ ...fadeUpPopTransition, delay: 0.1 }}
         className="marquee-track w-full overflow-hidden"
       >
         <div className="animate-marquee flex gap-6 w-max px-3">
@@ -101,6 +92,8 @@ const CollectionSectionComponent: React.FC = () => {
                 <img
                   src={card.image}
                   alt={`${card.rarity} Wardling`}
+                  width="240"
+                  height="240"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.03]"

@@ -52,9 +52,7 @@ const NavbarComponent: React.FC<NavbarProps> = ({
 
   const scrollToSection = (id: string) => {
     setIsMobileMenuOpen(false);
-    // 800ms eased scroll (see src/lib/scroll.ts) — falls within the
-    // 700-900ms ease-in-out spec and doesn't fight native wheel scrolling.
-    scrollToId(id, 800);
+    scrollToId(id);
   };
 
   return (
@@ -64,17 +62,10 @@ const NavbarComponent: React.FC<NavbarProps> = ({
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
         style={{
-          // Bumped opacity up (was 0.88/0.95) to compensate for dropping
-          // backdrop-blur below — a fixed, always-mounted element with
-          // backdrop-filter forces the browser to recompute a blur layer
-          // on every single scroll frame, which is one of the most common
-          // causes of janky/laggy scrolling on mobile Safari. A near-opaque
-          // solid background reads almost identically but costs nothing
-          // during scroll.
           backgroundColor: isScrolled ? 'rgba(248, 243, 233, 0.98)' : 'rgba(248, 243, 233, 0.96)',
           borderColor: 'rgba(53, 44, 38, 0.25)'
         }}
-        className={`flex items-center justify-between px-3.5 sm:px-5 py-2.5 rounded-full border shadow-sm transition-all duration-300 w-full whitespace-nowrap ${
+        className={`flex items-center justify-between px-3.5 sm:px-5 py-2.5 rounded-full border shadow-sm transition-shadow duration-300 w-full whitespace-nowrap ${
           isScrolled ? 'shadow-md' : ''
         }`}
       >
@@ -82,13 +73,15 @@ const NavbarComponent: React.FC<NavbarProps> = ({
         <button
           onClick={() => {
             setIsMobileMenuOpen(false);
-            scrollToY(0, 800);
+            scrollToY(0);
           }}
           className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer text-left shrink-0"
         >
           <img
             src="https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Logo.png"
             alt="Wardlings"
+            width="32"
+            height="32"
             className="w-7 h-7 sm:w-8 sm:h-8 object-contain transition-transform group-hover:scale-105"
             onError={(e) => {
               (e.target as HTMLElement).style.display = 'none';
@@ -99,8 +92,7 @@ const NavbarComponent: React.FC<NavbarProps> = ({
           </span>
         </button>
 
-        {/* Middle Desktop/Tablet Navigation Links — centered in its own flexible
-            column so the header stays balanced now that the header CTA is gone */}
+        {/* Middle Desktop/Tablet Navigation Links — strictly hidden on mobile via CSS media query */}
         <div className="hidden md:flex flex-1 items-center justify-center gap-5 lg:gap-7 font-baloo font-bold text-xs lg:text-sm text-[#5E564F]">
           {NAV_LINKS.map((link) => (
             <button
@@ -112,19 +104,13 @@ const NavbarComponent: React.FC<NavbarProps> = ({
             >
               {link.label}
               {activeId === link.id && (
-                <motion.span
-                  layoutId="nav-underline"
-                  className="absolute left-0 right-0 -bottom-0.5 h-[2px] rounded-full bg-[#5C8E47]"
-                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                />
+                <span className="absolute left-0 right-0 -bottom-0.5 h-[2px] rounded-full bg-[#5C8E47]" />
               )}
             </button>
           ))}
         </div>
 
-        {/* Right: Social Icons (Desktop/Tablet) + Hamburger (Mobile).
-            No "Become a Keeper" button here anymore — that CTA lives only in
-            the Hero and other intentional CTA sections (e.g. the footer). */}
+        {/* Right: Social Icons (Desktop/Tablet) + Hamburger (Mobile). */}
         <div className="flex items-center gap-3 lg:gap-4 shrink-0">
           <div className="hidden md:flex items-center gap-3 lg:gap-4">
             <a
@@ -147,7 +133,7 @@ const NavbarComponent: React.FC<NavbarProps> = ({
             </a>
           </div>
 
-          {/* Mobile Hamburger Toggle */}
+          {/* Mobile Hamburger Toggle — strictly visible on mobile (< 768px) */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle navigation menu"

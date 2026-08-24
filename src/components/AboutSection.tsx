@@ -32,8 +32,7 @@ const AboutSectionComponent: React.FC = () => {
   return (
     <section
       id="about"
-      className="min-h-[100svh] py-16 md:py-20 px-4 sm:px-6 lg:px-12 relative z-10 w-full overflow-hidden flex flex-col justify-center items-center"
-      style={{ backgroundColor: '#FFFFFF' }}
+      className="py-16 sm:py-20 md:py-24 lg:py-28 px-4 sm:px-6 lg:px-12 relative z-10 w-full overflow-hidden bg-white"
     >
       {/* Subtle organic decoration — small, restrained accents only.
           This section is lore + project info now, not another hero

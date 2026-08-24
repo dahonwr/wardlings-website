@@ -17,7 +17,7 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="home"
-      className="relative min-h-[100svh] pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center overflow-hidden bg-[#FFFDF8]"
+      className="relative min-h-[85vh] lg:min-h-[90vh] pt-28 sm:pt-32 md:pt-36 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
       {/* Background Artwork Layer (z-index: 0)
           bg-cover = object-fit:cover equivalent (crops, never stretches).

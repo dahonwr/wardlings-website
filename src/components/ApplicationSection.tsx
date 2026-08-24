@@ -5,7 +5,6 @@ import confetti from 'canvas-confetti';
 import { Settings } from '../types';
 import { checkWinnerAllocation, WinnerCheckResult } from '../services/whitelistService';
 import { fadeUpPop, fadeUpPopTransition, badgePop, badgePopTransition, popInPlayfulTransition, staggerContainer } from '../lib/motion';
-import { scrollElementIntoSmartView } from '../lib/scroll';
 import { XIcon, DiscordIcon } from './SocialIcons';
 
 // Authoritative Visual Assets
@@ -43,31 +42,6 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const walletInputRef = useRef<HTMLInputElement>(null);
 
-  // Fires exactly when the winner/not_found result block is attached to
-  // the DOM (React calls ref callbacks synchronously on mount) — a precise
-  // signal that beats any fixed delay. A follow-up double rAF waits for
-  // that content to actually be laid out and painted before measuring
-  // where it landed, so the reposition below is based on real geometry.
-  const handleResultMount = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        scrollElementIntoSmartView(cardRef.current);
-      });
-    });
-  }, []);
-
-  // The result graphics are remote images with no known intrinsic size, so
-  // they can still grow the card after the initial layout settles once
-  // they finish loading. Re-checking (not re-forcing) the position on load
-  // catches that without stacking animations — scrollElementIntoSmartView
-  // only moves the page if the content has actually drifted out of a
-  // sensible spot, and scrollToY cancels any in-flight scroll before
-  // starting a new one, so this never fights the mount-time scroll above.
-  const handleResultImageLoad = useCallback(() => {
-    scrollElementIntoSmartView(cardRef.current);
-  }, []);
-
   // Confetti celebration trigger for winning wallets
   const triggerConfettiCelebration = useCallback(() => {
     const prefersReducedMotion =
@@ -101,38 +75,27 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
         colors: CONFETTI_COLORS,
         zIndex: 9999
       });
-    }, 250);
+    }, 200);
   }, []);
 
-  // Schedules work for just after the browser has painted the current
-  // step's content, so measurements (and the resulting scroll target)
-  // reflect real, laid-out geometry instead of a guessed delay.
-  const runAfterPaint = useCallback((fn: () => void) => {
-    requestAnimationFrame(() => requestAnimationFrame(fn));
-  }, []);
-
-  // Trigger opening checker when hero CTA or navbar is clicked. The caller
-  // (App.tsx) already scrolls to this exact card via scrollToId('apply')
-  // when it bumps checkerTrigger, so this only needs to handle focus —
-  // scrolling again here would just be a second animation to the same spot.
+  // Trigger opening checker when hero CTA or navbar is clicked.
   useEffect(() => {
     if (checkerTrigger > 0) {
       setErrorMessage('');
       setStep('wallet_input');
-      runAfterPaint(() => {
+      setTimeout(() => {
         walletInputRef.current?.focus();
-      });
+      }, 50);
     }
-  }, [checkerTrigger, runAfterPaint]);
+  }, [checkerTrigger]);
 
   // Open Wallet Input
   const handleOpenWalletInput = () => {
     setStep('wallet_input');
     setErrorMessage('');
-    runAfterPaint(() => {
-      scrollElementIntoSmartView(cardRef.current);
+    setTimeout(() => {
       walletInputRef.current?.focus();
-    });
+    }, 50);
   };
 
   // Check Wallet Allocation against Google Sheet
@@ -204,14 +167,14 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
   const shareOnXUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
   return (
-    <section id="apply" className="min-h-[100svh] py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8] flex flex-col justify-center items-center">
+    <section id="apply" className="py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
       <motion.div
         ref={cardRef}
         data-scroll-anchor
         variants={staggerContainer(0.14)}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, margin: '0px 0px -35% 0px' }}
+        viewport={{ once: true, margin: '0px 0px -20% 0px' }}
         className="max-w-lg mx-auto w-full flex flex-col items-center text-center"
       >
         {/* Top Section Badge */}
@@ -389,7 +352,6 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
             {step === 'winner' && (
               <motion.div
                 key="step-winner"
-                ref={handleResultMount}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -397,12 +359,13 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                 className="flex flex-col items-center w-full"
               >
                 {/* Official YOU GOT IN Graphic */}
-                <div className="w-full max-w-xs sm:max-w-sm rounded-2xl overflow-hidden border-2 border-[#2F241D] shadow-md bg-white mb-5">
+                <div className="w-full max-w-xs sm:max-w-sm aspect-[4/3] rounded-2xl overflow-hidden border-2 border-[#2F241D] shadow-md bg-white mb-5 flex items-center justify-center">
                   <img
                     src={GRAPHIC_WINNER_URL}
                     alt="Official Wardlings Allocation"
-                    className="w-full h-auto object-contain block"
-                    onLoad={handleResultImageLoad}
+                    width="384"
+                    height="288"
+                    className="w-full h-full object-contain block"
                   />
                 </div>
 
@@ -460,7 +423,6 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
             {step === 'not_found' && (
               <motion.div
                 key="step-not-found"
-                ref={handleResultMount}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -468,12 +430,13 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                 className="flex flex-col items-center w-full"
               >
                 {/* Official NOT THIS TIME Graphic */}
-                <div className="w-full max-w-xs sm:max-w-sm rounded-2xl overflow-hidden border-2 border-[#2F241D] shadow-md bg-white mb-5">
+                <div className="w-full max-w-xs sm:max-w-sm aspect-[4/3] rounded-2xl overflow-hidden border-2 border-[#2F241D] shadow-md bg-white mb-5 flex items-center justify-center">
                   <img
                     src={GRAPHIC_NOT_FOUND_URL}
                     alt="Wardlings Allocation Status"
-                    className="w-full h-auto object-contain block"
-                    onLoad={handleResultImageLoad}
+                    width="384"
+                    height="288"
+                    className="w-full h-full object-contain block"
                   />
                 </div>
 
