@@ -17,12 +17,7 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="home"
-      // Height is tuned per device bucket so the tall illustration never
-      // pushes content below the fold:
-      //  - Mobile (base/sm):  ~100-110svh (svh avoids the iOS URL-bar jump)
-      //  - Tablet (md):       ~70-80vh
-      //  - Desktop (lg+):     unchanged — min-h-[90vh], exactly as before
-      className="relative min-h-[100svh] max-h-[110svh] md:min-h-[75vh] md:max-h-none lg:min-h-[90vh] pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center overflow-hidden bg-[#FFFDF8]"
+      className="relative min-h-[100svh] pt-24 sm:pt-28 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
       {/* Background Artwork Layer (z-index: 0)
           bg-cover = object-fit:cover equivalent (crops, never stretches).

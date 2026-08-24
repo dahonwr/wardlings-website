@@ -32,7 +32,7 @@ const AboutSectionComponent: React.FC = () => {
   return (
     <section
       id="about"
-      className="py-[72px] md:py-[96px] lg:py-[120px] px-4 sm:px-6 lg:px-12 relative z-10 w-full overflow-hidden"
+      className="min-h-[100svh] py-16 md:py-20 px-4 sm:px-6 lg:px-12 relative z-10 w-full overflow-hidden flex flex-col justify-center items-center"
       style={{ backgroundColor: '#FFFFFF' }}
     >
       {/* Subtle organic decoration — small, restrained accents only.

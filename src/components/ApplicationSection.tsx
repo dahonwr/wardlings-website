@@ -204,7 +204,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
   const shareOnXUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
   return (
-    <section id="apply" className="py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
+    <section id="apply" className="min-h-[100svh] py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8] flex flex-col justify-center items-center">
       <motion.div
         ref={cardRef}
         data-scroll-anchor
@@ -212,7 +212,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '0px 0px -35% 0px' }}
-        className="max-w-lg mx-auto flex flex-col items-center text-center"
+        className="max-w-lg mx-auto w-full flex flex-col items-center text-center"
       >
         {/* Top Section Badge */}
         <motion.div
@@ -516,32 +516,6 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
               </motion.div>
             )}
           </AnimatePresence>
-        </motion.div>
-
-        {/* Follow Wardlings on X Section */}
-        <motion.div
-          variants={fadeUpPop}
-          transition={{ ...fadeUpPopTransition, delay: 0.2 }}
-          className="w-full mt-5 p-5 sm:p-6 rounded-3xl bg-white/60 border border-[#2F241D]/10 text-center"
-        >
-          <h3 className="font-dynapuff font-bold text-lg sm:text-xl text-[#2F241D]">
-            Follow Wardlings on X
-          </h3>
-          <p className="font-nunito font-semibold text-sm sm:text-base text-[#6A6158] mt-2 leading-relaxed">
-            Stay close to the Sanctuary. Follow @wardlingsnft on X for Keeper announcements, updates, and what's coming next.
-          </p>
-          <motion.a
-            href={settings?.twitter_follow || 'https://x.com/wardlingsnft'}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="mt-4 w-full sm:w-auto font-baloo font-bold text-base sm:text-lg px-6 py-3.5 rounded-full bg-white/90 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer inline-flex items-center justify-center gap-2 transition-all"
-          >
-            <XIcon className="w-4 h-4 text-[#34281F] shrink-0" />
-            <span>Follow @wardlingsnft</span>
-          </motion.a>
         </motion.div>
       </motion.div>
     </section>

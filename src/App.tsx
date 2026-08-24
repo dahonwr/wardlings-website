@@ -8,7 +8,7 @@ import { Footer } from './components/Footer';
 import { MagicalForestEffects } from './components/MagicalForestEffects';
 import { Settings } from './types';
 import { fetchSettings } from './lib/storage';
-import { scrollToId } from './lib/scroll';
+import { scrollToId, initFullPageSectionScroll } from './lib/scroll';
 import { useVisibilityRecovery } from './hooks/useVisibilityRecovery';
 
 export default function App() {
@@ -35,6 +35,12 @@ export default function App() {
     window.scrollTo(0, 0);
 
     loadSettings();
+
+    // Initialize unified section-based scrolling
+    const cleanupScroll = initFullPageSectionScroll();
+    return () => {
+      cleanupScroll();
+    };
   }, []);
 
   const loadSettings = async () => {

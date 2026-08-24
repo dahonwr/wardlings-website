@@ -36,12 +36,13 @@ const FooterComponent: React.FC<FooterProps> = ({
 
   return (
     <motion.footer
+      id="footer"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '0px 0px -20% 0px' }}
       transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
       style={{ backgroundColor: '#FFFDF8' }}
-      className="py-[64px] md:py-[88px] lg:py-[104px] px-6 relative z-10 text-center"
+      className="min-h-[100svh] py-16 md:py-24 px-6 relative z-10 text-center flex flex-col justify-center items-center"
     >
       <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center space-y-7">
         
