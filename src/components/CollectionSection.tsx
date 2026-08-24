@@ -1,6 +1,4 @@
 import React from 'react';
-import { motion } from 'motion/react';
-import { fadeUpPop, fadeUpPopTransition, popInPlayfulTransition, staggerContainer } from '../lib/motion';
 
 const AVATAR1_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.jpg';
 const AVATAR2_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.jpg';
@@ -47,45 +45,26 @@ const galleryItems = [...baseCards, ...baseCards, ...baseCards, ...baseCards];
 const CollectionSectionComponent: React.FC = () => {
   return (
     <section id="collection" className="py-14 sm:py-18 md:py-24 relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
-      {/* Header. data-scroll-anchor: lands the "Collection" nav click
-          right on this heading instead of on the section's top padding. */}
-      <motion.div
+      {/* Header (max 2 reveal elements) */}
+      <div
         data-scroll-anchor
-        variants={staggerContainer(0.15)}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '0px 0px -20% 0px' }}
         className="text-center max-w-xl mx-auto mb-8 sm:mb-10 md:mb-12 px-4 sm:px-6"
       >
-        <motion.h2
-          variants={fadeUpPop}
-          transition={fadeUpPopTransition}
-          className="font-dynapuff font-bold text-[34px] md:text-[44px] lg:text-[56px] text-[#2F241D] tracking-tight leading-[1.15]"
-        >
+        <h2 className="reveal-on-scroll font-dynapuff font-bold text-[34px] md:text-[44px] lg:text-[56px] text-[#2F241D] tracking-tight leading-[1.15]">
           Gallery
-        </motion.h2>
-        <motion.p
-          variants={fadeUpPop}
-          transition={fadeUpPopTransition}
-          className="font-nunito font-semibold text-[16px] md:text-[17px] lg:text-[18px] text-[#6A6158] mt-2 sm:mt-3"
-        >
+        </h2>
+        <p className="reveal-on-scroll reveal-delay-1 font-nunito font-semibold text-[16px] md:text-[17px] lg:text-[18px] text-[#6A6158] mt-2 sm:mt-3">
           Discover handcrafted Wardlings from across the Sanctuary.
-        </motion.p>
-      </motion.div>
+        </p>
+      </div>
 
-      {/* Infinite Horizontal Carousel Track (Right to Left). */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-20px' }}
-        transition={{ ...fadeUpPopTransition, delay: 0.1 }}
-        className="marquee-track w-full overflow-hidden"
-      >
+      {/* Infinite Horizontal Carousel Track (Right to Left) */}
+      <div className="reveal-on-scroll reveal-delay-2 marquee-track w-full overflow-hidden">
         <div className="animate-marquee flex gap-6 w-max px-3">
           {galleryItems.map((card, idx) => (
             <div
               key={idx}
-              className="group w-64 sm:w-72 shrink-0 p-4 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D]/10 shadow-md hover:shadow-xl hover:-translate-y-2 flex flex-col items-center cursor-pointer transition-all duration-300 ease-out"
+              className="group w-64 sm:w-72 shrink-0 p-4 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D]/10 shadow-md hover:-translate-y-1.5 active:scale-[0.98] flex flex-col items-center cursor-pointer transition-transform duration-200 ease-out"
             >
               {/* Image Centered */}
               <div className="w-full aspect-square rounded-2xl bg-[#FFF8F0] overflow-hidden flex items-center justify-center p-3 mb-4 border border-[#2F241D]/5">
@@ -96,7 +75,7 @@ const CollectionSectionComponent: React.FC = () => {
                   height="240"
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+                  className="w-full h-full object-contain transition-transform duration-200 ease-out group-hover:scale-[1.02]"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = AVATAR1_URL;
                   }}
@@ -116,9 +95,10 @@ const CollectionSectionComponent: React.FC = () => {
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
 
 export const CollectionSection = React.memo(CollectionSectionComponent);
+

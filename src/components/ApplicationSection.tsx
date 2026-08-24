@@ -168,21 +168,13 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
 
   return (
     <section id="apply" className="py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
-      <motion.div
+      <div
         ref={cardRef}
         data-scroll-anchor
-        variants={staggerContainer(0.14)}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '0px 0px -20% 0px' }}
-        className="max-w-lg mx-auto w-full flex flex-col items-center text-center"
+        className="reveal-on-scroll max-w-lg mx-auto w-full flex flex-col items-center text-center"
       >
         {/* Top Section Badge */}
-        <motion.div
-          variants={badgePop}
-          transition={badgePopTransition}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F4EEE4] text-[#6A6158] font-patrick font-bold text-xs sm:text-sm tracking-wide border border-[#2F241D]/15 shadow-xs mb-4"
-        >
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F4EEE4] text-[#6A6158] font-patrick font-bold text-xs sm:text-sm tracking-wide border border-[#2F241D]/15 shadow-xs mb-4">
           {step === 'winner' ? (
             <>
               <Sparkles className="w-3.5 h-3.5 text-[#5C8E47]" />
@@ -204,23 +196,19 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
               <span>WHITELIST CLOSED</span>
             </>
           )}
-        </motion.div>
+        </div>
 
         {/* Main Interactive Card */}
-        <motion.div
-          variants={fadeUpPop}
-          transition={{ ...popInPlayfulTransition, delay: 0.1 }}
-          className="w-full p-6 sm:p-10 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D] shadow-md text-[#2F241D]"
-        >
+        <div className="w-full p-6 sm:p-10 rounded-3xl bg-[#FFFDF8] border-2 border-[#2F241D] shadow-md text-[#2F241D]">
           <AnimatePresence mode="wait">
             {/* STEP 0: IDLE SCREEN (CLOSED WHITELIST & FIND YOUR PLACE) */}
             {step === 'idle' && (
               <motion.div
                 key="step-idle"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 className="flex flex-col items-center"
               >
                 <h2 className="font-dynapuff font-bold text-2xl sm:text-3xl md:text-4xl tracking-tight leading-tight">
@@ -236,29 +224,22 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                 </p>
 
                 {errorMessage && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-5 w-full p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 font-nunito font-bold text-xs sm:text-sm flex items-center justify-center gap-2 text-center"
-                  >
+                  <div className="mt-5 w-full p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 font-nunito font-bold text-xs sm:text-sm flex items-center justify-center gap-2 text-center">
                     <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
                     <span>{errorMessage}</span>
-                  </motion.div>
+                  </div>
                 )}
 
                 {/* Main CTA: Find Your Place */}
                 <div className="mt-7 w-full flex flex-col items-center">
-                  <motion.button
+                  <button
                     onClick={handleOpenWalletInput}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
                     style={{ backgroundColor: '#5C8E47' }}
-                    className="w-full sm:w-auto font-dynapuff font-bold text-base sm:text-lg px-8 py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2.5 transition-all"
+                    className="w-full sm:w-auto font-dynapuff font-bold text-base sm:text-lg px-8 py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2.5 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98]"
                   >
                     <Sparkles className="w-5 h-5 text-yellow-200 fill-yellow-200 shrink-0" />
                     <span>Find Your Place</span>
-                  </motion.button>
+                  </button>
                 </div>
               </motion.div>
             )}
@@ -267,10 +248,10 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
             {step === 'wallet_input' && (
               <motion.div
                 key="step-wallet-input"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 className="flex flex-col items-center w-full"
               >
                 <h2 className="font-dynapuff font-bold text-2xl sm:text-3xl tracking-tight text-[#2F241D]">
@@ -303,14 +284,10 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                   </div>
 
                   {errorMessage && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 font-nunito font-bold text-xs sm:text-sm flex items-center justify-center gap-2 text-center"
-                    >
+                    <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 font-nunito font-bold text-xs sm:text-sm flex items-center justify-center gap-2 text-center">
                       <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
                       <span>{errorMessage}</span>
-                    </motion.div>
+                    </div>
                   )}
 
                   <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
@@ -323,13 +300,11 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                       Back
                     </button>
 
-                    <motion.button
+                    <button
                       type="submit"
                       disabled={isLoading || !walletInput.trim()}
-                      whileHover={!isLoading && walletInput.trim() ? { scale: 1.02 } : {}}
-                      whileTap={!isLoading && walletInput.trim() ? { scale: 0.98 } : {}}
                       style={{ backgroundColor: '#5C8E47' }}
-                      className="w-full sm:flex-1 font-dynapuff font-bold text-base sm:text-lg py-3 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full sm:flex-1 font-dynapuff font-bold text-base sm:text-lg py-3 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
                       {isLoading ? (
                         <>
@@ -342,7 +317,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                           <span>Check Allocation</span>
                         </>
                       )}
-                    </motion.button>
+                    </button>
                   </div>
                 </form>
               </motion.div>
@@ -352,10 +327,10 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
             {step === 'winner' && (
               <motion.div
                 key="step-winner"
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 className="flex flex-col items-center w-full"
               >
                 {/* Official YOU GOT IN Graphic */}
@@ -395,18 +370,16 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
 
                 {/* Share on X Button */}
                 <div className="w-full space-y-3">
-                  <motion.a
+                  <a
                     href={shareOnXUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                     style={{ backgroundColor: '#2F241D' }}
-                    className="w-full font-dynapuff font-bold text-base py-3.5 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#1C1511] cursor-pointer inline-flex items-center justify-center gap-2.5 transition-all"
+                    className="w-full font-dynapuff font-bold text-base py-3.5 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#1C1511] cursor-pointer inline-flex items-center justify-center gap-2.5 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98]"
                   >
                     <XIcon className="w-4.5 h-4.5 text-white shrink-0" />
                     <span>Share Your Spot</span>
-                  </motion.a>
+                  </a>
 
                   <button
                     type="button"
@@ -423,10 +396,10 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
             {step === 'not_found' && (
               <motion.div
                 key="step-not-found"
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 className="flex flex-col items-center w-full"
               >
                 {/* Official NOT THIS TIME Graphic */}
@@ -455,18 +428,16 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                 </div>
 
                 <div className="w-full space-y-3">
-                  <motion.a
+                  <a
                     href="https://discord.com/invite/AXjAt95DK"
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                     style={{ backgroundColor: '#5C8E47' }}
-                    className="w-full font-dynapuff font-bold text-base py-3.5 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2.5 transition-all"
+                    className="w-full font-dynapuff font-bold text-base py-3.5 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2.5 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98]"
                   >
                     <DiscordIcon className="w-5 h-5 text-white shrink-0" />
                     <span>Join the Sanctuary</span>
-                  </motion.a>
+                  </a>
 
                   <button
                     type="button"
@@ -479,8 +450,8 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
               </motion.div>
             )}
           </AnimatePresence>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 };

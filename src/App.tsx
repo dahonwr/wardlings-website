@@ -10,9 +10,11 @@ import { Settings } from './types';
 import { fetchSettings } from './lib/storage';
 import { scrollToId } from './lib/scroll';
 import { useVisibilityRecovery } from './hooks/useVisibilityRecovery';
+import { useScrollReveal } from './hooks/useScrollReveal';
 
 export default function App() {
   useVisibilityRecovery();
+  useScrollReveal();
 
   const [settings, setSettings] = useState<Settings>({
     twitter_follow: 'https://x.com/WardlingsNFT',

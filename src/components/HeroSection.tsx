@@ -1,7 +1,5 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import { Sparkles, Compass } from 'lucide-react';
-import { fadeUpPop, fadeUpPopTransition, staggerContainer } from '../lib/motion';
 
 interface HeroSectionProps {
   onOpenApply: () => void;
@@ -19,40 +17,25 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
       id="home"
       className="relative min-h-[85vh] lg:min-h-[90vh] pt-28 sm:pt-32 md:pt-36 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
-      {/* Background Artwork Layer (z-index: 0)
-          bg-cover = object-fit:cover equivalent (crops, never stretches).
-          bg-position is the crop anchor per breakpoint (object-position
-          equivalent), tuned so the main Wardling stays in frame:
-            base (mobile portrait) -> center
-            sm   (mobile landscape) -> right-bottom
-            md   (tablet)          -> 85% center
-            lg+  (desktop)         -> right-bottom (unchanged) */}
+      {/* Background Artwork Layer (z-index: 0) */}
       <div
-        className="absolute inset-0 z-0 bg-no-repeat bg-cover bg-center sm:bg-right-bottom md:bg-[85%_center] lg:bg-right-bottom pointer-events-none"
+        className="absolute inset-0 z-0 bg-no-repeat bg-cover bg-center sm:bg-right-bottom md:bg-[85%_center] lg:bg-right-bottom pointer-events-none animate-hero-breathe"
         style={{
           backgroundImage: `url("${HERO_BACKGROUND_URL}")`
         }}
       />
 
-      {/* Semi-transparent White Gradient Overlay (z-index: 10) — lightened so
-          more of the illustration reads through; left edge stays solid
-          enough to keep the text legible. */}
+      {/* Semi-transparent White Gradient Overlay (z-index: 10) */}
       <div
         className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#FFFDF8]/70 via-[#FFFDF8]/30 sm:via-[#FFFDF8]/20 to-transparent"
       />
 
       {/* Hero Content (z-index: 20) */}
       <div className="max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-20">
-        {/* Content Column — badge/heading/tagline, paragraph, and buttons
-            cascade in one after another on load instead of arriving as one
-            flat block, for a cuter, more playful first impression. */}
-        <motion.div
-          variants={staggerContainer(0.14)}
-          initial="hidden"
-          animate="show"
-          className="lg:col-span-8 flex flex-col items-start text-left space-y-5 sm:space-y-6"
-        >
-          <motion.div variants={fadeUpPop} transition={fadeUpPopTransition} className="space-y-2">
+        {/* Content Column (max 3 reveal elements) */}
+        <div className="lg:col-span-8 flex flex-col items-start text-left space-y-5 sm:space-y-6">
+          {/* Reveal Element 1: Header */}
+          <div className="reveal-on-scroll space-y-2">
             <span className="font-patrick font-bold text-base sm:text-lg lg:text-xl text-[#2C241E] tracking-wide uppercase">
               Welcome to
             </span>
@@ -62,48 +45,33 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
             <h2 className="font-dynapuff font-bold text-xl sm:text-2xl md:text-3xl text-[#241E1A] pt-1 sm:pt-2">
               Every forest has its keepers.
             </h2>
-          </motion.div>
+          </div>
 
-          <motion.p
-            variants={fadeUpPop}
-            transition={fadeUpPopTransition}
-            className="font-nunito font-bold text-[16px] md:text-[17px] lg:text-[18px] text-[#241E1B] max-w-lg leading-relaxed"
-          >
+          {/* Reveal Element 2: Paragraph (50-80ms delay) */}
+          <p className="reveal-on-scroll reveal-delay-1 font-nunito font-bold text-[16px] md:text-[17px] lg:text-[18px] text-[#241E1B] max-w-lg leading-relaxed">
             A peaceful sanctuary where tiny forest spirits gather. Collect, protect, and grow alongside your Wardlings as you explore a magical world filled with wonder.
-          </motion.p>
+          </p>
 
-          {/* Action Buttons */}
-          <motion.div
-            variants={fadeUpPop}
-            transition={fadeUpPopTransition}
-            className="w-full sm:w-auto flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 pt-2"
-          >
-            <motion.button
+          {/* Reveal Element 3: Action Buttons (additional delay) */}
+          <div className="reveal-on-scroll reveal-delay-2 w-full sm:w-auto flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 pt-2">
+            <button
               onClick={onOpenApply}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
               style={{ backgroundColor: '#5C8E47' }}
-              className="w-full max-w-[340px] sm:w-auto font-dynapuff font-bold text-base sm:text-lg px-7 py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer flex items-center justify-center gap-2 transition-all"
+              className="w-full max-w-[340px] sm:w-auto font-dynapuff font-bold text-base sm:text-lg px-7 py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98]"
             >
               <Sparkles className="w-5 h-5 text-yellow-200 fill-yellow-200 shrink-0" />
               <span>Find Your Place</span>
-            </motion.button>
+            </button>
 
-            <motion.button
+            <button
               onClick={onExploreClick}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="w-full max-w-[340px] sm:w-auto font-baloo font-bold text-base sm:text-lg px-6 py-3.5 rounded-full bg-white/90 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer flex items-center justify-center gap-2 transition-all"
+              className="w-full max-w-[340px] sm:w-auto font-baloo font-bold text-base sm:text-lg px-6 py-3.5 rounded-full bg-white/90 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98]"
             >
               <Compass className="w-5 h-5 text-[#4D7A39] shrink-0" />
               <span>Explore Collection</span>
-            </motion.button>
-          </motion.div>
-
-
-        </motion.div>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );

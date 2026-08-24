@@ -35,25 +35,15 @@ const FooterComponent: React.FC<FooterProps> = ({
   }, [activeModal]);
 
   return (
-    <motion.footer
+    <footer
       id="footer"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '0px 0px -20% 0px' }}
-      transition={{ duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }}
       style={{ backgroundColor: '#FFFDF8' }}
-      className="py-14 sm:py-18 md:py-20 px-6 relative z-10 text-center"
+      className="reveal-on-scroll py-14 sm:py-18 md:py-20 px-6 relative z-10 text-center"
     >
       <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center space-y-7">
         
         {/* Logo & Title */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7, y: 12 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px 0px -20% 0px' }}
-          transition={{ duration: 0.5, delay: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
-          className="flex flex-col items-center justify-center"
-        >
+        <div className="flex flex-col items-center justify-center">
           <img
             src={LOGO_URL}
             alt="Wardlings Logo"
@@ -69,7 +59,7 @@ const FooterComponent: React.FC<FooterProps> = ({
           <span className="font-dynapuff font-bold text-2xl sm:text-3xl text-[#3C2F28] mt-3 tracking-tight">
             Wardlings
           </span>
-        </motion.div>
+        </div>
 
         {/* Centered Navigation & Social Icons */}
         <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 font-baloo font-bold text-base sm:text-lg">
@@ -174,7 +164,7 @@ const FooterComponent: React.FC<FooterProps> = ({
           </div>
         </div>
       )}
-    </motion.footer>
+    </footer>
   );
 };
 

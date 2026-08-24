@@ -6,37 +6,32 @@
 
 import type { Variants, Transition } from 'motion/react';
 
-// Gentle back-ease with a little overshoot — settles past 100% then eases
-// back, which reads as a soft "pop" rather than a mechanical slide-in.
-export const POP_EASE: [number, number, number, number] = [0.34, 1.56, 0.64, 1];
+// Smooth cubic-bezier curve for fast, stable 60 FPS transitions without spring overshoot
+export const SMOOTH_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-// Text/content blocks: fades up with a light bounce. Subtle enough for
-// headings and paragraphs (no distracting overshoot on things people read).
+// Clean fade-up reveal (opacity + translateY only, no scale/rotation)
 export const fadeUpPop: Variants = {
-  hidden: { opacity: 0, y: 26 },
+  hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0 }
 };
 
 export const fadeUpPopTransition: Transition = {
   duration: 0.55,
-  ease: POP_EASE
+  ease: SMOOTH_EASE
 };
 
-// Artwork/illustrations/cards: a bouncier scale+rotate "pop-in" — this is
-// where the cute factor should read most, since it's the character art.
+// Clean pop for interactive cards/dialogs without heavy spring bounce
 export const popInPlayful: Variants = {
-  hidden: { opacity: 0, scale: 0.82, y: 30, rotate: -3 },
-  show: { opacity: 1, scale: 1, y: 0, rotate: 0 }
+  hidden: { opacity: 0, scale: 0.98, y: 12 },
+  show: { opacity: 1, scale: 1, y: 0 }
 };
 
 export const popInPlayfulTransition: Transition = {
-  duration: 0.7,
-  ease: POP_EASE
+  duration: 0.25,
+  ease: SMOOTH_EASE
 };
 
-// Wraps a set of children so they cascade in one after another instead of
-// all appearing at once — the "cute cascading reveal" feel.
-export const staggerContainer = (staggerDelay = 0.12): Variants => ({
+export const staggerContainer = (staggerDelay = 0.08): Variants => ({
   hidden: {},
   show: {
     transition: {
@@ -45,13 +40,14 @@ export const staggerContainer = (staggerDelay = 0.12): Variants => ({
   }
 });
 
-// Small badges/pills: quick, snappy pop — reads like a little jump.
+// Small badge reveal
 export const badgePop: Variants = {
-  hidden: { opacity: 0, scale: 0.6, y: 10 },
-  show: { opacity: 1, scale: 1, y: 0 }
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0 }
 };
 
 export const badgePopTransition: Transition = {
-  duration: 0.45,
-  ease: POP_EASE
+  duration: 0.4,
+  ease: SMOOTH_EASE
 };
+

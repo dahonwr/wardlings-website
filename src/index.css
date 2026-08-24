@@ -43,6 +43,20 @@ body::-webkit-scrollbar,
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-marquee,
+  .animate-breathe-float,
+  .animate-hero-breathe,
+  .animate-wardling-bob,
+  .animate-float-slow,
+  .animate-cloud-drift {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 @theme {
@@ -75,6 +89,32 @@ body::-webkit-scrollbar,
   }
 }
 
+/* ==================================================
+   LIGHTWEIGHT ONE-TIME SCROLL REVEAL SYSTEM
+   ================================================== */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+
+/* Stagger Delays (50-80ms intervals, max 3 reveal elements per section) */
+.reveal-delay-1 {
+  transition-delay: 60ms;
+}
+
+.reveal-delay-2 {
+  transition-delay: 120ms;
+}
+
 /* Custom hand-crafted styling classes */
 .cozy-card {
   background-color: #FFF9EF;
@@ -84,11 +124,13 @@ body::-webkit-scrollbar,
 }
 
 .cozy-card-hover {
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 200ms ease-out;
 }
 .cozy-card-hover:hover {
-  transform: translateY(-4px) rotate(-0.5deg);
-  box-shadow: 6px 10px 0px #2B2B2B;
+  transform: translateY(-6px);
+}
+.cozy-card-hover:active {
+  transform: scale(0.98);
 }
 
 .wood-sign {
@@ -113,20 +155,6 @@ body::-webkit-scrollbar,
   border-radius: 20px;
   box-shadow: 4px 6px 0px rgba(43,43,43,0.9);
 }
-
-/* NOTE — content-visibility: auto was tried here for scroll performance
-   (skip layout/paint for off-screen sections) but was reverted after it
-   turned out to cause exactly the opposite of the intended effect: when
-   the browser "un-skips" a large section right as it crosses into view,
-   it has to run a full synchronous layout pass for that entire subtree
-   in that one frame. On a page with a few sizeable sections (marquee
-   cards, the funnel/closed-state card, etc.) that lump cost was enough
-   to occasionally eat the exact frame a wheel/trackpad tick landed on —
-   reading as "the first scroll doesn't move the page, the second one
-   catches up". Native scrolling with no per-frame skip/unskip is worth
-   more than the paint-cost saving here. If revisiting this, tune
-   contain-intrinsic-size very close to each section's real height first
-   and test wheel input specifically at each section boundary. */
 
 /* Floating leaf & cloud animations */
 @keyframes floatSlow {
@@ -166,31 +194,31 @@ body::-webkit-scrollbar,
   animation: wobbleGently 0.4s ease-in-out infinite;
 }
 
-/* Very subtle illustration "breathing" float — ~3px, slow, transform-only
+/* Very subtle illustration "breathing" float — ~3px, slow 5s duration, transform-only
    (GPU-composited, no layout/paint cost). Used for hero/section artwork. */
 @keyframes breatheFloat {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-3px); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -3px, 0); }
 }
-.animate-breathe-float {
-  animation: breatheFloat 6s ease-in-out infinite;
+.animate-breathe-float,
+.animate-hero-breathe {
+  animation: breatheFloat 5s ease-in-out infinite;
 }
 
-/* Collection marquee: pure CSS transform animation so it runs entirely on
-   the compositor thread (no per-frame JS/React work), and pauses cleanly
-   on hover via animation-play-state rather than tearing down/rebuilding a
-   Framer Motion animation object. */
+/* Collection marquee: pure CSS transform animation running on the compositor
+   thread, pauses on hover, focus, or when tab is hidden. */
 @keyframes marqueeScroll {
-  from { transform: translateX(0%); }
-  to { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
 }
 .animate-marquee {
   animation: marqueeScroll 25s linear infinite;
   will-change: transform;
 }
 .marquee-track:hover .animate-marquee,
-.marquee-track:focus-within .animate-marquee {
-  animation-play-state: paused;
+.marquee-track:focus-within .animate-marquee,
+.tab-hidden .animate-marquee {
+  animation-play-state: paused !important;
 }
 
 /* Idle/looping decorative animations below are deliberately implemented in
