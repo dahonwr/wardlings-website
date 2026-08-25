@@ -62,6 +62,7 @@ const NavbarComponent: React.FC<NavbarProps> = ({
   return (
     <header className="fixed top-3 sm:top-5 left-0 right-0 z-40 px-3 sm:px-6 max-w-5xl mx-auto w-full">
       <motion.nav
+        data-nav-bar
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}

@@ -50,8 +50,11 @@ export default function App() {
   // don't see a new function identity — and therefore don't re-render —
   // on every App re-render.
   const handleOpenApply = useCallback(() => {
+    // Scrolling is intentionally left to ApplicationSection's own effect
+    // (keyed on checkerTrigger): it waits for the wallet-checker card to
+    // actually mount/settle before measuring, so the page lands on the
+    // final content instead of racing a second scroll against this one.
     setCheckerTrigger((prev) => prev + 1);
-    scrollToId('apply');
   }, []);
 
   const handleExploreClick = useCallback(() => {
