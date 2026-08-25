@@ -52,7 +52,11 @@ const NavbarComponent: React.FC<NavbarProps> = ({
 
   const scrollToSection = (id: string) => {
     setIsMobileMenuOpen(false);
-    scrollToId(id);
+    if (id === 'apply') {
+      onOpenApply();
+    } else {
+      scrollToId(id);
+    }
   };
 
   return (

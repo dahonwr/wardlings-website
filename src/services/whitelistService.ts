@@ -13,7 +13,9 @@ export const GOOGLE_SHEET_CSV_URL =
 
 export interface WinnerCheckResult {
   found: boolean;
+  allocations: string[];
   allocation?: string;
+  projects?: string[];
   project?: string;
   searchedAddress?: string;
 }
@@ -21,7 +23,7 @@ export interface WinnerCheckResult {
 export async function checkWinnerAllocation(walletAddress: string): Promise<WinnerCheckResult> {
   const cleanInput = walletAddress.trim().toLowerCase();
   if (!cleanInput) {
-    return { found: false, searchedAddress: walletAddress };
+    return { found: false, allocations: [], searchedAddress: walletAddress.trim() };
   }
 
   // Fetch with cache-busting timestamp to always retrieve latest sheet entries
@@ -40,10 +42,10 @@ export async function checkWinnerAllocation(walletAddress: string): Promise<Winn
   const csvText = await res.text();
   const lines = csvText.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
   if (lines.length === 0) {
-    return { found: false, searchedAddress: walletAddress };
+    return { found: false, allocations: [], searchedAddress: walletAddress.trim() };
   }
 
-  // Parse header to dynamically locate ADDRESS and WHITELIST columns
+  // Parse header to dynamically locate ADDRESS, WHITELIST, and PROJECT columns
   const headerParts = lines[0].split(',').map(h => h.trim().toUpperCase().replace(/^["']|["']$/g, ''));
   let addressIdx = headerParts.indexOf('ADDRESS');
   let whitelistIdx = headerParts.indexOf('WHITELIST');
@@ -53,33 +55,63 @@ export async function checkWinnerAllocation(walletAddress: string): Promise<Winn
   if (whitelistIdx === -1) whitelistIdx = 1;
   if (projectIdx === -1) projectIdx = 0;
 
+  const foundAllocations = new Set<'OG' | 'GTD' | 'FCFS'>();
+  const foundProjects = new Set<string>();
+
+  // Iterate over ALL rows to collect every matching allocation for this wallet
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
     const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
     if (cols.length <= addressIdx) continue;
 
-    const rowAddress = cols[addressIdx]?.toLowerCase();
+    const rowAddress = cols[addressIdx]?.toLowerCase().trim();
     if (rowAddress && rowAddress === cleanInput) {
-      let rawAlloc = (cols[whitelistIdx] || 'GTD').trim().toUpperCase();
-      let normalizedAlloc = 'GTD';
-      if (rawAlloc.includes('OG')) {
-        normalizedAlloc = 'OG';
-      } else if (rawAlloc.includes('FCFS')) {
-        normalizedAlloc = 'FCFS';
-      } else {
-        normalizedAlloc = 'GTD';
+      const rawAlloc = (cols[whitelistIdx] || '').trim().toUpperCase();
+
+      if (rawAlloc.includes('OG') || rawAlloc === 'WARDLINGS') {
+        foundAllocations.add('OG');
+      }
+      if (rawAlloc.includes('GTD') || rawAlloc.includes('GUARANTEED') || rawAlloc === 'KEEPERS') {
+        foundAllocations.add('GTD');
+      }
+      if (rawAlloc.includes('FCFS') || rawAlloc === 'CHOSEN') {
+        foundAllocations.add('FCFS');
       }
 
-      return {
-        found: true,
-        allocation: normalizedAlloc,
-        project: cols[projectIdx] || '',
-        searchedAddress: walletAddress.trim()
-      };
+      // Default fallback if a row was found with an unspecified allocation name
+      if (!rawAlloc.includes('OG') && !rawAlloc.includes('GTD') && !rawAlloc.includes('FCFS') && rawAlloc) {
+        foundAllocations.add('GTD');
+      }
+
+      if (cols[projectIdx]) {
+        foundProjects.add(cols[projectIdx]);
+      }
     }
   }
 
-  return { found: false, searchedAddress: walletAddress.trim() };
+  // Canonical ordering: OG, GTD, FCFS
+  const allocations: string[] = [];
+  if (foundAllocations.has('OG')) allocations.push('OG');
+  if (foundAllocations.has('GTD')) allocations.push('GTD');
+  if (foundAllocations.has('FCFS')) allocations.push('FCFS');
+
+  if (allocations.length > 0) {
+    const projectsArr = Array.from(foundProjects);
+    return {
+      found: true,
+      allocations,
+      allocation: allocations[0],
+      projects: projectsArr,
+      project: projectsArr[0] || '',
+      searchedAddress: walletAddress.trim()
+    };
+  }
+
+  return {
+    found: false,
+    allocations: [],
+    searchedAddress: walletAddress.trim()
+  };
 }
 
 // Helper to construct a WhitelistApplication with derived step and completion state

@@ -4,6 +4,7 @@ import { Search, Sparkles, RefreshCw, Lock, ArrowLeft, AlertCircle, CheckCircle2
 import confetti from 'canvas-confetti';
 import { Settings } from '../types';
 import { checkWinnerAllocation, WinnerCheckResult } from '../services/whitelistService';
+import { scrollToElement, scrollToId } from '../lib/scroll';
 import { fadeUpPop, fadeUpPopTransition, badgePop, badgePopTransition, popInPlayfulTransition, staggerContainer } from '../lib/motion';
 import { XIcon, DiscordIcon } from './SocialIcons';
 
@@ -84,6 +85,11 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
       setErrorMessage('');
       setStep('wallet_input');
       setTimeout(() => {
+        if (cardRef.current) {
+          scrollToElement(cardRef.current);
+        } else {
+          scrollToId('apply');
+        }
         walletInputRef.current?.focus();
       }, 50);
     }
@@ -94,6 +100,9 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setStep('wallet_input');
     setErrorMessage('');
     setTimeout(() => {
+      if (cardRef.current) {
+        scrollToElement(cardRef.current);
+      }
       walletInputRef.current?.focus();
     }, 50);
   };
@@ -119,12 +128,17 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
       setActiveWallet(cleanWallet);
       setAllocationResult(result);
 
-      if (result.found && result.allocation) {
+      if (result.found && ((result.allocations && result.allocations.length > 0) || result.allocation)) {
         setStep('winner');
         triggerConfettiCelebration();
       } else {
         setStep('not_found');
       }
+      setTimeout(() => {
+        if (cardRef.current) {
+          scrollToElement(cardRef.current);
+        }
+      }, 60);
     } catch (err) {
       console.error('Failed to verify allocation:', err);
       setErrorMessage('Could not check wallet allocation. Please try again.');
@@ -142,8 +156,11 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setAllocationResult(null);
     setIsLoading(false);
     setTimeout(() => {
+      if (cardRef.current) {
+        scrollToElement(cardRef.current);
+      }
       walletInputRef.current?.focus();
-    }, 100);
+    }, 50);
   };
 
   const handleBackToIdle = () => {
@@ -153,6 +170,11 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setErrorMessage('');
     setAllocationResult(null);
     setIsLoading(false);
+    setTimeout(() => {
+      if (cardRef.current) {
+        scrollToElement(cardRef.current);
+      }
+    }, 50);
   };
 
   const formatShortAddress = (addr?: string) => {
@@ -162,8 +184,11 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
   };
 
   // Build Share on X intent URL
-  const allocationName = allocationResult?.allocation || 'GTD';
-  const tweetText = `I found my place in the Wardlings Sanctuary 🌿\n\nI’m officially in with a ${allocationName} spot.\n\n@wardlingsnft\n#WardlingsNFT`;
+  const allocationsList = allocationResult?.allocations?.length
+    ? allocationResult.allocations
+    : [allocationResult?.allocation || 'GTD'];
+  const allocationText = allocationsList.map(a => `${a} Spot`).join(' & ');
+  const tweetText = `I found my place in the Wardlings Sanctuary 🌿\n\nI’m officially in with a ${allocationText}.\n\n@wardlingsnft\n#WardlingsNFT`;
   const shareOnXUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
   return (
@@ -290,21 +315,12 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                     </div>
                   )}
 
-                  <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={handleBackToIdle}
-                      disabled={isLoading}
-                      className="w-full sm:w-auto font-baloo font-bold text-sm sm:text-base px-5 py-3 rounded-full bg-white text-[#2F241D] border-2 border-[#2F241D] hover:bg-stone-100 transition-colors cursor-pointer disabled:opacity-50"
-                    >
-                      Back
-                    </button>
-
+                  <div className="pt-2 flex flex-col items-center gap-3 w-full">
                     <button
                       type="submit"
                       disabled={isLoading || !walletInput.trim()}
                       style={{ backgroundColor: '#5C8E47' }}
-                      className="w-full sm:flex-1 font-dynapuff font-bold text-base sm:text-lg py-3 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                      className="w-full font-dynapuff font-bold text-base sm:text-lg py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
                       {isLoading ? (
                         <>
@@ -317,6 +333,15 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                           <span>Check Allocation</span>
                         </>
                       )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleBackToIdle}
+                      disabled={isLoading}
+                      className="w-full font-baloo font-bold text-sm sm:text-base py-2.5 rounded-full bg-white text-[#2F241D] border-2 border-[#2F241D] hover:bg-stone-100 transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      Back
                     </button>
                   </div>
                 </form>
@@ -348,17 +373,36 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                 <div className="space-y-3 mb-6 w-full">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF7E8] text-[#3D6E29] border border-[#3D6E29]/20 font-patrick font-bold text-xs">
                     <Sparkles className="w-3.5 h-3.5 text-[#5C8E47]" />
-                    <span>ALLOCATION FOUND</span>
+                    <span>
+                      {allocationResult?.allocations && allocationResult.allocations.length > 1
+                        ? 'ALLOCATIONS FOUND'
+                        : 'ALLOCATION FOUND'}
+                    </span>
                   </div>
 
                   {/* Allocation Display */}
-                  <div className="p-4 rounded-2xl bg-[#EEF7E8] border-2 border-[#2F241D] shadow-xs">
+                  <div className="p-4 rounded-2xl bg-[#EEF7E8] border-2 border-[#2F241D] shadow-xs space-y-2">
                     <span className="block font-patrick font-bold text-xs text-[#6A6158] uppercase">
-                      Official Whitelist Spot
+                      {allocationResult?.allocations && allocationResult.allocations.length > 1
+                        ? 'Official Whitelist Spots'
+                        : 'Official Whitelist Spot'}
                     </span>
-                    <span className="font-dynapuff font-bold text-2xl sm:text-3xl text-[#3D6E29] tracking-wider">
-                      {allocationResult?.allocation || 'GTD'}
-                    </span>
+
+                    <div className="flex flex-col gap-2 w-full">
+                      {(allocationResult?.allocations && allocationResult.allocations.length > 0
+                        ? allocationResult.allocations
+                        : [allocationResult?.allocation || 'GTD']
+                      ).map((alloc) => (
+                        <div
+                          key={alloc}
+                          className="flex items-center justify-center px-4 py-2.5 rounded-xl bg-white/90 border border-[#2F241D]/15 text-[#2F241D]"
+                        >
+                          <span className="font-dynapuff font-bold text-xl sm:text-2xl text-[#3D6E29] tracking-wider">
+                            {alloc} Spot
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   {activeWallet && (
@@ -455,3 +499,4 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     </section>
   );
 };
+
