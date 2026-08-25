@@ -18,8 +18,13 @@ const FooterComponent: React.FC<FooterProps> = ({
   return (
     <footer
       id="footer"
-      style={{ backgroundColor: '#FFFDF8' }}
-      className="reveal-on-scroll py-12 sm:py-16 px-6 relative z-10 text-center"
+      style={{
+        backgroundColor: '#FFFDF8',
+        opacity: 1,
+        transform: 'none',
+        visibility: 'visible'
+      }}
+      className="py-12 sm:py-16 px-6 relative z-10 text-center"
     >
       <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center space-y-5">
         {/* Logo & Title */}
