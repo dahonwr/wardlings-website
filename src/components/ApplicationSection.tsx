@@ -233,7 +233,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                 )}
 
                 {/* Main CTA: Find Your Place */}
-                <div className="mt-7 w-full flex flex-col items-center">
+                <div className="mt-7 w-full flex justify-center">
                   <button
                     onClick={handleOpenWalletInput}
                     style={{ backgroundColor: '#5C8E47' }}

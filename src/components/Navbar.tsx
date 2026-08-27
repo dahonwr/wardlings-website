@@ -7,6 +7,7 @@ import { useActiveSection } from '../hooks/useActiveSection';
 
 interface NavbarProps {
   onOpenApply: () => void;
+  onNavigateToOgApply?: () => void;
   twitterUrl?: string;
 }
 
@@ -27,6 +28,7 @@ const DISCORD_INVITE_URL = 'https://discord.com/invite/AXjAt95DK';
 
 const NavbarComponent: React.FC<NavbarProps> = ({
   onOpenApply,
+  onNavigateToOgApply,
   twitterUrl = 'https://x.com/WardlingsNFT'
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -56,6 +58,13 @@ const NavbarComponent: React.FC<NavbarProps> = ({
       onOpenApply();
     } else {
       scrollToId(id);
+    }
+  };
+
+  const handleOgApplyClick = () => {
+    setIsMobileMenuOpen(false);
+    if (onNavigateToOgApply) {
+      onNavigateToOgApply();
     }
   };
 
@@ -113,6 +122,15 @@ const NavbarComponent: React.FC<NavbarProps> = ({
               )}
             </button>
           ))}
+          {onNavigateToOgApply && (
+            <button
+              onClick={handleOgApplyClick}
+              className="relative pb-1 text-[#4D7A39] hover:text-[#352C26] transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#5C8E47] animate-pulse" />
+              <span>OG Free Mint</span>
+            </button>
+          )}
         </div>
 
         {/* Right: Social Icons (Desktop/Tablet) + Hamburger (Mobile). */}
@@ -177,6 +195,15 @@ const NavbarComponent: React.FC<NavbarProps> = ({
                 )}
               </button>
             ))}
+            {onNavigateToOgApply && (
+              <button
+                onClick={handleOgApplyClick}
+                className="text-left py-2 border-b border-[#352C26]/10 flex items-center justify-between text-[#4D7A39]"
+              >
+                <span>OG Free Mint Application</span>
+                <span className="w-2 h-2 rounded-full bg-[#5C8E47] animate-pulse" />
+              </button>
+            )}
             <div className="py-2 border-b border-[#352C26]/10 flex items-center justify-between">
               <span className="text-sm">Follow Community</span>
               <div className="flex items-center gap-4 text-[#352C26]">
