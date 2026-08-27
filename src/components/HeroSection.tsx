@@ -6,7 +6,8 @@ interface HeroSectionProps {
   onExploreClick: () => void;
 }
 
-const HERO_BACKGROUND_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/IMG_20260824_220449.png';
+const HERO_BACKGROUND_URL = '/assets/hero-pc.jpg';
+const HERO_MOBILE_URL = '/assets/hero-mobile.jpg';
 
 const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   onOpenApply,
@@ -15,19 +16,20 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="home"
-      className="relative min-h-[85vh] lg:min-h-[90vh] pt-28 sm:pt-32 md:pt-36 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-12 flex flex-col justify-center items-center overflow-hidden bg-[#FFFDF8]"
+      className="relative min-h-0 lg:min-h-[90vh] pt-28 sm:pt-32 md:pt-36 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-12 flex flex-col justify-start lg:justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
-      {/* Background Artwork Layer (z-index: 0) */}
+      {/* Desktop/Tablet Background Artwork Layer (z-index: 0) — hidden below lg, where the
+          dedicated mobile hero image (below) is used instead */}
       <div
-        className="absolute inset-0 z-0 bg-no-repeat bg-cover bg-center sm:bg-right-bottom md:bg-[85%_center] lg:bg-right-bottom pointer-events-none animate-hero-breathe"
+        className="hidden lg:block absolute inset-0 z-0 bg-no-repeat bg-cover bg-right-bottom pointer-events-none animate-hero-breathe"
         style={{
           backgroundImage: `url("${HERO_BACKGROUND_URL}")`
         }}
       />
 
-      {/* Semi-transparent White Gradient Overlay (z-index: 10) */}
+      {/* Semi-transparent White Gradient Overlay (z-index: 10) — desktop/tablet only */}
       <div
-        className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#FFFDF8]/70 via-[#FFFDF8]/30 sm:via-[#FFFDF8]/20 to-transparent"
+        className="hidden lg:block absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#FFFDF8]/70 via-[#FFFDF8]/30 sm:via-[#FFFDF8]/20 to-transparent"
       />
 
       {/* Hero Content (z-index: 20) */}
@@ -72,6 +74,21 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Mobile/Tablet Hero Artwork — sits below the typography and CTAs in normal
+          document flow (not a background), shown only below the lg breakpoint where
+          the desktop background layer above is hidden. */}
+      <div className="lg:hidden relative z-20 w-full max-w-md sm:max-w-lg mx-auto mt-8 sm:mt-10">
+        <img
+          src={HERO_MOBILE_URL}
+          alt="Three Wardlings — a box-headed forest spirit, a hooded archer, and a robed keeper — standing before a glowing ruined gate"
+          className="w-full h-auto object-contain animate-hero-breathe"
+          style={{
+            maskImage: 'linear-gradient(to bottom, transparent, black 8%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 8%)'
+          }}
+        />
       </div>
     </section>
   );
