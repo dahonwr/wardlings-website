@@ -86,17 +86,9 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
       setStep('wallet_input');
       setTimeout(() => {
         if (cardRef.current) {
-          scrollToElement(cardRef.current, {
-            onComplete: () => {
-              walletInputRef.current?.focus({ preventScroll: true });
-            }
-          });
+          scrollToElement(cardRef.current);
         } else {
-          scrollToId('apply', {
-            onComplete: () => {
-              walletInputRef.current?.focus({ preventScroll: true });
-            }
-          });
+          scrollToId('apply');
         }
       }, 50);
     }
@@ -108,11 +100,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setErrorMessage('');
     setTimeout(() => {
       if (cardRef.current) {
-        scrollToElement(cardRef.current, {
-          onComplete: () => {
-            walletInputRef.current?.focus({ preventScroll: true });
-          }
-        });
+        scrollToElement(cardRef.current);
       }
     }, 50);
   };
@@ -167,11 +155,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setIsLoading(false);
     setTimeout(() => {
       if (cardRef.current) {
-        scrollToElement(cardRef.current, {
-          onComplete: () => {
-            walletInputRef.current?.focus({ preventScroll: true });
-          }
-        });
+        scrollToElement(cardRef.current);
       }
     }, 50);
   };

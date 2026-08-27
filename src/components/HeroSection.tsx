@@ -6,8 +6,8 @@ interface HeroSectionProps {
   onExploreClick: () => void;
 }
 
-const HERO_PC_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v1787812171/pc_view.png';
-const HERO_MOBILE_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v1787804241/mobile_view_1.png';
+const HERO_PC_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v1787814197/Pc.webp';
+const HERO_MOBILE_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v1787814197/Mobile.webp';
 
 const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   onOpenApply,
@@ -18,8 +18,7 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
       id="home"
       className="relative min-h-[100dvh] h-[100dvh] max-h-[100dvh] lg:h-screen lg:min-h-screen lg:max-h-[1050px] pt-18 sm:pt-22 md:pt-26 lg:pt-0 pb-2 sm:pb-4 lg:pb-0 px-4 sm:px-6 md:px-12 flex flex-col justify-start lg:justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
-      {/* Desktop Background Artwork Layer (z-index: 0) — shown on lg+ screens.
-          Fills the entire hero viewport edge-to-edge behind the navbar */}
+      {/* Desktop Background Artwork Layer (z-index: 0) — shown on lg+ screens */}
       <img
         src={HERO_PC_URL}
         alt="The Sanctuary — Wardlings in the magical forest"
@@ -44,13 +43,13 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
         className="block lg:hidden absolute inset-0 z-10 pointer-events-none"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(255,253,248,0.8) 0%, rgba(255,253,248,0.45) 30%, rgba(255,253,248,0.1) 48%, rgba(255,253,248,0) 65%)'
+            'linear-gradient(to bottom, rgba(255,253,248,0.82) 0%, rgba(255,253,248,0.48) 30%, rgba(255,253,248,0.1) 48%, rgba(255,253,248,0) 65%)'
         }}
       />
 
       {/* Hero Content (z-index: 20) */}
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-20">
-        {/* Content Column positioned cleanly in the left space, lifted slightly on PC */}
+        {/* Content Column positioned cleanly on the left, comfortably elevated in the sky space */}
         <div className="lg:col-span-6 xl:col-span-5 lg:pl-4 xl:pl-8 lg:-translate-y-8 xl:-translate-y-12 flex flex-col items-start text-left space-y-3 sm:space-y-5 lg:space-y-6">
           {/* Header */}
           <div className="space-y-1 sm:space-y-2">
