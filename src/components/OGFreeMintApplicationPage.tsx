@@ -380,11 +380,7 @@ export const OGFreeMintApplicationPage: React.FC<OGFreeMintApplicationPageProps>
                   {/* Wizard Card Header with Step Progress */}
                   <div className="border-b border-[#2F241D]/10 pb-3 mb-4 sm:pb-4 sm:mb-5 flex items-center justify-between">
                     <div>
-                      <div className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-patrick font-bold uppercase tracking-wider text-[#4D7A39]">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                        <span>Sanctuary Entry Flow</span>
-                      </div>
-                      <h2 className="font-dynapuff font-bold text-xl sm:text-2xl text-[#2F241D] mt-0.5 leading-tight">
+                      <h2 className="font-dynapuff font-bold text-xl sm:text-2xl text-[#2F241D] leading-tight">
                         OG Application
                       </h2>
                     </div>
