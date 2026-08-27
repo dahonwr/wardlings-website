@@ -76,7 +76,7 @@ export const OGFreeMintApplicationPage: React.FC<OGFreeMintApplicationPageProps>
     settings?.twitter_like ||
     settings?.twitter_repost ||
     settings?.twitter_comment ||
-    'https://x.com/wardlingsnft/status/2085351433776636116?s=20';
+    'https://x.com/wardlingsnft/status/2093096332936491146?s=20';
 
   const socialTasks: Record<
     'follow' | 'like' | 'repost' | 'comment_tag',

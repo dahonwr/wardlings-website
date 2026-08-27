@@ -23,9 +23,9 @@ export default function App() {
 
   const [settings, setSettings] = useState<Settings>({
     twitter_follow: 'https://x.com/WardlingsNFT',
-    twitter_like: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
-    twitter_repost: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
-    twitter_comment: 'https://x.com/wardlingsnft/status/2085351433776636116?s=20',
+    twitter_like: 'https://x.com/wardlingsnft/status/2093096332936491146?s=20',
+    twitter_repost: 'https://x.com/wardlingsnft/status/2093096332936491146?s=20',
+    twitter_comment: 'https://x.com/wardlingsnft/status/2093096332936491146?s=20',
     application_open: true,
     discord_link: 'https://discord.com/invite/AXjAt95DK',
     website_banner: ''
