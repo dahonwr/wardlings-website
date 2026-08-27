@@ -438,7 +438,6 @@ export const OGFreeMintApplicationPage: React.FC<OGFreeMintApplicationPageProps>
                           value={xUsername}
                           onChange={(e) => setXUsername(e.target.value)}
                           placeholder="@yourusername"
-                          autoFocus
                           autoComplete="off"
                           spellCheck={false}
                           className="w-full px-3.5 py-3 sm:px-4 sm:py-3.5 rounded-2xl border-2 border-[#2F241D]/20 focus:border-[#5C8E47] bg-[#FFFDF8] font-nunito font-bold text-base text-[#2F241D] placeholder:text-[#A89F95] focus:outline-none focus:ring-2 focus:ring-[#82C66A]/30 shadow-2xs transition-all"
@@ -581,7 +580,6 @@ export const OGFreeMintApplicationPage: React.FC<OGFreeMintApplicationPageProps>
                             value={walletAddress}
                             onChange={(e) => setWalletAddress(e.target.value)}
                             placeholder="Enter your wallet address (0x...)"
-                            autoFocus
                             disabled={isSubmitting}
                             autoComplete="off"
                             spellCheck={false}
