@@ -1,9 +1,9 @@
 import React from 'react';
 
-const AVATAR1_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.jpg';
-const AVATAR2_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.jpg';
-const AVATAR3_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Epic.jpg';
-const AVATAR4_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Legendary.jpg';
+const AVATAR1_URL = '/assets/Common.jpg';
+const AVATAR2_URL = '/assets/Uncommon.jpg';
+const AVATAR3_URL = '/assets/Epic.jpg';
+const AVATAR4_URL = '/assets/Legendary.jpg';
 
 interface RarityCard {
   rarity: 'Common' | 'Uncommon' | 'Epic' | 'Legendary';

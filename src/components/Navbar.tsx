@@ -83,7 +83,7 @@ const NavbarComponent: React.FC<NavbarProps> = ({
           className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer text-left shrink-0"
         >
           <img
-            src="https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Logo.png"
+            src="/assets/Logo.png"
             alt="Wardlings"
             width="32"
             height="32"

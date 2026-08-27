@@ -95,7 +95,7 @@ export const GallerySection: React.FC = () => {
                   className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
                   onError={(e) => {
                     // Fallback placeholder
-                    (e.target as HTMLImageElement).src = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.jpg';
+                    (e.target as HTMLImageElement).src = '/assets/Common.jpg';
                   }}
                 />
                 {/* Hover overlay button */}

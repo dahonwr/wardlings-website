@@ -10,9 +10,9 @@ import { XIcon, DiscordIcon } from './SocialIcons';
 
 // Authoritative Visual Assets
 const GRAPHIC_WINNER_URL =
-  'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Youreuin.png';
+  '/assets/Youreuin.png';
 const GRAPHIC_NOT_FOUND_URL =
-  'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Notthistime.png';
+  '/assets/Notthistime.png';
 
 // Brand confetti celebration colors
 const CONFETTI_COLORS = ['#82C66A', '#F7BFD5', '#FDE047', '#DFF4FF', '#2F241D'];

@@ -13,7 +13,7 @@ const DISCORD_INVITE_URL = 'https://discord.com/invite/AXjAt95DK';
 const FooterComponent: React.FC<FooterProps> = ({
   twitterUrl = 'https://x.com/WardlingsNFT'
 }) => {
-  const LOGO_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Logo.png';
+  const LOGO_URL = '/assets/Logo.png';
 
   return (
     <footer

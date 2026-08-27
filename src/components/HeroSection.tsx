@@ -19,17 +19,27 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
       className="relative min-h-0 lg:min-h-[90vh] pt-28 sm:pt-32 md:pt-36 pb-16 sm:pb-20 md:pb-24 px-4 sm:px-6 md:px-12 flex flex-col justify-start lg:justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
       {/* Desktop/Tablet Background Artwork Layer (z-index: 0) — hidden below lg, where the
-          dedicated mobile hero image (below) is used instead */}
-      <div
-        className="hidden lg:block absolute inset-0 z-0 bg-no-repeat bg-cover bg-right-bottom pointer-events-none animate-hero-breathe"
-        style={{
-          backgroundImage: `url("${HERO_BACKGROUND_URL}")`
-        }}
+          dedicated mobile hero image (below) is used instead.
+          Rendered as a plain <img> (not a bg-cover div) sized by WIDTH ONLY and anchored
+          bottom-right, so the whole illustration always stays intact and confined to the
+          right side of the section — it can never crop into the characters or drift left
+          into the text column the way bg-cover's height-based scaling could. The width
+          grows at wider breakpoints, where there's naturally more room before the text. */}
+      <img
+        src={HERO_BACKGROUND_URL}
+        alt="The Sanctuary — three Wardlings approaching a glowing ruined gate"
+        className="hidden lg:block absolute right-0 bottom-0 z-0 h-auto max-w-none w-[40%] xl:w-[52%] 2xl:w-[60%] pointer-events-none select-none animate-hero-breathe"
       />
 
-      {/* Semi-transparent White Gradient Overlay (z-index: 10) — desktop/tablet only */}
+      {/* Readability Gradient (z-index: 10) — desktop/tablet only. Solid cream behind the
+          text column, then a soft fade into the artwork; kept subtle (never a solid block)
+          so it reads as one continuous illustrated scene rather than a text card. */}
       <div
-        className="hidden lg:block absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#FFFDF8]/70 via-[#FFFDF8]/30 sm:via-[#FFFDF8]/20 to-transparent"
+        className="hidden lg:block absolute inset-0 z-10 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(to right, #FFFDF8 0%, #FFFDF8 34%, rgba(255,253,248,0.55) 45%, rgba(255,253,248,0) 58%)'
+        }}
       />
 
       {/* Hero Content (z-index: 20) */}
@@ -76,18 +86,15 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
         </div>
       </div>
 
-      {/* Mobile/Tablet Hero Artwork — sits below the typography and CTAs in normal
-          document flow (not a background), shown only below the lg breakpoint where
-          the desktop background layer above is hidden. */}
-      <div className="lg:hidden relative z-20 w-full max-w-md sm:max-w-lg mx-auto mt-8 sm:mt-10">
+      {/* Mobile/Tablet Hero Artwork — same hero section as the typography above, not a
+          separate block: bleeds edge-to-edge and sits close beneath the CTAs so the
+          whole thing reads as one continuous illustrated scene. Shown only below the
+          lg breakpoint where the desktop background layer above is hidden. */}
+      <div className="lg:hidden relative z-20 w-full -mx-4 sm:-mx-6 mt-4 sm:mt-5">
         <img
           src={HERO_MOBILE_URL}
           alt="Three Wardlings — a box-headed forest spirit, a hooded archer, and a robed keeper — standing before a glowing ruined gate"
-          className="w-full h-auto object-contain animate-hero-breathe"
-          style={{
-            maskImage: 'linear-gradient(to bottom, transparent, black 8%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 8%)'
-          }}
+          className="w-full h-auto block animate-hero-breathe"
         />
       </div>
     </section>

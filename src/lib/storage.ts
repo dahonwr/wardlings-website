@@ -24,28 +24,28 @@ const INITIAL_GALLERY: GalleryItem[] = [
     id: 'g-legendary',
     title: 'Sunburst Legendary',
     category: 'Legendary',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Legendary.jpg',
+    url: '/assets/Legendary.jpg',
     description: 'Spotted near the golden streams of the eastern clearing.'
   },
   {
     id: 'g-epic',
     title: 'Mossy Canopy Epic',
     category: 'Epic',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Epic.jpg',
+    url: '/assets/Epic.jpg',
     description: 'Wears a crown of luminescent mushrooms and ancient fern leaves.'
   },
   {
     id: 'g-uncommon',
     title: 'Pebble Wanderer',
     category: 'Uncommon',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Uncommon.jpg',
+    url: '/assets/Uncommon.jpg',
     description: 'Curious explorer with smooth river stone horns.'
   },
   {
     id: 'g-common',
     title: 'Sprout Scout',
     category: 'Common',
-    url: 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Common.jpg',
+    url: '/assets/Common.jpg',
     description: 'Friendly woodland resident tending to tiny acorn seedlings.'
   }
 ];

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 
-const WARDLINGS_LOGO_URL = 'https://osyvztzqmtimbefklcsn.supabase.co/storage/v1/object/public/assets/Logo.png';
+const WARDLINGS_LOGO_URL = '/assets/Logo.png';
 
 interface WardlingsProgressTrackerProps {
   currentStep: number; // 1, 2, 3, 4, 5
