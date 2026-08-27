@@ -21,7 +21,7 @@ export function useActiveSection(sectionIds: string[], defaultId: string): strin
           visibility.set(entry.target.id, entry.intersectionRatio);
         });
 
-        let bestId = activeId;
+        let bestId = '';
         let bestRatio = 0;
         visibility.forEach((ratio, id) => {
           if (ratio > bestRatio) {
@@ -30,7 +30,7 @@ export function useActiveSection(sectionIds: string[], defaultId: string): strin
           }
         });
 
-        if (bestRatio > 0) {
+        if (bestId && bestRatio > 0) {
           setActiveId((prev) => (prev !== bestId ? bestId : prev));
         }
       },

@@ -16,7 +16,7 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="home"
-      className="relative min-h-[100dvh] h-[100dvh] max-h-[100dvh] lg:h-screen lg:min-h-screen lg:max-h-[1050px] pt-18 sm:pt-22 md:pt-26 lg:pt-0 pb-2 sm:pb-4 lg:pb-0 px-4 sm:px-6 md:px-12 flex flex-col justify-start lg:justify-center items-center overflow-hidden bg-[#FFFDF8]"
+      className="relative min-h-[100svh] lg:min-h-screen lg:max-h-[1050px] pt-20 sm:pt-24 md:pt-28 lg:pt-0 pb-10 sm:pb-12 lg:pb-0 px-4 sm:px-6 md:px-12 flex flex-col justify-start lg:justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
       {/* Desktop Background Artwork Layer (z-index: 0) — shown on lg+ screens */}
       <img
