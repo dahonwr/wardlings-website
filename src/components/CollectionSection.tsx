@@ -46,10 +46,7 @@ const CollectionSectionComponent: React.FC = () => {
   return (
     <section id="collection" className="py-14 sm:py-18 md:py-24 relative z-10 w-full overflow-hidden select-none bg-[#FFFDF8]">
       {/* Header (max 2 reveal elements) */}
-      <div
-        data-scroll-anchor
-        className="text-center max-w-xl mx-auto mb-8 sm:mb-10 md:mb-12 px-4 sm:px-6"
-      >
+      <div className="text-center max-w-xl mx-auto mb-8 sm:mb-10 md:mb-12 px-4 sm:px-6">
         <h2 className="reveal-on-scroll font-dynapuff font-bold text-[34px] md:text-[44px] lg:text-[56px] text-[#2F241D] tracking-tight leading-[1.15]">
           Gallery
         </h2>

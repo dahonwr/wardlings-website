@@ -34,28 +34,19 @@ export function useScrollReveal(): void {
         });
       },
       {
-        rootMargin: '0px 0px -8% 0px',
-        threshold: 0.1
+        rootMargin: '50px 0px 50px 0px',
+        threshold: 0.01
       }
     );
 
-    const observeElements = () => {
-      const elements = document.querySelectorAll('.reveal-on-scroll:not(.is-revealed)');
-      elements.forEach((el) => observer.observe(el));
-    };
-
-    observeElements();
-
-    // Catch any dynamically mounted elements without overhead
-    const mutationObserver = new MutationObserver(() => {
-      observeElements();
+    const elements = document.querySelectorAll('.reveal-on-scroll');
+    elements.forEach((el) => {
+      // Mark as revealed immediately to guarantee zero blank states
+      el.classList.add('is-revealed');
     });
-
-    mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       observer.disconnect();
-      mutationObserver.disconnect();
     };
   }, []);
 }

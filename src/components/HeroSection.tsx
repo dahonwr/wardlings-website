@@ -25,7 +25,10 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
       <img
         src={HERO_BACKGROUND_URL}
         alt="The Sanctuary — three Wardlings approaching a glowing ruined gate"
-        className="hidden lg:block absolute inset-0 w-full h-full object-cover object-right z-0 pointer-events-none select-none animate-hero-breathe"
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        className="hidden lg:block absolute inset-0 w-full h-full object-cover object-right z-0 pointer-events-none select-none"
       />
 
       {/* Mobile/Tablet Background Artwork Layer (z-index: 0) — shown below lg.
@@ -33,7 +36,10 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
       <img
         src={HERO_MOBILE_URL}
         alt="The Sanctuary — three Wardlings approaching a glowing ruined gate"
-        className="block lg:hidden absolute inset-0 w-full h-full object-cover object-bottom z-0 pointer-events-none select-none animate-hero-breathe"
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        className="block lg:hidden absolute inset-0 w-full h-full object-cover object-bottom z-0 pointer-events-none select-none"
       />
 
       {/* Mobile Readability Gradient (z-index: 10) — soft blend ensuring typography clarity on mobile */}
@@ -47,10 +53,10 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
 
       {/* Hero Content (z-index: 20) */}
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-20 lg:pt-12">
-        {/* Content Column (max 3 reveal elements) positioned cleanly in the left negative space */}
+        {/* Content Column positioned cleanly in the left negative space */}
         <div className="lg:col-span-6 xl:col-span-5 lg:pl-4 xl:pl-8 flex flex-col items-start text-left space-y-3 sm:space-y-5 lg:space-y-6">
-          {/* Reveal Element 1: Header */}
-          <div className="reveal-on-scroll space-y-1 sm:space-y-2">
+          {/* Header */}
+          <div className="space-y-1 sm:space-y-2">
             <span className="font-patrick font-bold text-sm sm:text-base lg:text-xl text-[#2C241E] tracking-wide uppercase">
               Welcome to
             </span>
@@ -62,13 +68,13 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
             </h2>
           </div>
 
-          {/* Reveal Element 2: Paragraph (50-80ms delay) */}
-          <p className="reveal-on-scroll reveal-delay-1 font-nunito font-bold text-[14px] sm:text-[16px] md:text-[17px] lg:text-[18px] text-[#241E1B] max-w-sm sm:max-w-md lg:max-w-lg leading-snug sm:leading-relaxed">
+          {/* Paragraph */}
+          <p className="font-nunito font-bold text-[14px] sm:text-[16px] md:text-[17px] lg:text-[18px] text-[#241E1B] max-w-sm sm:max-w-md lg:max-w-lg leading-snug sm:leading-relaxed">
             A peaceful sanctuary where tiny forest spirits gather. Collect, protect, and grow alongside your Wardlings as you explore a magical world filled with wonder.
           </p>
 
-          {/* Reveal Element 3: Action Buttons (additional delay) */}
-          <div className="reveal-on-scroll reveal-delay-2 w-full sm:w-auto flex flex-row items-center justify-start gap-2.5 sm:gap-4 pt-1 sm:pt-2">
+          {/* Action Buttons */}
+          <div className="w-full sm:w-auto flex flex-row items-center justify-start gap-2.5 sm:gap-4 pt-1 sm:pt-2">
             <button
               onClick={onOpenApply}
               style={{ backgroundColor: '#5C8E47' }}

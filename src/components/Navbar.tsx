@@ -78,7 +78,7 @@ const NavbarComponent: React.FC<NavbarProps> = ({
         <button
           onClick={() => {
             setIsMobileMenuOpen(false);
-            scrollToY(0);
+            scrollToId('home');
           }}
           className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer text-left shrink-0"
         >

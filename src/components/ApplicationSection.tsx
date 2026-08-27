@@ -86,11 +86,18 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
       setStep('wallet_input');
       setTimeout(() => {
         if (cardRef.current) {
-          scrollToElement(cardRef.current);
+          scrollToElement(cardRef.current, {
+            onComplete: () => {
+              walletInputRef.current?.focus({ preventScroll: true });
+            }
+          });
         } else {
-          scrollToId('apply');
+          scrollToId('apply', {
+            onComplete: () => {
+              walletInputRef.current?.focus({ preventScroll: true });
+            }
+          });
         }
-        walletInputRef.current?.focus();
       }, 50);
     }
   }, [checkerTrigger]);
@@ -101,9 +108,12 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setErrorMessage('');
     setTimeout(() => {
       if (cardRef.current) {
-        scrollToElement(cardRef.current);
+        scrollToElement(cardRef.current, {
+          onComplete: () => {
+            walletInputRef.current?.focus({ preventScroll: true });
+          }
+        });
       }
-      walletInputRef.current?.focus();
     }, 50);
   };
 
@@ -138,7 +148,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
         if (cardRef.current) {
           scrollToElement(cardRef.current);
         }
-      }, 60);
+      }, 50);
     } catch (err) {
       console.error('Failed to verify allocation:', err);
       setErrorMessage('Could not check wallet allocation. Please try again.');
@@ -157,9 +167,12 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setIsLoading(false);
     setTimeout(() => {
       if (cardRef.current) {
-        scrollToElement(cardRef.current);
+        scrollToElement(cardRef.current, {
+          onComplete: () => {
+            walletInputRef.current?.focus({ preventScroll: true });
+          }
+        });
       }
-      walletInputRef.current?.focus();
     }, 50);
   };
 
@@ -365,6 +378,8 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                     alt="Official Wardlings Allocation"
                     width="384"
                     height="288"
+                    loading="eager"
+                    decoding="async"
                     className="w-full h-full object-contain block"
                   />
                 </div>
@@ -453,6 +468,8 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                     alt="Wardlings Allocation Status"
                     width="384"
                     height="288"
+                    loading="eager"
+                    decoding="async"
                     className="w-full h-full object-contain block"
                   />
                 </div>

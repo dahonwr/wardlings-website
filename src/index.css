@@ -93,20 +93,13 @@ body::-webkit-scrollbar,
    LIGHTWEIGHT ONE-TIME SCROLL REVEAL SYSTEM
    ================================================== */
 .reveal-on-scroll {
-  opacity: 0;
-  transform: translate3d(0, 18px, 0);
-  transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
-              transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
-}
-
-.reveal-on-scroll.is-revealed {
   opacity: 1;
   transform: translate3d(0, 0, 0);
-  will-change: auto;
+  transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Stagger Delays (50-80ms intervals, max 3 reveal elements per section) */
+/* Stagger Delays (50-80ms intervals) */
 .reveal-delay-1 {
   transition-delay: 60ms;
 }

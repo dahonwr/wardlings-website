@@ -31,14 +31,14 @@ export function useActiveSection(sectionIds: string[], defaultId: string): strin
         });
 
         if (bestRatio > 0) {
-          setActiveId(bestId);
+          setActiveId((prev) => (prev !== bestId ? bestId : prev));
         }
       },
       {
         // Treat the section as "active" once it occupies the vertical
         // center band of the viewport, accounting for the fixed navbar.
-        rootMargin: '-100px 0px -55% 0px',
-        threshold: [0, 0.25, 0.5, 0.75, 1]
+        rootMargin: '-100px 0px -50% 0px',
+        threshold: [0.1, 0.5]
       }
     );
 
