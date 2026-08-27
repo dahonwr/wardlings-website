@@ -84,13 +84,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     if (checkerTrigger > 0) {
       setErrorMessage('');
       setStep('wallet_input');
-      setTimeout(() => {
-        if (cardRef.current) {
-          scrollToElement(cardRef.current);
-        } else {
-          scrollToId('apply');
-        }
-      }, 50);
+      scrollToId('apply');
     }
   }, [checkerTrigger]);
 
@@ -98,11 +92,6 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
   const handleOpenWalletInput = () => {
     setStep('wallet_input');
     setErrorMessage('');
-    setTimeout(() => {
-      if (cardRef.current) {
-        scrollToElement(cardRef.current);
-      }
-    }, 50);
   };
 
   // Check Wallet Allocation against Google Sheet
@@ -132,11 +121,6 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
       } else {
         setStep('not_found');
       }
-      setTimeout(() => {
-        if (cardRef.current) {
-          scrollToElement(cardRef.current);
-        }
-      }, 50);
     } catch (err) {
       console.error('Failed to verify allocation:', err);
       setErrorMessage('Could not check wallet allocation. Please try again.');
@@ -153,11 +137,6 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setErrorMessage('');
     setAllocationResult(null);
     setIsLoading(false);
-    setTimeout(() => {
-      if (cardRef.current) {
-        scrollToElement(cardRef.current);
-      }
-    }, 50);
   };
 
   const handleBackToIdle = () => {
@@ -167,11 +146,6 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     setErrorMessage('');
     setAllocationResult(null);
     setIsLoading(false);
-    setTimeout(() => {
-      if (cardRef.current) {
-        scrollToElement(cardRef.current);
-      }
-    }, 50);
   };
 
   const formatShortAddress = (addr?: string) => {
