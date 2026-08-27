@@ -22,11 +22,23 @@ export function getHeaderHeight(): number {
   return typeof window !== 'undefined' && window.innerWidth < 768 ? 64 : 76;
 }
 
+let activeCancelListeners: (() => void) | null = null;
+
+function cleanupActiveListeners() {
+  if (activeCancelListeners) {
+    activeCancelListeners();
+    activeCancelListeners = null;
+  }
+}
+
 export function scrollToY(targetY: number, onComplete?: () => void): void {
   if (typeof window === 'undefined') {
     onComplete?.();
     return;
   }
+
+  // Clear any existing listeners from prior programmatic scroll
+  cleanupActiveListeners();
 
   const prefersReducedMotion =
     window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -39,14 +51,41 @@ export function scrollToY(targetY: number, onComplete?: () => void): void {
     return;
   }
 
+  let isCompleted = false;
+
+  // If user starts manual interaction (touch, wheel, pointer, key), immediately cancel
+  const handleUserInterrupt = () => {
+    if (isCompleted) return;
+    isCompleted = true;
+    cleanupActiveListeners();
+  };
+
+  const timer = setTimeout(() => {
+    if (!isCompleted) {
+      isCompleted = true;
+      cleanupActiveListeners();
+      onComplete?.();
+    }
+  }, 600);
+
+  const options: AddEventListenerOptions = { passive: true, capture: true };
+  window.addEventListener('touchstart', handleUserInterrupt, options);
+  window.addEventListener('wheel', handleUserInterrupt, options);
+  window.addEventListener('pointerdown', handleUserInterrupt, options);
+  window.addEventListener('keydown', handleUserInterrupt, options);
+
+  activeCancelListeners = () => {
+    clearTimeout(timer);
+    window.removeEventListener('touchstart', handleUserInterrupt, options);
+    window.removeEventListener('wheel', handleUserInterrupt, options);
+    window.removeEventListener('pointerdown', handleUserInterrupt, options);
+    window.removeEventListener('keydown', handleUserInterrupt, options);
+  };
+
   window.scrollTo({
     top: finalY,
     behavior: 'smooth'
   });
-
-  if (onComplete) {
-    setTimeout(onComplete, 600);
-  }
 }
 
 export function scrollToId(
@@ -95,6 +134,7 @@ export function scrollToElement(
 
   scrollToY(targetY, options?.onComplete);
 }
+
 
 
 

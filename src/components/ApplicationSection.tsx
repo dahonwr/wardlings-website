@@ -84,7 +84,13 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     if (checkerTrigger > 0) {
       setErrorMessage('');
       setStep('wallet_input');
-      scrollToId('apply');
+      requestAnimationFrame(() => {
+        if (cardRef.current) {
+          scrollToElement(cardRef.current);
+        } else {
+          scrollToId('apply');
+        }
+      });
     }
   }, [checkerTrigger]);
 
