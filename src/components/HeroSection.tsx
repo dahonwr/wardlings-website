@@ -6,7 +6,7 @@ interface HeroSectionProps {
   onExploreClick: () => void;
 }
 
-const HERO_BACKGROUND_URL = '/assets/hero-pc.jpg';
+const HERO_PC_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v1787812171/pc_view.png';
 const HERO_MOBILE_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v1787804241/mobile_view_1.png';
 
 const HeroSectionComponent: React.FC<HeroSectionProps> = ({
@@ -18,24 +18,21 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
       id="home"
       className="relative min-h-[100dvh] h-[100dvh] max-h-[100dvh] lg:h-screen lg:min-h-screen lg:max-h-[1050px] pt-18 sm:pt-22 md:pt-26 lg:pt-0 pb-2 sm:pb-4 lg:pb-0 px-4 sm:px-6 md:px-12 flex flex-col justify-start lg:justify-center items-center overflow-hidden bg-[#FFFDF8]"
     >
-      {/* Desktop Background Artwork Layer (z-index: 0) — hidden below lg.
-          Fills the entire hero viewport edge-to-edge and begins at the top
-          behind the floating navbar, with the Sanctuary environment and
-          Wardlings occupying the right side. */}
+      {/* Desktop Background Artwork Layer (z-index: 0) — shown on lg+ screens.
+          Fills the entire hero viewport edge-to-edge behind the navbar */}
       <img
-        src={HERO_BACKGROUND_URL}
-        alt="The Sanctuary — three Wardlings approaching a glowing ruined gate"
+        src={HERO_PC_URL}
+        alt="The Sanctuary — Wardlings in the magical forest"
         loading="eager"
         decoding="async"
         fetchPriority="high"
         className="hidden lg:block absolute inset-0 w-full h-full object-cover object-right z-0 pointer-events-none select-none"
       />
 
-      {/* Mobile/Tablet Background Artwork Layer (z-index: 0) — shown below lg.
-          Fills the entire mobile hero section container edge-to-edge from top to bottom. */}
+      {/* Mobile/Tablet Background Artwork Layer (z-index: 0) — shown below lg screens */}
       <img
         src={HERO_MOBILE_URL}
-        alt="The Sanctuary — three Wardlings approaching a glowing ruined gate"
+        alt="The Sanctuary — Wardlings in the magical forest"
         loading="eager"
         decoding="async"
         fetchPriority="high"
@@ -47,14 +44,14 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
         className="block lg:hidden absolute inset-0 z-10 pointer-events-none"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(255,253,248,0.75) 0%, rgba(255,253,248,0.4) 30%, rgba(255,253,248,0.08) 48%, rgba(255,253,248,0) 62%)'
+            'linear-gradient(to bottom, rgba(255,253,248,0.8) 0%, rgba(255,253,248,0.45) 30%, rgba(255,253,248,0.1) 48%, rgba(255,253,248,0) 65%)'
         }}
       />
 
       {/* Hero Content (z-index: 20) */}
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-20 lg:pt-12">
-        {/* Content Column positioned cleanly in the left negative space */}
-        <div className="lg:col-span-6 xl:col-span-5 lg:pl-4 xl:pl-8 flex flex-col items-start text-left space-y-3 sm:space-y-5 lg:space-y-6">
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-20">
+        {/* Content Column positioned cleanly in the left space, lifted slightly on PC */}
+        <div className="lg:col-span-6 xl:col-span-5 lg:pl-4 xl:pl-8 lg:-translate-y-8 xl:-translate-y-12 flex flex-col items-start text-left space-y-3 sm:space-y-5 lg:space-y-6">
           {/* Header */}
           <div className="space-y-1 sm:space-y-2">
             <span className="font-patrick font-bold text-sm sm:text-base lg:text-xl text-[#2C241E] tracking-wide uppercase">
@@ -98,6 +95,5 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   );
 };
 
-// Memoized: HeroSection's only props are two stable callback references
-// from App (wrapped in useCallback), so this only ever needs to render once.
 export const HeroSection = React.memo(HeroSectionComponent);
+
