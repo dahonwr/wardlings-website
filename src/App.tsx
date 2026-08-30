@@ -84,6 +84,13 @@ export default function App() {
     scrollToId('collection');
   }, []);
 
+  const handleOpenCheckerFromOgPage = useCallback(() => {
+    navigateTo('/');
+    setTimeout(() => {
+      handleOpenApply();
+    }, 60);
+  }, [navigateTo, handleOpenApply]);
+
   // Subtle page transition variants respecting reduced motion preferences
   const pageVariants = {
     initial: {
@@ -124,6 +131,7 @@ export default function App() {
         >
           <OGFreeMintApplicationPage
             onBackToHome={() => navigateTo('/')}
+            onOpenChecker={handleOpenCheckerFromOgPage}
             settings={settings}
           />
         </motion.div>
