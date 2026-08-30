@@ -6,7 +6,8 @@ import { scrollToId, scrollToY } from '../lib/scroll';
 import { useActiveSection } from '../hooks/useActiveSection';
 
 interface NavbarProps {
-  onOpenApply: () => void;
+  onOpenApply?: () => void;
+  onNavigateToWalletChecker?: () => void;
   onNavigateToOgApply?: () => void;
   twitterUrl?: string;
 }
@@ -18,7 +19,7 @@ const NAV_LINKS = [
   { id: 'apply', label: 'Find Your Place' }
 ];
 
-const SECTION_IDS = NAV_LINKS.map((link) => link.id);
+const SECTION_IDS = ['home', 'about', 'collection'];
 
 // Official Wardlings Discord invite. Hardcoded intentionally (not a prop,
 // not an env var, not settings-driven) so this exact URL is what every
@@ -28,6 +29,7 @@ const DISCORD_INVITE_URL = 'https://discord.com/invite/AXjAt95DK';
 
 const NavbarComponent: React.FC<NavbarProps> = ({
   onOpenApply,
+  onNavigateToWalletChecker,
   onNavigateToOgApply,
   twitterUrl = 'https://x.com/WardlingsNFT'
 }) => {
@@ -55,7 +57,11 @@ const NavbarComponent: React.FC<NavbarProps> = ({
   const scrollToSection = (id: string) => {
     setIsMobileMenuOpen(false);
     if (id === 'apply') {
-      onOpenApply();
+      if (onNavigateToWalletChecker) {
+        onNavigateToWalletChecker();
+      } else if (onOpenApply) {
+        onOpenApply();
+      }
     } else {
       scrollToId(id);
     }

@@ -5,7 +5,6 @@ import {
   Leaf,
   Sprout,
   Gift,
-  Star,
   ArrowLeft,
   CheckCircle2
 } from 'lucide-react';
@@ -18,7 +17,6 @@ interface OGFreeMintApplicationPageProps {
   settings?: Settings;
 }
 
-const AVATAR_ARTWORK = '/assets/Legendary.jpg';
 const LOGO_URL = '/assets/Logo.png';
 
 export const OGFreeMintApplicationPage: React.FC<OGFreeMintApplicationPageProps> = ({
@@ -85,44 +83,9 @@ export const OGFreeMintApplicationPage: React.FC<OGFreeMintApplicationPageProps>
       </header>
 
       {/* Main Dedicated Page Body — Centered single-column layout */}
-      <main className="flex-1 py-4 sm:py-8 px-3 sm:px-6 relative z-10 w-full flex flex-col justify-center items-center">
+      <main className="flex-1 py-6 sm:py-10 px-3 sm:px-6 relative z-10 w-full flex flex-col justify-center items-center">
         <div className="max-w-md sm:max-w-lg mx-auto w-full flex flex-col items-stretch">
-          {/* 1. TOP KEEPER ARTWORK & 2. OG FREE MINT PASS INTRO */}
-          <div className="p-3.5 sm:p-5 rounded-[22px] sm:rounded-[26px] bg-white border-2 border-[#2F241D]/10 shadow-2xs flex flex-col items-center text-center relative overflow-hidden mb-3.5 sm:mb-5">
-            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#EEF7E8] rounded-full blur-xl pointer-events-none" />
-
-            {/* Character Artwork */}
-            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#FFF8F0] border-2 border-[#2F241D]/10 p-1.5 shadow-inner mb-2 flex items-center justify-center overflow-hidden shrink-0">
-              <img
-                src={AVATAR_ARTWORK}
-                alt="Wardling Sanctuary Keeper"
-                width="80"
-                height="80"
-                loading="eager"
-                className="w-full h-full object-contain rounded-xl transition-transform duration-300 hover:scale-105"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/assets/Common.jpg';
-                }}
-              />
-              <div className="absolute bottom-1 right-1 bg-[#5C8E47] text-white p-0.5 rounded-full shadow-2xs">
-                <Star className="w-2.5 h-2.5 fill-white" />
-              </div>
-            </div>
-
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FEF3E2] text-[#DD6B20] border border-[#DD6B20]/20 font-patrick font-bold text-[10px] sm:text-xs uppercase mb-1">
-              <span>Sanctuary Keeper</span>
-            </div>
-
-            <h1 className="font-dynapuff font-bold text-lg sm:text-2xl text-[#2F241D] tracking-tight">
-              OG Free Mint Pass
-            </h1>
-
-            <p className="font-nunito font-semibold text-[11px] sm:text-xs md:text-sm text-[#6A6158] mt-0.5 max-w-sm leading-snug">
-              Early supporters who answer the Sanctuary call receive exclusive OG recognition and a guaranteed free mint allocation.
-            </p>
-          </div>
-
-          {/* 3. APPLICATION CLOSED CARD */}
+          {/* APPLICATION CLOSED CARD */}
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}

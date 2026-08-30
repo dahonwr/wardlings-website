@@ -2,9 +2,10 @@ import React from 'react';
 import { Sparkles, Compass } from 'lucide-react';
 
 interface HeroSectionProps {
-  onOpenApply: () => void;
+  onOpenApply?: () => void;
   onExploreClick: () => void;
   onNavigateToOgApply?: () => void;
+  onNavigateToWalletChecker?: () => void;
 }
 
 const HERO_PC_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v1787814197/Pc.webp';
@@ -13,8 +14,16 @@ const HERO_MOBILE_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v17878
 const HeroSectionComponent: React.FC<HeroSectionProps> = ({
   onOpenApply,
   onExploreClick,
-  onNavigateToOgApply
+  onNavigateToOgApply,
+  onNavigateToWalletChecker
 }) => {
+  const handleFindYourPlace = () => {
+    if (onNavigateToWalletChecker) {
+      onNavigateToWalletChecker();
+    } else if (onOpenApply) {
+      onOpenApply();
+    }
+  };
   return (
     <section
       id="home"
@@ -83,7 +92,7 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
             </button>
 
             <button
-              onClick={onOpenApply}
+              onClick={handleFindYourPlace}
               className="w-full xs:w-auto font-baloo font-bold text-sm sm:text-base lg:text-lg px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white/95 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] text-center"
             >
               <Sparkles className="w-4 h-4 sm:w-5 h-5 text-[#4D7A39] shrink-0" />

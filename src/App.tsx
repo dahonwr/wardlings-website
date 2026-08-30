@@ -4,8 +4,8 @@ import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { AboutSection } from './components/AboutSection';
 import { CollectionSection } from './components/CollectionSection';
-import { ApplicationSection } from './components/ApplicationSection';
 import { OGFreeMintApplicationPage } from './components/OGFreeMintApplicationPage';
+import { WalletCheckerPage } from './components/WalletCheckerPage';
 import { Footer } from './components/Footer';
 import { MagicalForestEffects } from './components/MagicalForestEffects';
 import { Settings } from './types';
@@ -31,8 +31,6 @@ export default function App() {
     website_banner: ''
   });
 
-  const [checkerTrigger, setCheckerTrigger] = useState(0);
-
   // Hook subscriptions for homepage scroll animations and visibility recovery
   useVisibilityRecovery();
   useScrollReveal();
@@ -52,9 +50,7 @@ export default function App() {
       window.history.scrollRestoration = 'manual';
     }
 
-    if (window.location.pathname.toLowerCase() !== '/applyogfreemint') {
-      window.scrollTo(0, 0);
-    }
+    window.scrollTo(0, 0);
 
     loadSettings();
 
@@ -76,20 +72,9 @@ export default function App() {
     }
   }, []);
 
-  const handleOpenApply = useCallback(() => {
-    setCheckerTrigger((prev) => prev + 1);
-  }, []);
-
   const handleExploreClick = useCallback(() => {
     scrollToId('collection');
   }, []);
-
-  const handleOpenCheckerFromOgPage = useCallback(() => {
-    navigateTo('/');
-    setTimeout(() => {
-      handleOpenApply();
-    }, 60);
-  }, [navigateTo, handleOpenApply]);
 
   // Subtle page transition variants respecting reduced motion preferences
   const pageVariants = {
@@ -131,7 +116,21 @@ export default function App() {
         >
           <OGFreeMintApplicationPage
             onBackToHome={() => navigateTo('/')}
-            onOpenChecker={handleOpenCheckerFromOgPage}
+            onOpenChecker={() => navigateTo('/walletchecker')}
+            settings={settings}
+          />
+        </motion.div>
+      ) : currentPath === '/walletchecker' ? (
+        <motion.div
+          key="wallet-checker-route"
+          variants={pageVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="w-full min-h-screen"
+        >
+          <WalletCheckerPage
+            onBackToHome={() => navigateTo('/')}
             settings={settings}
           />
         </motion.div>
@@ -151,7 +150,7 @@ export default function App() {
 
           {/* Header */}
           <Navbar
-            onOpenApply={handleOpenApply}
+            onNavigateToWalletChecker={() => navigateTo('/walletchecker')}
             onNavigateToOgApply={() => navigateTo('/applyogfreemint')}
             twitterUrl={settings.twitter_follow}
           />
@@ -160,7 +159,7 @@ export default function App() {
           <main className="relative z-10">
             {/* 1. Hero */}
             <HeroSection
-              onOpenApply={handleOpenApply}
+              onNavigateToWalletChecker={() => navigateTo('/walletchecker')}
               onExploreClick={handleExploreClick}
               onNavigateToOgApply={() => navigateTo('/applyogfreemint')}
             />
@@ -170,15 +169,9 @@ export default function App() {
 
             {/* 3. Gallery */}
             <CollectionSection />
-
-            {/* 4. Find Your Place (Winner Check) */}
-            <ApplicationSection
-              settings={settings}
-              checkerTrigger={checkerTrigger}
-            />
           </main>
 
-          {/* 5. Footer */}
+          {/* 4. Footer */}
           <Footer twitterUrl={settings.twitter_follow} />
         </motion.div>
       )}
