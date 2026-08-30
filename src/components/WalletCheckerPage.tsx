@@ -4,6 +4,7 @@ import { Search, Sparkles, RefreshCw, Lock, ArrowLeft, AlertCircle, Leaf, Sprout
 import confetti from 'canvas-confetti';
 import { Settings } from '../types';
 import { checkWinnerAllocation, WinnerCheckResult } from '../services/whitelistService';
+import { generateRandomShareOnXUrl } from '../utils/shareTemplates';
 import { XIcon, DiscordIcon } from './SocialIcons';
 
 // Authoritative Visual Assets
@@ -135,13 +136,18 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
-  // Build Share on X intent URL
+  // Generate initial Share on X URL from the 50 templates
   const allocationsList = allocationResult?.allocations?.length
     ? allocationResult.allocations
     : [allocationResult?.allocation || 'GTD'];
-  const allocationText = allocationsList.map((a) => `${a} Spot`).join(' & ');
-  const tweetText = `I found my place in the Wardlings Sanctuary 🌿\n\nI’m officially in with a ${allocationText}.\n\n@wardlingsnft\n#WardlingsNFT`;
-  const shareOnXUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+  const shareOnXUrl = generateRandomShareOnXUrl(allocationsList);
+
+  const handleShareOnXClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    // Select a fresh random template from the 50 templates upon each click
+    const freshUrl = generateRandomShareOnXUrl(allocationsList);
+    window.open(freshUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <div className="min-h-screen text-[#2F241D] relative font-nunito selection:bg-[#F7BFD5] selection:text-[#2F241D] flex flex-col justify-between overflow-x-hidden bg-[#FFFDF8]">
@@ -358,6 +364,7 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
                   <div className="w-full space-y-3">
                     <a
                       href={shareOnXUrl}
+                      onClick={handleShareOnXClick}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ backgroundColor: '#2F241D' }}

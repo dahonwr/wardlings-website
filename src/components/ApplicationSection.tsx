@@ -4,6 +4,7 @@ import { Search, Sparkles, RefreshCw, Lock, ArrowLeft, AlertCircle, CheckCircle2
 import confetti from 'canvas-confetti';
 import { Settings } from '../types';
 import { checkWinnerAllocation, WinnerCheckResult } from '../services/whitelistService';
+import { generateRandomShareOnXUrl } from '../utils/shareTemplates';
 import { scrollToElement, scrollToId } from '../lib/scroll';
 import { fadeUpPop, fadeUpPopTransition, badgePop, badgePopTransition, popInPlayfulTransition, staggerContainer } from '../lib/motion';
 import { XIcon, DiscordIcon } from './SocialIcons';
@@ -164,13 +165,18 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
-  // Build Share on X intent URL
+  // Generate initial Share on X URL from the 50 templates
   const allocationsList = allocationResult?.allocations?.length
     ? allocationResult.allocations
     : [allocationResult?.allocation || 'GTD'];
-  const allocationText = allocationsList.map(a => `${a} Spot`).join(' & ');
-  const tweetText = `I found my place in the Wardlings Sanctuary 🌿\n\nI’m officially in with a ${allocationText}.\n\n@wardlingsnft\n#WardlingsNFT`;
-  const shareOnXUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+  const shareOnXUrl = generateRandomShareOnXUrl(allocationsList);
+
+  const handleShareOnXClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    // Select a fresh random template from the 50 templates upon each click
+    const freshUrl = generateRandomShareOnXUrl(allocationsList);
+    window.open(freshUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <section id="apply" className="py-16 md:py-24 px-4 sm:px-6 relative z-10 w-full bg-[#FFFDF8]">
@@ -393,6 +399,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                 <div className="w-full space-y-3">
                   <a
                     href={shareOnXUrl}
+                    onClick={handleShareOnXClick}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ backgroundColor: '#2F241D' }}
