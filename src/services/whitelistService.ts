@@ -13,6 +13,7 @@ export const GOOGLE_SHEET_CSV_URL =
 
 export interface WinnerCheckResult {
   found: boolean;
+  wallet?: string;
   allocations: string[];
   allocation?: string;
   projects?: string[];
@@ -20,98 +21,134 @@ export interface WinnerCheckResult {
   searchedAddress?: string;
 }
 
+function parseCsvLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim().replace(/^["']|["']$/g, ''));
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim().replace(/^["']|["']$/g, ''));
+  return result;
+}
+
 export async function checkWinnerAllocation(walletAddress: string): Promise<WinnerCheckResult> {
   const cleanInput = walletAddress.trim().toLowerCase();
   if (!cleanInput) {
-    return { found: false, allocations: [], searchedAddress: walletAddress.trim() };
+    return { found: false, wallet: walletAddress.trim(), allocations: [], searchedAddress: walletAddress.trim() };
   }
 
-  // Fetch with cache-busting timestamp to always retrieve latest sheet entries
-  const url = `${GOOGLE_SHEET_CSV_URL}&_t=${Date.now()}`;
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: {
-      Accept: 'text/csv, text/plain, */*'
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error('Failed to retrieve spreadsheet data');
-  }
-
-  const csvText = await res.text();
-  const lines = csvText.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
-  if (lines.length === 0) {
-    return { found: false, allocations: [], searchedAddress: walletAddress.trim() };
-  }
-
-  // Parse header to dynamically locate ADDRESS, WHITELIST, and PROJECT columns
-  const headerParts = lines[0].split(',').map(h => h.trim().toUpperCase().replace(/^["']|["']$/g, ''));
-  let addressIdx = headerParts.indexOf('ADDRESS');
-  let whitelistIdx = headerParts.indexOf('WHITELIST');
-  let projectIdx = headerParts.indexOf('PROJECT');
-
-  if (addressIdx === -1) addressIdx = 2;
-  if (whitelistIdx === -1) whitelistIdx = 1;
-  if (projectIdx === -1) projectIdx = 0;
-
-  const foundAllocations = new Set<'OG' | 'GTD' | 'FCFS'>();
-  const foundProjects = new Set<string>();
-
-  // Iterate over ALL rows to collect every matching allocation for this wallet
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i];
-    const cols = line.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
-    if (cols.length <= addressIdx) continue;
-
-    const rowAddress = cols[addressIdx]?.toLowerCase().trim();
-    if (rowAddress && rowAddress === cleanInput) {
-      const rawAlloc = (cols[whitelistIdx] || '').trim().toUpperCase();
-
-      if (rawAlloc.includes('OG') || rawAlloc === 'WARDLINGS') {
-        foundAllocations.add('OG');
+  // 1. First attempt: Safe backend API endpoint
+  try {
+    const apiRes = await fetch(`/api/check-wallet?wallet=${encodeURIComponent(cleanInput)}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json'
       }
-      if (rawAlloc.includes('GTD') || rawAlloc.includes('GUARANTEED') || rawAlloc === 'KEEPERS') {
-        foundAllocations.add('GTD');
-      }
-      if (rawAlloc.includes('FCFS') || rawAlloc === 'CHOSEN') {
-        foundAllocations.add('FCFS');
-      }
+    });
 
-      // Default fallback if a row was found with an unspecified allocation name
-      if (!rawAlloc.includes('OG') && !rawAlloc.includes('GTD') && !rawAlloc.includes('FCFS') && rawAlloc) {
-        foundAllocations.add('GTD');
-      }
-
-      if (cols[projectIdx]) {
-        foundProjects.add(cols[projectIdx]);
+    if (apiRes.ok) {
+      const data = await apiRes.json();
+      if (data && typeof data.found === 'boolean') {
+        const allocations = Array.isArray(data.allocations) ? data.allocations : [];
+        return {
+          found: Boolean(data.found),
+          wallet: data.wallet || walletAddress.trim(),
+          allocations,
+          allocation: allocations[0] || undefined,
+          searchedAddress: walletAddress.trim()
+        };
       }
     }
+  } catch (apiErr) {
+    console.warn('Backend /api/check-wallet check failed, falling back to direct sheet check:', apiErr);
   }
 
-  // Canonical ordering: OG, GTD, FCFS
-  const allocations: string[] = [];
-  if (foundAllocations.has('OG')) allocations.push('OG');
-  if (foundAllocations.has('GTD')) allocations.push('GTD');
-  if (foundAllocations.has('FCFS')) allocations.push('FCFS');
+  // 2. Fallback: Direct Google Sheets export lookup with OG (Col A), GTD (Col B), FCFS (Col C) parsing
+  try {
+    const url = `${GOOGLE_SHEET_CSV_URL}&_t=${Date.now()}`;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'text/csv, text/plain, */*'
+      }
+    });
 
-  if (allocations.length > 0) {
-    const projectsArr = Array.from(foundProjects);
+    if (!res.ok) {
+      throw new Error('Unable to check allocation right now. Please try again.');
+    }
+
+    const csvText = await res.text();
+    const lines = csvText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) {
+      return { found: false, wallet: walletAddress.trim(), allocations: [], searchedAddress: walletAddress.trim() };
+    }
+
+    const headerParts = parseCsvLine(lines[0]).map((h) => h.toUpperCase().trim());
+    let ogIdx = headerParts.findIndex((h) => h.includes('OG'));
+    let gtdIdx = headerParts.findIndex((h) => h.includes('GTD') || h.includes('GUARANTEED'));
+    let fcfsIdx = headerParts.findIndex((h) => h.includes('FCFS'));
+
+    if (ogIdx === -1) ogIdx = 0; // Col A
+    if (gtdIdx === -1) gtdIdx = 1; // Col B
+    if (fcfsIdx === -1) fcfsIdx = 2; // Col C
+
+    const hasHeader = headerParts.some(
+      (h) => h.includes('OG') || h.includes('GTD') || h.includes('FCFS') || h.includes('ADDRESS')
+    );
+    const startIndex = hasHeader ? 1 : 0;
+
+    const foundAllocations = new Set<'OG' | 'GTD' | 'FCFS'>();
+
+    for (let i = startIndex; i < lines.length; i++) {
+      const cols = parseCsvLine(lines[i]);
+
+      if (ogIdx >= 0 && cols.length > ogIdx) {
+        const cell = cols[ogIdx]?.trim().toLowerCase();
+        if (cell && cell === cleanInput) {
+          foundAllocations.add('OG');
+        }
+      }
+
+      if (gtdIdx >= 0 && cols.length > gtdIdx) {
+        const cell = cols[gtdIdx]?.trim().toLowerCase();
+        if (cell && cell === cleanInput) {
+          foundAllocations.add('GTD');
+        }
+      }
+
+      if (fcfsIdx >= 0 && cols.length > fcfsIdx) {
+        const cell = cols[fcfsIdx]?.trim().toLowerCase();
+        if (cell && cell === cleanInput) {
+          foundAllocations.add('FCFS');
+        }
+      }
+    }
+
+    const allocations: ('OG' | 'GTD' | 'FCFS')[] = [];
+    if (foundAllocations.has('OG')) allocations.push('OG');
+    if (foundAllocations.has('GTD')) allocations.push('GTD');
+    if (foundAllocations.has('FCFS')) allocations.push('FCFS');
+
     return {
-      found: true,
+      found: allocations.length > 0,
+      wallet: walletAddress.trim(),
       allocations,
-      allocation: allocations[0],
-      projects: projectsArr,
-      project: projectsArr[0] || '',
+      allocation: allocations[0] || undefined,
       searchedAddress: walletAddress.trim()
     };
+  } catch (err: any) {
+    console.error('Google Sheet allocation check error:', err);
+    throw new Error('Unable to check allocation right now. Please try again.');
   }
-
-  return {
-    found: false,
-    allocations: [],
-    searchedAddress: walletAddress.trim()
-  };
 }
 
 // Helper to construct a WhitelistApplication with derived step and completion state

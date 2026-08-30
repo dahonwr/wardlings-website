@@ -113,7 +113,7 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     if (isLoading) return;
 
     setIsLoading(true);
-    setLoadingText('Searching allocation data...');
+    setLoadingText('Checking allocation...');
     setErrorMessage('');
 
     try {
@@ -127,9 +127,13 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
       } else {
         setStep('not_found');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to verify allocation:', err);
-      setErrorMessage('Could not check wallet allocation. Please try again.');
+      setErrorMessage(
+        err?.message && err.message.includes('Unable to check')
+          ? err.message
+          : 'Unable to check allocation right now. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -352,19 +356,13 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                 <div className="space-y-3 mb-6 w-full">
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF7E8] text-[#3D6E29] border border-[#3D6E29]/20 font-patrick font-bold text-xs">
                     <Sparkles className="w-3.5 h-3.5 text-[#5C8E47]" />
-                    <span>
-                      {allocationResult?.allocations && allocationResult.allocations.length > 1
-                        ? 'ALLOCATIONS FOUND'
-                        : 'ALLOCATION FOUND'}
-                    </span>
+                    <span>ALLOCATION FOUND</span>
                   </div>
 
                   {/* Allocation Display */}
                   <div className="p-4 rounded-2xl bg-[#EEF7E8] border-2 border-[#2F241D] shadow-xs space-y-2">
                     <span className="block font-patrick font-bold text-xs text-[#6A6158] uppercase">
-                      {allocationResult?.allocations && allocationResult.allocations.length > 1
-                        ? 'Official Whitelist Spots'
-                        : 'Official Whitelist Spot'}
+                      Official Whitelist Spots
                     </span>
 
                     <div className="flex flex-col gap-2 w-full">
