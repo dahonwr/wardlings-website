@@ -171,6 +171,14 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
     : [allocationResult?.allocation || 'GTD'];
   const shareOnXUrl = generateRandomShareOnXUrl(allocationsList);
 
+  // Handle Discord role claim redirect
+  const handleClaimDiscordRole = () => {
+    const targetWallet = activeWallet || allocationResult?.wallet || walletInput.trim();
+    if (!targetWallet) return;
+    const authUrl = `https://wardlings-og-api.xethrial.workers.dev/api/auth/discord?wallet=${encodeURIComponent(targetWallet)}`;
+    window.location.href = authUrl;
+  };
+
   const handleShareOnXClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     // Select a fresh random template from the 50 templates upon each click
@@ -395,8 +403,18 @@ export const ApplicationSection: React.FC<ApplicationSectionProps> = ({
                   )}
                 </div>
 
-                {/* Share on X Button */}
+                {/* Action Buttons: CLAIM DISCORD ROLE (Primary) + Share on X */}
                 <div className="w-full space-y-3">
+                  <button
+                    type="button"
+                    onClick={handleClaimDiscordRole}
+                    style={{ backgroundColor: '#5865F2' }}
+                    className="w-full font-dynapuff font-bold text-base py-3.5 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#4752C4] cursor-pointer inline-flex items-center justify-center gap-2.5 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98]"
+                  >
+                    <DiscordIcon className="w-5 h-5 text-white shrink-0" />
+                    <span>CLAIM DISCORD ROLE</span>
+                  </button>
+
                   <a
                     href={shareOnXUrl}
                     onClick={handleShareOnXClick}

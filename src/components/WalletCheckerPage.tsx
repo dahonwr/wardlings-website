@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 import { Settings } from '../types';
 import { checkWinnerAllocation, WinnerCheckResult } from '../services/whitelistService';
 import { generateRandomShareOnXUrl } from '../utils/shareTemplates';
+import { DiscordClaimModal } from './DiscordClaimModal';
 import { XIcon, DiscordIcon } from './SocialIcons';
 
 // Authoritative Visual Assets
@@ -37,8 +38,33 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
   const [loadingText, setLoadingText] = useState('Checking allocation...');
   const [errorMessage, setErrorMessage] = useState('');
   const [allocationResult, setAllocationResult] = useState<WinnerCheckResult | null>(null);
+  const [claimToken, setClaimToken] = useState<string | null>(null);
+  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
 
   const walletInputRef = useRef<HTMLInputElement>(null);
+
+  // Detect Discord OAuth callback (discord=ready and claim=...)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(
+        window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
+      );
+      const isDiscordReady = params.get('discord') === 'ready' || hashParams.get('discord') === 'ready';
+      const token = params.get('claim') || hashParams.get('claim');
+
+      if (isDiscordReady && token) {
+        setClaimToken(token);
+        setIsClaimModalOpen(true);
+        // Clean up query param from URL without reloading
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, '', cleanUrl);
+      }
+    } catch (e) {
+      console.warn('Failed to parse URL params:', e);
+    }
+  }, []);
 
   // Scroll to top immediately when mounted
   useEffect(() => {
@@ -141,6 +167,14 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
     ? allocationResult.allocations
     : [allocationResult?.allocation || 'GTD'];
   const shareOnXUrl = generateRandomShareOnXUrl(allocationsList);
+
+  // Handle Discord role claim redirect
+  const handleClaimDiscordRole = () => {
+    const targetWallet = activeWallet || allocationResult?.wallet || walletInput.trim();
+    if (!targetWallet) return;
+    const authUrl = `https://wardlings-og-api.xethrial.workers.dev/api/auth/discord?wallet=${encodeURIComponent(targetWallet)}`;
+    window.location.href = authUrl;
+  };
 
   const handleShareOnXClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -360,8 +394,18 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
                     )}
                   </div>
 
-                  {/* Share on X Button */}
+                  {/* Action Buttons: CLAIM DISCORD ROLE (Primary) + Share on X */}
                   <div className="w-full space-y-3">
+                    <button
+                      type="button"
+                      onClick={handleClaimDiscordRole}
+                      style={{ backgroundColor: '#5865F2' }}
+                      className="w-full font-dynapuff font-bold text-base py-3.5 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#4752C4] cursor-pointer inline-flex items-center justify-center gap-2.5 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98]"
+                    >
+                      <DiscordIcon className="w-5 h-5 text-white shrink-0" />
+                      <span>CLAIM DISCORD ROLE</span>
+                    </button>
+
                     <a
                       href={shareOnXUrl}
                       onClick={handleShareOnXClick}
@@ -448,6 +492,14 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
           </div>
         </div>
       </main>
+
+      {/* Discord Role Claim Modal */}
+      {isClaimModalOpen && claimToken && (
+        <DiscordClaimModal
+          claimToken={claimToken}
+          onClose={() => setIsClaimModalOpen(false)}
+        />
+      )}
 
       {/* Dedicated Page Footer */}
       <footer className="w-full border-t border-[#2F241D]/10 py-4 sm:py-5 px-4 text-center">

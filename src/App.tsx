@@ -13,11 +13,14 @@ import { fetchSettings } from './lib/storage';
 import { scrollToId } from './lib/scroll';
 import { useVisibilityRecovery } from './hooks/useVisibilityRecovery';
 import { useScrollReveal } from './hooks/useScrollReveal';
+import { DiscordClaimModal } from './components/DiscordClaimModal';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(() =>
     typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '/'
   );
+  const [claimToken, setClaimToken] = useState<string | null>(null);
+  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -51,6 +54,25 @@ export default function App() {
     }
 
     window.scrollTo(0, 0);
+
+    // Detect Discord OAuth callback (discord=ready and claim=...)
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(
+        window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
+      );
+      const isDiscordReady = params.get('discord') === 'ready' || hashParams.get('discord') === 'ready';
+      const token = params.get('claim') || hashParams.get('claim');
+
+      if (isDiscordReady && token) {
+        setClaimToken(token);
+        setIsClaimModalOpen(true);
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, '', cleanUrl);
+      }
+    } catch (e) {
+      console.warn('Failed to parse URL params in App:', e);
+    }
 
     loadSettings();
 
@@ -174,6 +196,14 @@ export default function App() {
           {/* 4. Footer */}
           <Footer twitterUrl={settings.twitter_follow} />
         </motion.div>
+      )}
+
+      {/* Global Discord Claim Modal */}
+      {isClaimModalOpen && claimToken && (
+        <DiscordClaimModal
+          claimToken={claimToken}
+          onClose={() => setIsClaimModalOpen(false)}
+        />
       )}
     </AnimatePresence>
   );
