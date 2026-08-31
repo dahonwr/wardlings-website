@@ -2,9 +2,7 @@ import React from 'react';
 import { Sparkles, Compass } from 'lucide-react';
 
 interface HeroSectionProps {
-  onOpenApply?: () => void;
-  onExploreClick: () => void;
-  onNavigateToOgApply?: () => void;
+  onExploreClick?: () => void;
   onNavigateToWalletChecker?: () => void;
 }
 
@@ -12,16 +10,11 @@ const HERO_PC_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v178781419
 const HERO_MOBILE_URL = 'https://res.cloudinary.com/lgrhe1nm/image/upload/v1787814197/Mobile.webp';
 
 const HeroSectionComponent: React.FC<HeroSectionProps> = ({
-  onOpenApply,
-  onExploreClick,
-  onNavigateToOgApply,
   onNavigateToWalletChecker
 }) => {
   const handleFindYourPlace = () => {
     if (onNavigateToWalletChecker) {
       onNavigateToWalletChecker();
-    } else if (onOpenApply) {
-      onOpenApply();
     }
   };
   return (
@@ -80,22 +73,14 @@ const HeroSectionComponent: React.FC<HeroSectionProps> = ({
             A peaceful sanctuary where tiny forest spirits gather. Collect, protect, and grow alongside your Wardlings as you explore a magical world filled with wonder.
           </p>
 
-          {/* Action Buttons: stack on small screens, flex-row on xs/sm+ */}
-          <div className="w-full sm:w-auto flex flex-col xs:flex-row items-stretch xs:items-center justify-start gap-2.5 sm:gap-3.5 pt-1.5 sm:pt-2">
-            <button
-              onClick={onNavigateToOgApply || onOpenApply}
-              style={{ backgroundColor: '#5C8E47' }}
-              className="w-full xs:w-auto font-dynapuff font-bold text-sm sm:text-base lg:text-lg px-5 sm:px-7 py-3 sm:py-3.5 rounded-full text-white shadow-md hover:bg-[#4F7A3D] cursor-pointer flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] text-center"
-            >
-              <Sparkles className="w-4 h-4 sm:w-5 h-5 text-yellow-200 fill-yellow-200 shrink-0" />
-              <span>Apply for OG Free Mint</span>
-            </button>
-
+          {/* Action Button: Find Your Place (Wallet Allocation Checker) */}
+          <div className="w-full sm:w-auto flex flex-col xs:flex-row items-stretch xs:items-center justify-start pt-1.5 sm:pt-2">
             <button
               onClick={handleFindYourPlace}
-              className="w-full xs:w-auto font-baloo font-bold text-sm sm:text-base lg:text-lg px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white/95 text-[#34281F] border border-[#34281F]/15 shadow-sm hover:bg-white cursor-pointer flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] text-center"
+              style={{ backgroundColor: '#5C8E47' }}
+              className="w-full xs:w-auto font-dynapuff font-bold text-sm sm:text-base lg:text-lg px-7 sm:px-9 py-3.5 sm:py-4 rounded-full text-white border-2 border-[#2F241D] shadow-[3px_4px_0px_#2F241D] hover:bg-[#4F7A3D] cursor-pointer flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] text-center"
             >
-              <Sparkles className="w-4 h-4 sm:w-5 h-5 text-[#4D7A39] shrink-0" />
+              <Sparkles className="w-4 h-4 sm:w-5 h-5 text-yellow-200 fill-yellow-200 shrink-0" />
               <span>Find Your Place</span>
             </button>
           </div>

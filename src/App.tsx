@@ -189,7 +189,6 @@ export default function App() {
             {/* Header */}
             <Navbar
               onNavigateToWalletChecker={() => navigateTo('/walletchecker')}
-              onNavigateToOgApply={() => navigateTo('/applyogfreemint')}
               twitterUrl={settings.twitter_follow}
             />
 
@@ -199,7 +198,6 @@ export default function App() {
               <HeroSection
                 onNavigateToWalletChecker={() => navigateTo('/walletchecker')}
                 onExploreClick={handleExploreClick}
-                onNavigateToOgApply={() => navigateTo('/applyogfreemint')}
               />
 
               {/* 2. Sanctuary */}
