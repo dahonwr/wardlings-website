@@ -33,7 +33,7 @@ export const DiscordClaimModal: React.FC<DiscordClaimModalProps> = ({
   const [assignedRoles, setAssignedRoles] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [hasClickedJoin, setHasClickedJoin] = useState(false);
-  const [isPolling, setIsPolling] = useState(true);
+  const [isPolling, setIsPolling] = useState(false);
 
   const isRequestInFlight = useRef(false);
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -104,7 +104,7 @@ export const DiscordClaimModal: React.FC<DiscordClaimModalProps> = ({
 
   // Check Discord Membership Status
   const checkStatus = useCallback(async () => {
-    if (!claimToken || !isMountedRef.current || isRequestInFlight.current || !isPolling) {
+    if (!claimToken || !isMountedRef.current || isRequestInFlight.current) {
       return;
     }
 
@@ -121,7 +121,7 @@ export const DiscordClaimModal: React.FC<DiscordClaimModalProps> = ({
 
       if (!isMountedRef.current) return;
 
-      if (data.joined === true) {
+      if (data.joined === true || (data.success === true && data.joined === true)) {
         // Stop polling and claim roles immediately
         setIsPolling(false);
         await performClaim(claimToken);
@@ -134,42 +134,37 @@ export const DiscordClaimModal: React.FC<DiscordClaimModalProps> = ({
         setIsPolling(false);
         setStage('expired');
         setErrorMessage('Your Discord session expired. Please verify Discord again.');
-      } else {
-        // joined === false -> keep waiting
       }
     } catch (err) {
-      console.warn('Membership polling tick failed:', err);
+      console.warn('Membership polling check failed:', err);
     } finally {
       isRequestInFlight.current = false;
     }
-  }, [claimToken, isPolling, performClaim]);
+  }, [claimToken, performClaim]);
 
-  // Setup 2-second polling interval
+  // Setup 2-second polling interval after user clicks Join
   useEffect(() => {
     isMountedRef.current = true;
 
-    // Run first check after a short moment
-    const initialTimer = setTimeout(() => {
+    if (isPolling) {
+      // Immediate first check
       checkStatus();
-    }, 500);
 
-    const interval = setInterval(() => {
-      if (isPolling) {
+      const interval = setInterval(() => {
         checkStatus();
-      }
-    }, 2000);
+      }, 2000);
 
-    pollTimerRef.current = interval;
+      pollTimerRef.current = interval;
 
-    return () => {
-      isMountedRef.current = false;
-      clearTimeout(initialTimer);
-      clearInterval(interval);
-    };
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, [checkStatus, isPolling]);
 
   const handleJoinClick = () => {
     setHasClickedJoin(true);
+    setIsPolling(true);
     window.open(DISCORD_INVITE_URL, '_blank', 'noopener,noreferrer');
   };
 
@@ -234,9 +229,9 @@ export const DiscordClaimModal: React.FC<DiscordClaimModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full font-baloo font-bold text-sm py-2.5 rounded-full bg-white text-[#6A6158] hover:text-[#2F241D] border border-[#2F241D]/20 hover:bg-stone-100 transition-colors cursor-pointer"
+                className="w-full font-baloo font-bold text-sm py-2.5 rounded-full bg-white text-[#6A6158] hover:text-[#2F241D] border border-[#2F241D]/20 hover:bg-stone-100 transition-colors cursor-pointer tracking-wider"
               >
-                Cancel
+                CANCEL
               </button>
             </div>
           </div>

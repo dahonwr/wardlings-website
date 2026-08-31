@@ -31,13 +31,54 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
   onBackToHome,
   settings
 }) => {
-  const [step, setStep] = useState<CheckerStep>('wallet_input');
-  const [walletInput, setWalletInput] = useState('');
-  const [activeWallet, setActiveWallet] = useState('');
+  // Initialize state with cached winner result if returning from OAuth
+  const [step, setStep] = useState<CheckerStep>(() => {
+    if (typeof window === 'undefined') return 'wallet_input';
+    try {
+      const saved = sessionStorage.getItem('wardlings_winner_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.allocationResult) return 'winner';
+      }
+    } catch {}
+    return 'wallet_input';
+  });
+  const [walletInput, setWalletInput] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    try {
+      const saved = sessionStorage.getItem('wardlings_winner_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed?.wallet || '';
+      }
+    } catch {}
+    return '';
+  });
+  const [activeWallet, setActiveWallet] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    try {
+      const saved = sessionStorage.getItem('wardlings_winner_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed?.wallet || '';
+      }
+    } catch {}
+    return '';
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('Checking allocation...');
   const [errorMessage, setErrorMessage] = useState('');
-  const [allocationResult, setAllocationResult] = useState<WinnerCheckResult | null>(null);
+  const [allocationResult, setAllocationResult] = useState<WinnerCheckResult | null>(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const saved = sessionStorage.getItem('wardlings_winner_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed?.allocationResult || null;
+      }
+    } catch {}
+    return null;
+  });
   const [claimToken, setClaimToken] = useState<string | null>(null);
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
 
@@ -130,9 +171,18 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
 
       if (result.found && ((result.allocations && result.allocations.length > 0) || result.allocation)) {
         setStep('winner');
+        try {
+          sessionStorage.setItem(
+            'wardlings_winner_state',
+            JSON.stringify({ wallet: cleanWallet, allocationResult: result })
+          );
+        } catch {}
         triggerConfettiCelebration();
       } else {
         setStep('not_found');
+        try {
+          sessionStorage.removeItem('wardlings_winner_state');
+        } catch {}
       }
     } catch (err: any) {
       console.error('Failed to verify allocation:', err);
@@ -154,6 +204,9 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
     setErrorMessage('');
     setAllocationResult(null);
     setIsLoading(false);
+    try {
+      sessionStorage.removeItem('wardlings_winner_state');
+    } catch {}
   };
 
   const formatShortAddress = (addr?: string) => {

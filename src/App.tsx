@@ -15,12 +15,30 @@ import { useVisibilityRecovery } from './hooks/useVisibilityRecovery';
 import { useScrollReveal } from './hooks/useScrollReveal';
 import { DiscordClaimModal } from './components/DiscordClaimModal';
 
+const getInitialDiscordClaim = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(
+      window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
+    );
+    const isDiscordReady = params.get('discord') === 'ready' || hashParams.get('discord') === 'ready';
+    const token = params.get('claim') || hashParams.get('claim');
+    if (isDiscordReady && token) {
+      return token.trim();
+    }
+  } catch (e) {
+    console.warn('Failed parsing query params:', e);
+  }
+  return null;
+};
+
 export default function App() {
   const [currentPath, setCurrentPath] = useState(() =>
     typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '/'
   );
-  const [claimToken, setClaimToken] = useState<string | null>(null);
-  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
+  const [claimToken, setClaimToken] = useState<string | null>(getInitialDiscordClaim);
+  const [isClaimModalOpen, setIsClaimModalOpen] = useState<boolean>(() => Boolean(getInitialDiscordClaim()));
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -126,77 +144,79 @@ export default function App() {
   };
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      {currentPath === '/applyogfreemint' ? (
-        <motion.div
-          key="og-free-mint-route"
-          variants={pageVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          className="w-full min-h-screen"
-        >
-          <OGFreeMintApplicationPage
-            onBackToHome={() => navigateTo('/')}
-            onOpenChecker={() => navigateTo('/walletchecker')}
-            settings={settings}
-          />
-        </motion.div>
-      ) : currentPath === '/walletchecker' ? (
-        <motion.div
-          key="wallet-checker-route"
-          variants={pageVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          className="w-full min-h-screen"
-        >
-          <WalletCheckerPage
-            onBackToHome={() => navigateTo('/')}
-            settings={settings}
-          />
-        </motion.div>
-      ) : (
-        <motion.div
-          key="homepage-route"
-          variants={pageVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          className="min-h-screen text-[#34281F] relative font-nunito selection:bg-[#F7BFD5] selection:text-[#34281F] overflow-x-hidden"
-          style={{
-            backgroundColor: '#FFFDF8',
-          }}
-        >
-          <MagicalForestEffects />
+    <>
+      <AnimatePresence mode="wait" initial={false}>
+        {currentPath === '/applyogfreemint' ? (
+          <motion.div
+            key="og-free-mint-route"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full min-h-screen"
+          >
+            <OGFreeMintApplicationPage
+              onBackToHome={() => navigateTo('/')}
+              onOpenChecker={() => navigateTo('/walletchecker')}
+              settings={settings}
+            />
+          </motion.div>
+        ) : currentPath === '/walletchecker' ? (
+          <motion.div
+            key="wallet-checker-route"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full min-h-screen"
+          >
+            <WalletCheckerPage
+              onBackToHome={() => navigateTo('/')}
+              settings={settings}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="homepage-route"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="min-h-screen text-[#34281F] relative font-nunito selection:bg-[#F7BFD5] selection:text-[#34281F] overflow-x-hidden"
+            style={{
+              backgroundColor: '#FFFDF8',
+            }}
+          >
+            <MagicalForestEffects />
 
-          {/* Header */}
-          <Navbar
-            onNavigateToWalletChecker={() => navigateTo('/walletchecker')}
-            onNavigateToOgApply={() => navigateTo('/applyogfreemint')}
-            twitterUrl={settings.twitter_follow}
-          />
-
-          {/* Main Single-Page Sections */}
-          <main className="relative z-10">
-            {/* 1. Hero */}
-            <HeroSection
+            {/* Header */}
+            <Navbar
               onNavigateToWalletChecker={() => navigateTo('/walletchecker')}
-              onExploreClick={handleExploreClick}
               onNavigateToOgApply={() => navigateTo('/applyogfreemint')}
+              twitterUrl={settings.twitter_follow}
             />
 
-            {/* 2. Sanctuary */}
-            <AboutSection />
+            {/* Main Single-Page Sections */}
+            <main className="relative z-10">
+              {/* 1. Hero */}
+              <HeroSection
+                onNavigateToWalletChecker={() => navigateTo('/walletchecker')}
+                onExploreClick={handleExploreClick}
+                onNavigateToOgApply={() => navigateTo('/applyogfreemint')}
+              />
 
-            {/* 3. Gallery */}
-            <CollectionSection />
-          </main>
+              {/* 2. Sanctuary */}
+              <AboutSection />
 
-          {/* 4. Footer */}
-          <Footer twitterUrl={settings.twitter_follow} />
-        </motion.div>
-      )}
+              {/* 3. Gallery */}
+              <CollectionSection />
+            </main>
+
+            {/* 4. Footer */}
+            <Footer twitterUrl={settings.twitter_follow} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Global Discord Claim Modal */}
       {isClaimModalOpen && claimToken && (
@@ -205,7 +225,7 @@ export default function App() {
           onClose={() => setIsClaimModalOpen(false)}
         />
       )}
-    </AnimatePresence>
+    </>
   );
 }
 
