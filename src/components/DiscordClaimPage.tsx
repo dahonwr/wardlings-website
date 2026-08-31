@@ -235,7 +235,7 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({
                 Your Discord account is connected.
               </p>
               <p className="font-nunito font-semibold text-xs sm:text-sm text-[#6A6158] mt-1 mb-6 max-w-xs leading-relaxed">
-                Join the Wardlings Discord to claim your allocation role.
+                Join the Wardlings Discord to claim your role.
               </p>
 
               {/* Waiting / Polling Status */}
@@ -265,7 +265,7 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({
                   onClick={onBackToHome}
                   className="w-full font-baloo font-bold text-sm py-2.5 rounded-full bg-white text-[#6A6158] hover:text-[#2F241D] border border-[#2F241D]/20 hover:bg-stone-100 transition-colors cursor-pointer tracking-wider uppercase"
                 >
-                  BACK
+                  BACK TO WARDLINGS
                 </button>
               </div>
             </div>
@@ -377,7 +377,7 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({
                 style={{ backgroundColor: '#5C8E47' }}
                 className="w-full font-dynapuff font-bold text-base py-3.5 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]"
               >
-                <span>Back to Wardlings</span>
+                <span>BACK TO WARDLINGS</span>
               </button>
             </div>
           )}
@@ -402,7 +402,7 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({
                 style={{ backgroundColor: '#5C8E47' }}
                 className="w-full font-dynapuff font-bold text-base py-3.5 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#4F7A3D] cursor-pointer inline-flex items-center justify-center gap-2 transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.98]"
               >
-                <span>Back to Wardlings</span>
+                <span>BACK TO WARDLINGS</span>
               </button>
             </div>
           )}

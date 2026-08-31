@@ -15,10 +15,31 @@ import { useVisibilityRecovery } from './hooks/useVisibilityRecovery';
 import { useScrollReveal } from './hooks/useScrollReveal';
 import { DiscordClaimPage } from './components/DiscordClaimPage';
 
+const getNormalizedPath = (): string => {
+  if (typeof window === 'undefined') return '/';
+  const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
+
+  if (pathname === '/discord-claim' || pathname.startsWith('/discord-claim')) {
+    return '/discord-claim';
+  }
+  if (pathname === '/applyogfreemint' || pathname.startsWith('/applyogfreemint')) {
+    return '/applyogfreemint';
+  }
+  if (pathname === '/walletchecker' || pathname.startsWith('/walletchecker')) {
+    return '/walletchecker';
+  }
+
+  // Hash-based route fallbacks if forwarded with hash
+  const hash = window.location.hash.toLowerCase();
+  if (hash.includes('discord-claim')) return '/discord-claim';
+  if (hash.includes('applyogfreemint')) return '/applyogfreemint';
+  if (hash.includes('walletchecker')) return '/walletchecker';
+
+  return pathname;
+};
+
 export default function App() {
-  const [currentPath, setCurrentPath] = useState(() =>
-    typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '/'
-  );
+  const [currentPath, setCurrentPath] = useState<string>(getNormalizedPath);
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -39,7 +60,7 @@ export default function App() {
   useEffect(() => {
     // Listen to browser Back/Forward history navigation
     const handlePopState = () => {
-      setCurrentPath(window.location.pathname.toLowerCase());
+      setCurrentPath(getNormalizedPath());
       window.scrollTo(0, 0);
     };
 
@@ -66,9 +87,10 @@ export default function App() {
   };
 
   const navigateTo = useCallback((path: string) => {
-    if (window.location.pathname.toLowerCase() !== path.toLowerCase()) {
+    const norm = path.toLowerCase().replace(/\/+$/, '') || '/';
+    if (getNormalizedPath() !== norm) {
       window.history.pushState({}, '', path);
-      setCurrentPath(path.toLowerCase());
+      setCurrentPath(norm);
       window.scrollTo(0, 0);
     }
   }, []);
