@@ -260,12 +260,7 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
         <div className="max-w-lg mx-auto w-full flex flex-col items-center text-center">
           {/* Top Section Badge */}
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F4EEE4] text-[#6A6158] font-patrick font-bold text-xs sm:text-sm tracking-wide border border-[#2F241D]/15 shadow-xs mb-4">
-            {step === 'winner' ? (
-              <>
-                <Sparkles className="w-3.5 h-3.5 text-[#5C8E47]" />
-                <span className="text-[#5C8E47]">ALLOCATION FOUND</span>
-              </>
-            ) : step === 'not_found' ? (
+            {step === 'not_found' ? (
               <>
                 <Lock className="w-3.5 h-3.5 text-[#6A6158]" />
                 <span>ALLOCATION STATUS</span>
@@ -385,11 +380,6 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
 
                   {/* Allocation Details */}
                   <div className="space-y-3 mb-6 w-full">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEF7E8] text-[#3D6E29] border border-[#3D6E29]/20 font-patrick font-bold text-xs">
-                      <Sparkles className="w-3.5 h-3.5 text-[#5C8E47]" />
-                      <span>ALLOCATION FOUND</span>
-                    </div>
-
                     {/* Allocation Display */}
                     <div className="p-4 rounded-2xl bg-[#EEF7E8] border-2 border-[#2F241D] shadow-xs space-y-2">
                       <span className="block font-patrick font-bold text-xs text-[#6A6158] uppercase">
