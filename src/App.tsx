@@ -13,32 +13,12 @@ import { fetchSettings } from './lib/storage';
 import { scrollToId } from './lib/scroll';
 import { useVisibilityRecovery } from './hooks/useVisibilityRecovery';
 import { useScrollReveal } from './hooks/useScrollReveal';
-import { DiscordClaimModal } from './components/DiscordClaimModal';
-
-const getInitialDiscordClaim = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(
-      window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
-    );
-    const isDiscordReady = params.get('discord') === 'ready' || hashParams.get('discord') === 'ready';
-    const token = params.get('claim') || hashParams.get('claim');
-    if (isDiscordReady && token) {
-      return token.trim();
-    }
-  } catch (e) {
-    console.warn('Failed parsing query params:', e);
-  }
-  return null;
-};
+import { DiscordClaimPage } from './components/DiscordClaimPage';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState(() =>
     typeof window !== 'undefined' ? window.location.pathname.toLowerCase() : '/'
   );
-  const [claimToken, setClaimToken] = useState<string | null>(getInitialDiscordClaim);
-  const [isClaimModalOpen, setIsClaimModalOpen] = useState<boolean>(() => Boolean(getInitialDiscordClaim()));
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -72,25 +52,6 @@ export default function App() {
     }
 
     window.scrollTo(0, 0);
-
-    // Detect Discord OAuth callback (discord=ready and claim=...)
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const hashParams = new URLSearchParams(
-        window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
-      );
-      const isDiscordReady = params.get('discord') === 'ready' || hashParams.get('discord') === 'ready';
-      const token = params.get('claim') || hashParams.get('claim');
-
-      if (isDiscordReady && token) {
-        setClaimToken(token);
-        setIsClaimModalOpen(true);
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState({}, '', cleanUrl);
-      }
-    } catch (e) {
-      console.warn('Failed to parse URL params in App:', e);
-    }
 
     loadSettings();
 
@@ -175,6 +136,20 @@ export default function App() {
               settings={settings}
             />
           </motion.div>
+        ) : currentPath === '/discord-claim' ? (
+          <motion.div
+            key="discord-claim-route"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="w-full min-h-screen"
+          >
+            <DiscordClaimPage
+              onBackToHome={() => navigateTo('/')}
+              settings={settings}
+            />
+          </motion.div>
         ) : (
           <motion.div
             key="homepage-route"
@@ -217,14 +192,6 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Global Discord Claim Modal */}
-      {isClaimModalOpen && claimToken && (
-        <DiscordClaimModal
-          claimToken={claimToken}
-          onClose={() => setIsClaimModalOpen(false)}
-        />
-      )}
     </>
   );
 }

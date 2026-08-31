@@ -5,7 +5,6 @@ import confetti from 'canvas-confetti';
 import { Settings } from '../types';
 import { checkWinnerAllocation, WinnerCheckResult } from '../services/whitelistService';
 import { generateRandomShareOnXUrl } from '../utils/shareTemplates';
-import { DiscordClaimModal } from './DiscordClaimModal';
 import { XIcon, DiscordIcon } from './SocialIcons';
 
 // Authoritative Visual Assets
@@ -79,33 +78,7 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
     } catch {}
     return null;
   });
-  const [claimToken, setClaimToken] = useState<string | null>(null);
-  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
-
   const walletInputRef = useRef<HTMLInputElement>(null);
-
-  // Detect Discord OAuth callback (discord=ready and claim=...)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const hashParams = new URLSearchParams(
-        window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
-      );
-      const isDiscordReady = params.get('discord') === 'ready' || hashParams.get('discord') === 'ready';
-      const token = params.get('claim') || hashParams.get('claim');
-
-      if (isDiscordReady && token) {
-        setClaimToken(token);
-        setIsClaimModalOpen(true);
-        // Clean up query param from URL without reloading
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState({}, '', cleanUrl);
-      }
-    } catch (e) {
-      console.warn('Failed to parse URL params:', e);
-    }
-  }, []);
 
   // Scroll to top immediately when mounted
   useEffect(() => {
@@ -545,14 +518,6 @@ export const WalletCheckerPage: React.FC<WalletCheckerPageProps> = ({
           </div>
         </div>
       </main>
-
-      {/* Discord Role Claim Modal */}
-      {isClaimModalOpen && claimToken && (
-        <DiscordClaimModal
-          claimToken={claimToken}
-          onClose={() => setIsClaimModalOpen(false)}
-        />
-      )}
 
       {/* Dedicated Page Footer */}
       <footer className="w-full border-t border-[#2F241D]/10 py-4 sm:py-5 px-4 text-center">
