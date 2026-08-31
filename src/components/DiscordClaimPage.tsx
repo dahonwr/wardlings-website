@@ -30,15 +30,15 @@ export const mapBackendRoleToDisplay = (role: string): string => {
 
 type ClaimStage =
   | 'no_token'      // No claim param provided
-  | 'ready_to_join' // Connected, displaying roles, prompt to Join
+  | 'ready_to_join' // Connected, prompt to Join Discord
   | 'waiting'       // User clicked Join, polling Discord membership
-  | 'claiming'      // Membership confirmed, auto-claiming roles
+  | 'claiming'      // Membership confirmed (joined === true), assigning role
   | 'success'       // Claimed successfully, show assigned roles
   | 'expired'       // Claim expired
   | 'error';        // General error
 
 export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome }) => {
-  const [claimToken, setClaimToken] = useState<string | null>(() => {
+  const [claimToken] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
     try {
       const params = new URLSearchParams(window.location.search);
@@ -88,67 +88,14 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
   // Clean up polling timer on unmount
   useEffect(() => {
     return () => {
+      isPollingRef.current = false;
       if (pollIntervalRef.current) {
         window.clearInterval(pollIntervalRef.current);
       }
     };
   }, []);
 
-  // Fetch initial membership & role status on mount if claim token exists
-  useEffect(() => {
-    if (!claimToken) return;
-
-    let isMounted = true;
-
-    const checkInitialStatus = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/discord/status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ claim: claimToken })
-        });
-
-        if (!res.ok) {
-          if (res.status === 401 || res.status === 403 || res.status === 410) {
-            if (isMounted) {
-              setStage('expired');
-              setErrorMessage('Your Discord session expired. Please verify Discord again.');
-            }
-          }
-          return;
-        }
-
-        const data = await res.json();
-        if (!isMounted) return;
-
-        // If the backend returns user's allocations or roles
-        if (Array.isArray(data.allocations) && data.allocations.length > 0) {
-          setRoles(data.allocations.map(mapBackendRoleToDisplay));
-        } else if (Array.isArray(data.roles) && data.roles.length > 0) {
-          setRoles(data.roles.map(mapBackendRoleToDisplay));
-        }
-
-        // If already joined and claimed
-        if (data.claimed && Array.isArray(data.assigned_roles)) {
-          setAssignedRoles(data.assigned_roles.map(mapBackendRoleToDisplay));
-          setStage('success');
-        } else if (data.joined) {
-          // If joined already, auto-claim
-          performClaim(claimToken);
-        }
-      } catch {
-        // Silent network failure on passive check
-      }
-    };
-
-    checkInitialStatus();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [claimToken]);
-
-  // Execute the Role Claim API
+  // Execute the Role Claim API - strictly ONLY called when joined === true
   const performClaim = useCallback(async (token: string) => {
     setStage('claiming');
     try {
@@ -183,7 +130,7 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
     }
   }, [roles]);
 
-  // Start polling status every 2 seconds without overlapping requests
+  // Start polling status every 2 seconds without overlapping requests (ONLY after Join button click)
   const startPolling = useCallback((token: string) => {
     if (pollIntervalRef.current) {
       window.clearInterval(pollIntervalRef.current);
@@ -216,6 +163,7 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
 
         const data = await res.json();
 
+        // Check if session expired
         if (data.error && (data.error.includes('expired') || data.error.includes('session'))) {
           isPollingRef.current = false;
           if (pollIntervalRef.current) window.clearInterval(pollIntervalRef.current);
@@ -224,8 +172,27 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
           return;
         }
 
-        if (data.success && data.joined) {
-          // User joined! Stop polling and claim role
+        // Check user allocation roles from status payload if provided
+        if (Array.isArray(data.allocations) && data.allocations.length > 0) {
+          setRoles(data.allocations.map(mapBackendRoleToDisplay));
+        } else if (Array.isArray(data.roles) && data.roles.length > 0) {
+          setRoles(data.roles.map(mapBackendRoleToDisplay));
+        }
+
+        // If already claimed before, show success immediately
+        if (data.claimed && Array.isArray(data.assigned_roles)) {
+          isPollingRef.current = false;
+          if (pollIntervalRef.current) {
+            window.clearInterval(pollIntervalRef.current);
+            pollIntervalRef.current = null;
+          }
+          setAssignedRoles(data.assigned_roles.map(mapBackendRoleToDisplay));
+          setStage('success');
+          return;
+        }
+
+        // CRITICAL: ONLY proceed to claim when joined === true
+        if (data.success && data.joined === true) {
           isPollingRef.current = false;
           if (pollIntervalRef.current) {
             window.clearInterval(pollIntervalRef.current);
@@ -234,7 +201,7 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
           await performClaim(token);
         }
       } catch {
-        // Continue polling on transient network hiccup
+        // Continue polling on transient network hiccups
       } finally {
         isRequestInFlightRef.current = false;
       }
@@ -347,17 +314,15 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
                   exit={{ opacity: 0, scale: 0.98 }}
                   className="flex flex-col items-center w-full"
                 >
-                  {/* Top Badge */}
-                  <div className="inline-flex items-center px-3.5 py-1 rounded-full bg-[#EEF7E8] text-[#3D6E29] border border-[#3D6E29]/20 font-patrick font-bold text-xs sm:text-sm tracking-wide mb-3">
-                    DISCORD CONNECTED
-                  </div>
-
                   {/* Title & Connection description */}
                   <h2 className="font-dynapuff font-bold text-2xl sm:text-3xl text-[#2F241D] tracking-tight">
-                    Discord Connected
+                    JOIN THE SANCTUARY
                   </h2>
-                  <p className="font-nunito font-semibold text-sm text-[#6A6158] mt-1.5 mb-5 leading-relaxed">
+                  <p className="font-nunito font-semibold text-sm sm:text-base text-[#6A6158] mt-2 mb-1">
                     Your Discord account is connected.
+                  </p>
+                  <p className="font-nunito font-semibold text-xs sm:text-sm text-[#6A6158] mb-5 max-w-xs leading-relaxed">
+                    Join the Wardlings Discord to claim your role.
                   </p>
 
                   {/* Role Display Section */}
@@ -393,13 +358,16 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
                     </div>
                   )}
 
-                  {/* CLAIMING SPINNER STATE */}
+                  {/* ASSIGNING ROLE STATE (strictly only after joined === true) */}
                   {stage === 'claiming' && (
                     <div className="w-full p-4 rounded-2xl bg-[#EEF7E8] border-2 border-[#2F241D] shadow-xs text-center space-y-1 mb-5">
                       <div className="font-dynapuff font-bold text-sm sm:text-base text-[#3D6E29] flex items-center justify-center gap-2">
                         <RefreshCw className="w-4 h-4 animate-spin text-[#5C8E47]" />
-                        <span>Assigning Sanctuary Roles...</span>
+                        <span>ASSIGNING ROLE</span>
                       </div>
+                      <p className="font-nunito font-semibold text-xs sm:text-sm text-[#6A6158] leading-relaxed">
+                        Assigning your Sanctuary role...
+                      </p>
                     </div>
                   )}
 
@@ -409,8 +377,8 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
                       type="button"
                       onClick={handleJoinClick}
                       disabled={stage === 'claiming'}
-                      style={{ backgroundColor: '#5865F2' }}
-                      className="w-full font-dynapuff font-bold text-base py-3.5 sm:py-4 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#4752C4] cursor-pointer flex items-center justify-center transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-center"
+                      style={{ backgroundColor: '#5C8E47' }}
+                      className="w-full font-dynapuff font-bold text-base py-3.5 sm:py-4 rounded-full text-white border-2 border-[#2F241D] shadow-[2px_3px_0px_#2F241D] hover:bg-[#4F7A3D] cursor-pointer flex items-center justify-center transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-center"
                     >
                       <span>JOIN THE SANCTUARY</span>
                     </button>
