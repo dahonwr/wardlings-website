@@ -85,6 +85,61 @@ export const DiscordClaimPage: React.FC<DiscordClaimPageProps> = ({ onBackToHome
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
 
+  // Fetch initial role preview on mount (without initiating claim or showing assigning role)
+  useEffect(() => {
+    if (!claimToken) return;
+
+    let isMounted = true;
+
+    const fetchInitialRolePreview = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/discord/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ claim: claimToken })
+        });
+
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403 || res.status === 410) {
+            if (isMounted) {
+              setStage('expired');
+              setErrorMessage('Your Discord session expired. Please verify Discord again.');
+            }
+          }
+          return;
+        }
+
+        const data = await res.json();
+        if (!isMounted) return;
+
+        if (data.error && (data.error.includes('expired') || data.error.includes('session'))) {
+          setStage('expired');
+          setErrorMessage('Your Discord session expired. Please verify Discord again.');
+          return;
+        }
+
+        if (Array.isArray(data.allocations) && data.allocations.length > 0) {
+          setRoles(data.allocations.map(mapBackendRoleToDisplay));
+        } else if (Array.isArray(data.roles) && data.roles.length > 0) {
+          setRoles(data.roles.map(mapBackendRoleToDisplay));
+        }
+
+        if (data.claimed && Array.isArray(data.assigned_roles) && data.assigned_roles.length > 0) {
+          setAssignedRoles(data.assigned_roles.map(mapBackendRoleToDisplay));
+          setStage('success');
+        }
+      } catch {
+        // Continue with local preview if offline
+      }
+    };
+
+    fetchInitialRolePreview();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [claimToken]);
+
   // Clean up polling timer on unmount
   useEffect(() => {
     return () => {

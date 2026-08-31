@@ -17,6 +17,25 @@ import { DiscordClaimPage } from './components/DiscordClaimPage';
 
 const getNormalizedPath = (): string => {
   if (typeof window === 'undefined') return '/';
+
+  // Check query params and hash for claim token or discord callback
+  try {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(
+      window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
+    );
+    if (
+      searchParams.has('claim') ||
+      hashParams.has('claim') ||
+      searchParams.get('discord') === 'ready' ||
+      hashParams.get('discord') === 'ready'
+    ) {
+      return '/discord-claim';
+    }
+  } catch (e) {
+    console.warn('Error reading URL params', e);
+  }
+
   const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
 
   if (pathname === '/discord-claim' || pathname.startsWith('/discord-claim')) {
